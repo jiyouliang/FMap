@@ -12,6 +12,22 @@ import android.support.v4.content.ContextCompat;
  */
 public class PermissionUtil {
 
+    private static final String[] INIT_PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.INTERNET};
+
+    /**
+     * 初始化申请权限
+     *
+     * @param activity
+     * @param reqCode
+     */
+    public static void initPermissions(Activity activity, int reqCode) {
+        requestPermission(activity, INIT_PERMISSIONS, reqCode);
+    }
+
     /**
      * 判断是否授予权限
      *
@@ -26,12 +42,22 @@ public class PermissionUtil {
 
     /**
      * 判断多个权限是否授予
+     *
      * @param context
      * @param permissions
      * @return
      */
     public static boolean checkPermissions(Context context, String[] permissions) {
         for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean checkPermissions(Context context) {
+        for (String permission : INIT_PERMISSIONS) {
             if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }

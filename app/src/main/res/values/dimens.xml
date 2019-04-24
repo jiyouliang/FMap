@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="gps_loc_size">38dp</dimen>
+    <dimen name="gps_loc_radius">19dp</dimen>
+
+
+</resources>

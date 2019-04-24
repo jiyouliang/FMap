@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <size
+        android:width="@dimen/gps_loc_size"
+        android:height="@dimen/gps_loc_size" />
+    <solid android:color="@color/gsp_loc_selected" />
+    <corners android:radius="@dimen/gps_loc_radius" />
+    <stroke android:color="@color/gsp_loc_selected" />
+</shape>
