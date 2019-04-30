@@ -21,11 +21,13 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.PermissionUtil;
 import com.jiyouliang.fmap.view.GPSView;
+import com.jiyouliang.fmap.view.NearbySearchView;
 
-public class MapActivity extends AppCompatActivity implements GPSView.OnGPSViewClickListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -42,6 +44,7 @@ public class MapActivity extends AppCompatActivity implements GPSView.OnGPSViewC
     private GPSView mGpsView;
     private MyLocationStyle mLocationStyle;
     private Marker mLocationMarker;
+    private NearbySearchView mNearbySearcyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +59,10 @@ public class MapActivity extends AppCompatActivity implements GPSView.OnGPSViewC
         mGpsView = (GPSView) findViewById(R.id.gps_view);
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
+        mNearbySearcyView = (NearbySearchView)findViewById(R.id.nearby_view);
 
         mGpsView.setOnGPSViewClickListener(this);
+        mNearbySearcyView.setOnNearbySearchViewClick(this);
     }
 
     private void initMap(Bundle savedInstanceState) {
@@ -147,7 +152,7 @@ public class MapActivity extends AppCompatActivity implements GPSView.OnGPSViewC
             if (null == mLocationMarker) {
                 mLocationMarker = aMap.addMarker(new MarkerOptions().position(latLng)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_point))
-                        .anchor(0.5f, 0.5f));
+                        .anchor(0.0f, 0.0f));
 
 
             }
@@ -197,5 +202,10 @@ public class MapActivity extends AppCompatActivity implements GPSView.OnGPSViewC
     @Override
     public void onGPSClick() {
         mLocationClient.startLocation();
+    }
+
+    @Override
+    public void onNearbySearchClick() {
+        Toast.makeText(this, "点击附近搜索", Toast.LENGTH_SHORT).show();
     }
 }

@@ -2,6 +2,7 @@
 <resources>
     <dimen name="gps_loc_size">38dp</dimen>
     <dimen name="gps_loc_radius">19dp</dimen>
+    <dimen name="padding_size">10dp</dimen>
 
 
 </resources>
