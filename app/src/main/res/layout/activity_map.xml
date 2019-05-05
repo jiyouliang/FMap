@@ -44,8 +44,22 @@
 
         <com.jiyouliang.fmap.view.RouteView
             android:layout_width="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+       <!-- <include
+            layout="@layout/frequent_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />-->
+
+        <com.jiyouliang.fmap.view.FrequentView
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:background="@drawable/icon_circle_selector"
+            android:layout_height="wrap_content" />
 
 
     </RelativeLayout>
