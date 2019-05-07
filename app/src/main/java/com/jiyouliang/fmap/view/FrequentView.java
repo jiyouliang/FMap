@@ -5,8 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.v4.widget.ImageViewCompat;
+import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.util.LogUtil;
@@ -14,7 +17,7 @@ import com.jiyouliang.fmap.util.LogUtil;
 /**
  * 常用
  */
-public class FrequentView extends android.support.v7.widget.AppCompatImageButton {
+public class FrequentView extends AppCompatImageButton {
     private static final String TAG = "FrequentView";
 
     //    private final Bitmap mBitmap2;
@@ -33,7 +36,7 @@ public class FrequentView extends android.support.v7.widget.AppCompatImageButton
         super(context, attrs, defStyleAttr);
 //        ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.frequent_view, null, false);
 //        setImageDrawable(getResources().getDrawable(R.drawable.icon_frequent_location_btn));
-//        setBackgroundResource(R.drawable.icon_circle_selector);
+        setBackgroundResource(R.drawable.icon_circle_selector);
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.icon_frequent_location_btn);
         mPaint = new Paint();
         setOnClickListener(new OnClickListener() {
@@ -59,7 +62,7 @@ public class FrequentView extends android.support.v7.widget.AppCompatImageButton
         int height = getMeasuredHeight();
         int width = getMeasuredWidth();
         LogUtil.d(TAG, "height=" + height + ",width=" + width);
-        //图片居中
+        //居中显示
         canvas.drawBitmap(mBitmap, (width - mBitmap.getWidth()) / 2f, (height - mBitmap.getHeight()) / 2f, mPaint);
     }
 }
