@@ -26,7 +26,7 @@ public class NearbySearchView extends ConstraintLayout implements View.OnClickLi
     public NearbySearchView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-                .inflate(R.layout.nearby_searcy_view, this, true);
+                .inflate(R.layout.view_nearby_searcy, this, true);
         setOnClickListener(this);
     }
 

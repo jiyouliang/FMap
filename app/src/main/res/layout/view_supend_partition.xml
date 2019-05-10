@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/icon_size"
+    android:layout_height="match_parent"
+    android:background="@color/transparent"
+    android:padding="0dp">
+
+    <com.jiyouliang.fmap.view.MapLayerView
+        android:id="@+id/mv"
+        style="@style/IconViewStyle"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.jiyouliang.fmap.view.TrafficView
+        android:id="@+id/tv"
+        style="@style/IconViewStyle"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mv" />
+
+    <com.jiyouliang.fmap.view.CallTaxiView
+        android:id="@+id/ctv"
+        style="@style/IconViewStyle"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv" />
+    <com.jiyouliang.fmap.view.GroupTeamView
+        android:id="@+id/gtv"
+        style="@style/IconViewStyle"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ctv" />
+
+
+</android.support.constraint.ConstraintLayout>

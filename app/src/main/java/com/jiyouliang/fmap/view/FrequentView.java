@@ -34,7 +34,7 @@ public class FrequentView extends AppCompatImageButton {
 
     public FrequentView(final Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-//        ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.frequent_view, null, false);
+//        ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.view_frequent, null, false);
 //        setImageDrawable(getResources().getDrawable(R.drawable.icon_frequent_location_btn));
         setBackgroundResource(R.drawable.icon_circle_selector);
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.icon_frequent_location_btn);

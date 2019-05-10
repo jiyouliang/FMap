@@ -4,7 +4,7 @@
     <dimen name="gps_loc_radius">19dp</dimen>
     <dimen name="padding_size">10dp</dimen>
     <dimen name="input_height">56dp</dimen>
-    <dimen name="icon_size">54dp</dimen>
+    <dimen name="icon_size">42dp</dimen>
 
 
 </resources>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,61 +12,9 @@
         app:layout_constraintEnd_toStartOf="parent" />
 
 
-    <com.jiyouliang.fmap.view.NearbySearchView
-        android:id="@+id/nearby_view"
+    <com.jiyouliang.fmap.view.SupendViewContainer
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/padding_size"
-        android:layout_marginRight="@dimen/padding_size"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/padding_size"
-        android:layout_marginRight="@dimen/padding_size"
-        android:layout_marginBottom="4dp"
-        android:background="@color/transparent"
-        app:layout_constraintBottom_toTopOf="@id/nearby_view"
-        app:layout_constraintStart_toStartOf="@id/nearby_view">
-
-        <com.jiyouliang.fmap.view.GPSView
-            android:id="@+id/gps_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:background="@drawable/gps_loc_selector"
-            android:src="@drawable/icon_gps_unlocked" />
-
-        <com.jiyouliang.fmap.view.RouteView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-
-        <!-- <include
-             layout="@layout/frequent_view"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_alignParentRight="true"
-             android:layout_centerVertical="true" />-->
-
-        <com.jiyouliang.fmap.view.FrequentView
-            android:id="@+id/fv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" />
-
-        <com.jiyouliang.fmap.view.MapLayerView
-            style="@style/IconViewStyle"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/fv" />
-
-
-    </RelativeLayout>
+        android:layout_height="match_parent" />
 
 
 </android.support.constraint.ConstraintLayout>

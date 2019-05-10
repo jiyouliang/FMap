@@ -11,22 +11,22 @@ import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.util.LogUtil;
 
 /**
- * 图层
+ * 交通
  */
-public class MapLayerView extends BaseIconView {
+public class TrafficView extends BaseIconView {
 
-    private static final String TAG = "MapLayerView";
+    private static final String TAG = "TrafficView";
 
 
-    public MapLayerView(Context context) {
+    public TrafficView(Context context) {
         this(context, null);
     }
 
-    public MapLayerView(Context context, AttributeSet attrs) {
+    public TrafficView(Context context, AttributeSet attrs) {
         this(context, attrs, R.style.IconViewStyle);
     }
 
-    public MapLayerView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TrafficView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOnClickListener(new OnClickListener() {
             @Override
@@ -36,16 +36,19 @@ public class MapLayerView extends BaseIconView {
         });
     }
 
-
+    @Override
+    protected void initBackground() {
+        setBackgroundResource(R.drawable.icon_up_selector);
+    }
 
     @Override
     public Bitmap createBitmap() {
-        return BitmapFactory.decodeResource(getResources(), R.drawable.icon_c2);
+        return BitmapFactory.decodeResource(getResources(), R.drawable.icon_c_traffic_open);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         LogUtil.d(TAG, "width="+getMeasuredWidth()+",height="+getMeasuredHeight());
+        super.onDraw(canvas);
     }
 }
