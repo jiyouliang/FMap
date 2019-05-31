@@ -15,7 +15,7 @@ import com.jiyouliang.fmap.util.LogUtil;
  */
 public class CallTaxiView extends BaseIconView {
 
-    private static final String TAG = "TrafficView";
+    private static final String TAG = "CallTaxiView";
 
 
     public CallTaxiView(Context context) {
@@ -43,7 +43,14 @@ public class CallTaxiView extends BaseIconView {
 
     @Override
     public Bitmap createBitmap() {
-        return BitmapFactory.decodeResource(getResources(), R.drawable.poi_indicator_call_taxi);
+//        return BitmapFactory.decodeResource(getResources(), R.drawable.poi_indicator_call_taxi);
+        //返回可修改的bitmap
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.poi_indicator_call_taxi)
+                .copy(Bitmap.Config.ARGB_8888, true);
+        LogUtil.d(TAG, "bitmap width="+bitmap.getWidth()+",bitmap height="+bitmap.getHeight());
+       /* bitmap.setHeight(48);
+        bitmap.setWidth(48);*/
+        return bitmap;
     }
 
     @Override

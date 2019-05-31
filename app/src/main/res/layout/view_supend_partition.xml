@@ -8,13 +8,15 @@
 
     <com.jiyouliang.fmap.view.MapLayerView
         android:id="@+id/mv"
-        style="@style/IconViewStyle"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.jiyouliang.fmap.view.TrafficView
         android:id="@+id/tv"
         style="@style/IconViewStyle"
+        android:scaleType="centerCrop"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mv" />
 
@@ -23,11 +25,23 @@
         style="@style/IconViewStyle"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv" />
+
     <com.jiyouliang.fmap.view.GroupTeamView
         android:id="@+id/gtv"
         style="@style/IconViewStyle"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ctv" />
 
+    <com.jiyouliang.fmap.view.ReportView
+        android:id="@+id/rv"
+        style="@style/IconViewStyle"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gtv" />
+
+    <com.jiyouliang.fmap.view.MoreIconView
+        android:id="@+id/miv"
+        style="@style/IconViewStyle"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv" />
 
 </android.support.constraint.ConstraintLayout>

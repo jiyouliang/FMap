@@ -5,11 +5,22 @@
     android:layout_height="match_parent"
     android:background="@color/transparent">
 
+    <com.jiyouliang.fmap.view.MapHeaderView
+        android:id="@+id/mhv"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/padding_size"
+        android:layout_marginRight="@dimen/padding_size"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.jiyouliang.fmap.view.NearbySearchView
         android:id="@+id/nearby_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/padding_size"
+        android:layout_marginBottom="@dimen/padding_size"
         android:layout_marginRight="@dimen/padding_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -56,7 +67,8 @@
 
     <com.jiyouliang.fmap.view.SupendPartitionView
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/padding_size"
+        android:layout_height="wrap_content"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/mhv" />
 </android.support.constraint.ConstraintLayout>

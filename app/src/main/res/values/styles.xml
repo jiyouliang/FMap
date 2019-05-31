@@ -11,7 +11,7 @@
 
     <!--输入框样式-->
     <style name="EditTextStyle" parent="Base.V7.Widget.AppCompat.EditText">
-        <item name="android:background">@drawable/navi_current_road_board_bg</item>
+        <item name="android:background">@drawable/button_only_one_normal</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/input_height</item>
         <item name="android:paddingLeft">@dimen/padding_size</item>
@@ -21,8 +21,8 @@
     </style>
 
     <style name="IconViewStyle">
-        <item name="android:layout_width">@dimen/icon_size</item>
-        <item name="android:layout_height">@dimen/icon_size</item>
+        <item name="android:layout_width">@dimen/icon_width</item>
+        <item name="android:layout_height">@dimen/icon_height</item>
     </style>
 
 </resources>

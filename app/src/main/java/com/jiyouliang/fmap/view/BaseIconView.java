@@ -32,7 +32,7 @@ public abstract class BaseIconView extends AppCompatImageButton implements IconV
         initBackground();
     }
 
-    protected  void initBackground(){
+    protected void initBackground() {
         setBackgroundResource(R.drawable.ret_circle_selector);
     }
 
@@ -44,12 +44,12 @@ public abstract class BaseIconView extends AppCompatImageButton implements IconV
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
 
-        if (null != mPaint) {
+        if (null != mPaint && b != null) {
             c.drawBitmap(b, (width - b.getWidth()) / 2f, (height - b.getHeight()) / 2f, mPaint);
         }
     }
 
-    protected void drawBitmapToCenter(Canvas c){
+    protected void drawBitmapToCenter(Canvas c) {
         drawToCenter(c, mBitmap);
     }
 

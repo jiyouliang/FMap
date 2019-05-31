@@ -2,12 +2,22 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+//    buildToolsVersion "28.0.3"
+
+    /*aaptOptions {
+        cruncherEnabled = false
+        useNewCruncher = false
+    }*/
+/*    aaptOptions.setProperty("cruncherEnabled",false)
+    aaptOptions.setProperty("useNewCruncher",false)*/
+
     defaultConfig {
         applicationId "com.jiyouliang.fmap"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -16,6 +26,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {

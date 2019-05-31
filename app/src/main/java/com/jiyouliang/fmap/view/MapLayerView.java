@@ -23,7 +23,7 @@ public class MapLayerView extends BaseIconView {
     }
 
     public MapLayerView(Context context, AttributeSet attrs) {
-        this(context, attrs, R.style.IconViewStyle);
+        this(context, attrs, 0);
     }
 
     public MapLayerView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -37,15 +37,14 @@ public class MapLayerView extends BaseIconView {
     }
 
 
-
     @Override
     public Bitmap createBitmap() {
-        return BitmapFactory.decodeResource(getResources(), R.drawable.icon_c2);
+        return BitmapFactory.decodeResource(getResources(), R.drawable.map_widget_layer_icon);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        LogUtil.d(TAG, "width="+getMeasuredWidth()+",height="+getMeasuredHeight());
+        LogUtil.d(TAG, "width=" + getMeasuredWidth() + ",height=" + getMeasuredHeight());
     }
 }

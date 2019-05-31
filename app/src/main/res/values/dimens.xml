@@ -3,8 +3,10 @@
     <dimen name="gps_loc_size">38dp</dimen>
     <dimen name="gps_loc_radius">19dp</dimen>
     <dimen name="padding_size">10dp</dimen>
-    <dimen name="input_height">56dp</dimen>
-    <dimen name="icon_size">42dp</dimen>
+    <dimen name="input_height">46dp</dimen>
+    <dimen name="icon_size">44dp</dimen>
+    <dimen name="icon_width">44dp</dimen>
+    <dimen name="icon_height">36dp</dimen>
 
 
 </resources>

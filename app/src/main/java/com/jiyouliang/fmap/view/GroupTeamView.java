@@ -15,8 +15,7 @@ import com.jiyouliang.fmap.util.LogUtil;
  */
 public class GroupTeamView extends BaseIconView {
 
-    private static final String TAG = "TrafficView";
-
+    private static final String TAG = "GroupTeamView";
 
     public GroupTeamView(Context context) {
         this(context, null);
@@ -48,7 +47,7 @@ public class GroupTeamView extends BaseIconView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        LogUtil.d(TAG, "width="+getMeasuredWidth()+",height="+getMeasuredHeight());
+        LogUtil.d(TAG, "width=" + getMeasuredWidth() + ",height=" + getMeasuredHeight());
         super.onDraw(canvas);
     }
 }
