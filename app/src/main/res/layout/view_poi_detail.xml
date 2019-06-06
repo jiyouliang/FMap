@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/radius_top_bg"
+    android:padding="@dimen/padding_large">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_my_loc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/tv_loc_title"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:text="我的位置"
+            android:textColor="@color/title_color"
+            android:textSize="20sp" />
+
+
+        <TextView
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_loc_title"
+            android:id="@+id/tv_my_loc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_small"
+            android:text="在什么位置附近"
+            android:textColor="@color/title_color"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="30dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_loc_title"
+            app:layout_constraintBottom_toBottomOf="@id/tv_loc_title"
+            android:layout_height="30dp"
+            android:baseline="@id/tv_loc_title"
+            android:background="@drawable/close_normal" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>

@@ -4,7 +4,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -16,11 +17,10 @@ import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
-import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.AMapGestureListener;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
-import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.util.LogUtil;
@@ -28,7 +28,7 @@ import com.jiyouliang.fmap.util.PermissionUtil;
 import com.jiyouliang.fmap.view.GPSView;
 import com.jiyouliang.fmap.view.NearbySearchView;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -46,6 +46,13 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private MyLocationStyle mLocationStyle;
     private Marker mLocationMarker;
     private NearbySearchView mNearbySearcyView;
+    private static boolean mStopLocation;
+    private static boolean isScrolling;//正在滑动
+    private FrameLayout mPoiDetailContainer;
+    private int mCurLocState = STATE_UNLOCKED;//当前定位状态
+    private static final int STATE_UNLOCKED = 0;//未定位状态，默认状态
+    private static final int STATE_LOCKED = 1;//定位状态
+    private static final int STATE_ROTATE = 2;//根据地图方向旋转状态
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +65,22 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     private void initView() {
         mGpsView = (GPSView) findViewById(R.id.gps_view);
+        mGpsView.setGpsState(mCurLocState);
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
         mNearbySearcyView = (NearbySearchView) findViewById(R.id.nearby_view);
+        mPoiDetailContainer = (FrameLayout) findViewById(R.id.poi_detail_container);
 
+    }
+
+    /**
+     * 事件处理
+     */
+    private void setListener() {
         mGpsView.setOnGPSViewClickListener(this);
-        mNearbySearcyView.setOnNearbySearchViewClick(this);
+        mNearbySearcyView.setOnNearbySearchViewClickListener(this);
+        //地图手势事件
+        aMap.setAMapGestureListener(this);
     }
 
     private void initMap(Bundle savedInstanceState) {
@@ -71,7 +88,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mMapView.onCreate(savedInstanceState);
         aMap = mMapView.getMap();
         aMap.setMyLocationEnabled(true);//开启定位蓝点
-        setLocationStyle();
+        //定位、但不会移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。
+        setLocationStyle(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
         mUiSettings = aMap.getUiSettings();
         //隐藏缩放控件
         mUiSettings.setZoomControlsEnabled(false);
@@ -104,24 +122,21 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             }
         }
 
+        setListener();
     }
 
     /**
      * 设置自定义定位蓝点
+     *
+     * @param locationType 定位模式{@link com.amap.api.maps.model.MyLocationStyle}
      */
-    private void setLocationStyle() {
+    private void setLocationStyle(int locationType) {
         // 自定义系统定位蓝点
         mLocationStyle = new MyLocationStyle();
-        mLocationStyle.strokeColor(Color.argb(0,0,0,0));
+        mLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));
         mLocationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));//圆圈的颜色,设为透明
-        // 自定义定位蓝点图标
-//        mLocationStyle.myLocationIcon(BitmapDescriptorFactory.
-//                fromResource(R.drawable.gps_point));
-////        mLocationStyle.strokeWidth(0);
-//        // 将自定义的 mLocationStyle 对象添加到地图上
         //定位、且将视角移动到地图中心点，定位点依照设备方向旋转，  并且会跟随设备移动。
-//        aMap.setMyLocationStyle(mLocationStyle);
-        aMap.setMyLocationStyle(mLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE));
+        aMap.setMyLocationStyle(mLocationStyle.myLocationType(locationType));
     }
 
     @Override
@@ -146,6 +161,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         //定位回调
         @Override
         public void onLocationChanged(AMapLocation location) {
+            if (mStopLocation) {
+                return;//停止定位，滑动停止定位后，还会定位一次，这里通过参数mStopLocation控制
+            }
             if (null == location) {
                 return;
             }
@@ -160,11 +178,13 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             //定位蓝点
             /*if (null == mLocationMarker) {
                 mLocationMarker = aMap.addMarker(new MarkerOptions().position(latLng)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_point))
+                        .icon_down_pressed.9.png(BitmapDescriptorFactory.fromResource(R.drawable.gps_point))
                         .anchor(0.0f, 0.0f));
 
 
             }*/
+            //改变定位图标状态
+            mGpsView.setGpsState(mCurLocState);
             //首次定位,选择移动到地图中心点并修改级别到15级
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
             aMap.animateCamera(cameraUpdate, new AMap.CancelableCallback() {
@@ -208,13 +228,124 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mMapView.onPause();
     }
 
+
     @Override
     public void onGPSClick() {
+        //修改定位图标状态
+        switch (mCurLocState) {
+            case STATE_UNLOCKED:
+                mCurLocState = STATE_LOCKED;
+                setLocationStyle(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+                break;
+            case STATE_LOCKED:
+                mCurLocState = STATE_ROTATE;
+                setLocationStyle(MyLocationStyle.LOCATION_TYPE_MAP_ROTATE);
+                break;
+            case STATE_ROTATE:
+                mCurLocState = STATE_LOCKED;
+                setLocationStyle(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+                break;
+        }
+        aMap.setMyLocationEnabled(true);
+        mStopLocation = false;
+        mLocationOption.setOnceLocation(false);
         mLocationClient.startLocation();
     }
 
     @Override
     public void onNearbySearchClick() {
         Toast.makeText(this, "点击附近搜索", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 地图手势事件回调：单指双击
+     *
+     * @param v
+     * @param v1
+     */
+    @Override
+    public void onDoubleTap(float v, float v1) {
+
+    }
+
+    /**
+     * 地体手势事件回调：单指单击
+     *
+     * @param v
+     * @param v1
+     */
+    @Override
+    public void onSingleTap(float v, float v1) {
+
+    }
+
+    /**
+     * 地体手势事件回调：单指惯性滑动
+     *
+     * @param v
+     * @param v1
+     */
+    @Override
+    public void onFling(float v, float v1) {
+        LogUtil.d(TAG, "onFling,x=" + v + ",y=" + v1);
+    }
+
+    /**
+     * 地体手势事件回调：单指滑动
+     *
+     * @param v
+     * @param v1
+     */
+    @Override
+    public void onScroll(float v, float v1) {
+        LogUtil.d(TAG, "onScroll,x=" + v + ",y=" + v1);
+        setLocationStyle(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+        mLocationClient.stopLocation();
+        mLocationOption.setOnceLocation(true);//单次定位
+        mStopLocation = true;
+        mCurLocState = STATE_UNLOCKED;
+        mGpsView.setGpsState(mCurLocState);
+    }
+
+    /**
+     * 地体手势事件回调：长按
+     *
+     * @param v
+     * @param v1
+     */
+    @Override
+    public void onLongPress(float v, float v1) {
+
+    }
+
+    /**
+     * 地体手势事件回调：单指按下
+     *
+     * @param v
+     * @param v1
+     */
+    @Override
+    public void onDown(float v, float v1) {
+        LogUtil.d(TAG, "onDown");
+    }
+
+    /**
+     * 地体手势事件回调：单指抬起
+     *
+     * @param v
+     * @param v1
+     */
+    @Override
+    public void onUp(float v, float v1) {
+        LogUtil.d(TAG, "onUp");
+
+    }
+
+    /**
+     * 地体手势事件回调：地图稳定下来会回到此接口
+     */
+    @Override
+    public void onMapStable() {
+
     }
 }

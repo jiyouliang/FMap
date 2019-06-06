@@ -30,7 +30,7 @@ public class NearbySearchView extends ConstraintLayout implements View.OnClickLi
         setOnClickListener(this);
     }
 
-    public void setOnNearbySearchViewClick(OnNearbySearchViewClickListener listener) {
+    public void setOnNearbySearchViewClickListener(OnNearbySearchViewClickListener listener) {
         if (listener == null) {
             return;
         }
