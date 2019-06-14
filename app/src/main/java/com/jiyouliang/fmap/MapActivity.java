@@ -49,7 +49,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private AMapLocationClient mLocationClient;
     private AMapLocationClientOption mLocationOption;
     private GPSView mGpsView;
-    private Marker mLocationMarker;
     private NearbySearchView mNearbySearcyView;
     private static boolean mFirstLocation = true;//第一次定位
     private FrameLayout mPoiDetailContainer;
@@ -67,6 +66,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private static final int STROKE_COLOR = Color.argb(240, 3, 145, 255);
     private static final int FILL_COLOR = Color.argb(10, 0, 0, 180);
     private OnLocationChangedListener mLocationListener;
+    private float mAccuracy;
     //定位、但不会移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。
 
     @Override
@@ -129,15 +129,16 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         //获取经纬度
         double lng = location.getLongitude();
         double lat = location.getLatitude();
-        LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat);
+        LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat + ",mLocMarker=" + mLocMarker);
 
         //参数依次是：视角调整区域的中心点坐标、希望调整到的缩放级别、俯仰角0°~45°（垂直与地图时为0）、偏航角 0~360° (正北方为0)
         mLatLng = new LatLng(lat, lng);
 
         //首次定位,选择移动到地图中心点并修改级别到15级
         //首次定位成功才修改地图中心点，并移动
-        final float accuracy = location.getAccuracy();
-        LogUtil.d(TAG, "accuracy=" + accuracy);
+        mAccuracy = location.getAccuracy();
+        LogUtil.d(TAG, "accuracy=" + mAccuracy);
+        LogUtil.d(TAG, "mFirstLocation=" + mFirstLocation);
         if (mFirstLocation) {
             aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel), new AMap.CancelableCallback() {
                 @Override
@@ -145,7 +146,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                     mCurrentGpsState = STATE_LOCKED;
                     mGpsView.setGpsState(mCurrentGpsState);
                     mMapType = MyLocationStyle.LOCATION_TYPE_LOCATE;
-                    addCircle(mLatLng, accuracy);//添加定位精度圆
+                    addCircle(mLatLng, mAccuracy);//添加定位精度圆
                     addMarker(mLatLng);//添加定位图标
                     mSensorHelper.setCurrentMarker(mLocMarker);//定位图标旋转
                     mFirstLocation = false;
@@ -158,7 +159,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             });
         } else {
             mCircle.setCenter(mLatLng);
-            mCircle.setRadius(accuracy);
+            mCircle.setRadius(mAccuracy);
             mLocMarker.setPosition(mLatLng);
 //            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
         }
@@ -186,8 +187,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mLocationOption.setHttpTimeOut(30000);//可选，设置网络请求超时时间。默认为30秒。在仅设备模式下无效
             mLocationOption.setLocationCacheEnable(true);//开启定位缓存
             mLocationClient.setLocationOption(mLocationOption);
-            mLocationClient.startLocation();
-           /* if (null != mLocationClient) {
+//            mLocationClient.startLocation();
+            if (null != mLocationClient) {
                 mLocationClient.setLocationOption(mLocationOption);
                 //运行时权限
                 if (PermissionUtil.checkPermissions(this)) {
@@ -196,7 +197,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                     //未授予权限，动态申请
                     PermissionUtil.initPermissions(this, REQ_CODE_INIT);
                 }
-            }*/
+            }
         }
     }
 
@@ -251,9 +252,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onDoubleTap(float v, float v1) {
         mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
-        setLocationStyle();
         mCurrentGpsState = STATE_UNLOCKED;
         mGpsView.setGpsState(mCurrentGpsState);
+        setLocationStyle();
+        resetLocationMarker();
     }
 
     /**
@@ -364,16 +366,15 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 break;
         }
         aMap.setMyLocationEnabled(true);
+        LogUtil.d(TAG, "onGPSClick:mCurrentGpsState=" + mCurrentGpsState + ",mMapType=" + mMapType);
         //改变定位图标状态
         mGpsView.setGpsState(mCurrentGpsState);
+
         //执行地图动效
         aMap.animateCamera(cameraUpdate, mAnimDuartion, new AMap.CancelableCallback() {
             @Override
             public void onFinish() {
-                if (mFirstLocation) {
-                    mFirstLocation = false;
-                }
-                setLocationStyle();
+
             }
 
             @Override
@@ -381,7 +382,29 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
             }
         });
-//        mLocationClient.startLocation();
+        setLocationStyle();
+        resetLocationMarker();
+    }
+
+    /**
+     * 根据当前地图状态重置定位蓝点
+     */
+    private void resetLocationMarker() {
+        aMap.clear();
+        mLocMarker = null;
+        if (mCurrentGpsState == STATE_ROTATE) {
+            //ROTATE模式不需要方向传感器
+            //mSensorHelper.unRegisterSensorListener();
+            addRotateMarker(mLatLng);
+        } else {
+            //mSensorHelper.registerSensorListener();
+            addMarker(mLatLng);
+            if (null != mLocMarker) {
+                mSensorHelper.setCurrentMarker(mLocMarker);
+            }
+        }
+
+        addCircle(mLatLng, mAccuracy);
     }
 
     @Override
@@ -455,15 +478,28 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     }
 
     private void addMarker(LatLng latlng) {
-        if (mLocMarker != null) {
+        /*if (mLocMarker != null) {
             return;
-        }
-        MarkerOptions options = new MarkerOptions();
-        options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(this.getResources(),
+        }*/
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(this.getResources(),
                 R.mipmap.navi_map_gps_locked)));
-        options.anchor(0.5f, 0.5f);
-        options.position(latlng);
-        mLocMarker = aMap.addMarker(options);
+        markerOptions.anchor(0.5f, 0.5f);
+        markerOptions.position(latlng);
+        mLocMarker = aMap.addMarker(markerOptions);
+    }
+
+    private void addRotateMarker(LatLng latlng) {
+       /* if (mLocMarker != null) {
+            return;
+        }*/
+        MarkerOptions markerOptions = new MarkerOptions();
+        //3D效果
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(this.getResources(),
+                R.mipmap.navi_map_gps_3d)));
+        markerOptions.anchor(0.5f, 0.5f);
+        markerOptions.position(latlng);
+        mLocMarker = aMap.addMarker(markerOptions);
     }
 
 

@@ -10,6 +10,7 @@ import android.view.Surface;
 import android.view.WindowManager;
 
 import com.amap.api.maps.model.Marker;
+import com.jiyouliang.fmap.util.LogUtil;
 
 /**
  * 方向传感器
@@ -23,6 +24,9 @@ public class SensorEventHelper implements SensorEventListener {
     private float mAngle;
     private Context mContext;
     private Marker mMarker;
+    private static final String TAG = "SensorEventHelper";
+    private boolean rotate = true;//是否可以旋转marker
+    private float rotation;//旋转角度
 
     public SensorEventHelper(Context context) {
         mContext = context;
@@ -58,7 +62,11 @@ public class SensorEventHelper implements SensorEventListener {
         }
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ORIENTATION: {
+                if(!rotate){
+                    return;
+                }
                 float x = event.values[0];
+                LogUtil.d(TAG, "onSensorChanged,"+"mLocMarker="+mMarker);
                 x += getScreenRotationOnPhone(mContext);
                 x %= 360.0F;
                 if (x > 180.0F)
@@ -71,7 +79,8 @@ public class SensorEventHelper implements SensorEventListener {
                 }
                 mAngle = Float.isNaN(x) ? 0 : x;
                 if (mMarker != null) {
-                    mMarker.setRotateAngle(360 - mAngle);
+                    rotation = 360 - mAngle;
+                    mMarker.setRotateAngle(rotation);
                 }
                 lastTime = System.currentTimeMillis();
             }
@@ -103,5 +112,17 @@ public class SensorEventHelper implements SensorEventListener {
                 return -90;
         }
         return 0;
+    }
+
+    /**
+     * 获取旋转角度
+     * @return
+     */
+    public float getRotationAngle(){
+        return rotation;
+    }
+
+    public void setRotate(boolean rotate) {
+        this.rotate = rotate;
     }
 }
