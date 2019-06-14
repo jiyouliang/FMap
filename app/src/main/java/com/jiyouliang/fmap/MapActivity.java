@@ -1,10 +1,10 @@
 package com.jiyouliang.fmap;
 
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.view.MotionEvent;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -15,20 +15,26 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.AMapGestureListener;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.Circle;
+import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.PermissionUtil;
 import com.jiyouliang.fmap.view.GPSView;
 import com.jiyouliang.fmap.view.NearbySearchView;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -43,34 +49,48 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private AMapLocationClient mLocationClient;
     private AMapLocationClientOption mLocationOption;
     private GPSView mGpsView;
-    private MyLocationStyle mLocationStyle;
     private Marker mLocationMarker;
     private NearbySearchView mNearbySearcyView;
-    private static boolean mStopLocation;
-    private static boolean isScrolling;//正在滑动
+    private static boolean mFirstLocation = true;//第一次定位
     private FrameLayout mPoiDetailContainer;
-    private int mCurLocState = STATE_UNLOCKED;//当前定位状态
+    private int mCurrentGpsState = STATE_UNLOCKED;//当前定位状态
     private static final int STATE_UNLOCKED = 0;//未定位状态，默认状态
     private static final int STATE_LOCKED = 1;//定位状态
     private static final int STATE_ROTATE = 2;//根据地图方向旋转状态
+    private int mZoomLevel = 16;//地图缩放级别，最大缩放级别为20
+    private LatLng mLatLng;//当前定位经纬度
+    private static long mAnimDuartion = 500L;//地图动效时长
+    private int mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;//地图状态类型
+    private SensorEventHelper mSensorHelper;
+    private Marker mLocMarker;//自定义小蓝点
+    private Circle mCircle;
+    private static final int STROKE_COLOR = Color.argb(240, 3, 145, 255);
+    private static final int FILL_COLOR = Color.argb(10, 0, 0, 180);
+    private OnLocationChangedListener mLocationListener;
+    //定位、但不会移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        initView();
-        initMap(savedInstanceState);
+        initView(savedInstanceState);
+        setListener();
 
     }
 
-    private void initView() {
+    private void initView(Bundle savedInstanceState) {
         mGpsView = (GPSView) findViewById(R.id.gps_view);
-        mGpsView.setGpsState(mCurLocState);
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
+        aMap = mMapView.getMap();
+
+        //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
+        mMapView.onCreate(savedInstanceState);
+
+        mGpsView.setGpsState(mCurrentGpsState);
         mNearbySearcyView = (NearbySearchView) findViewById(R.id.nearby_view);
         mPoiDetailContainer = (FrameLayout) findViewById(R.id.poi_detail_container);
-
+        setUpMap();
     }
 
     /**
@@ -81,62 +101,129 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mNearbySearcyView.setOnNearbySearchViewClickListener(this);
         //地图手势事件
         aMap.setAMapGestureListener(this);
+        mSensorHelper = new SensorEventHelper(this);
+        if (mSensorHelper != null) {
+            mSensorHelper.registerSensorListener();
+        }
     }
 
-    private void initMap(Bundle savedInstanceState) {
-        //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
-        mMapView.onCreate(savedInstanceState);
-        aMap = mMapView.getMap();
-        aMap.setMyLocationEnabled(true);//开启定位蓝点
-        //定位、但不会移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。
-        setLocationStyle(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
-        mUiSettings = aMap.getUiSettings();
+    private void setUpMap() {
+        aMap.setLocationSource(this);//设置定位监听
         //隐藏缩放控件
-        mUiSettings.setZoomControlsEnabled(false);
+        aMap.getUiSettings().setZoomControlsEnabled(false);
+        //设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
+        aMap.setMyLocationEnabled(true);
+        setLocationStyle();
+    }
 
-        //初始化定位
-        mLocationClient = new AMapLocationClient(getApplicationContext());
-        //设置定位回调监听
-        mLocationClient.setLocationListener(mLocationListener);
-        mLocationOption = new AMapLocationClientOption();  //初始化AMapLocationClientOption对象
-        mLocationOption.setLocationCacheEnable(true);//开启定位缓存
-        mLocationOption.setInterval(2000);//定位时间间隔
-        mLocationOption.setHttpTimeOut(30000);//可选，设置网络请求超时时间。默认为30秒。在仅设备模式下无效
+    @Override
+    public void onLocationChanged(final AMapLocation location) {
 
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//高精度模式
 
-        /**
-         * 设置定位场景，目前支持三种场景（签到、出行、运动，默认无场景）
-         */
-        //  mLocationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.Transport);
-        if (null != mLocationClient) {
-            mLocationClient.setLocationOption(mLocationOption);
-            //设置场景模式后最好调用一次stop，再调用start以保证场景模式生效
-//            mLocationClient.stopLocation();
-            //运行时权限
-            if (PermissionUtil.checkPermissions(this)) {
-                mLocationClient.startLocation();
-            } else {
-                //未授予权限，动态申请
-                PermissionUtil.initPermissions(this, REQ_CODE_INIT);
+        if (null == mLocationListener || null == location || location.getErrorCode() != 0) {
+            if (location != null) {
+                LogUtil.d(TAG, "定位失败：errorCode=" + location.getErrorCode() + ",errorMsg=" + location.getErrorInfo());
             }
+            return;
         }
+        //获取经纬度
+        double lng = location.getLongitude();
+        double lat = location.getLatitude();
+        LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat);
 
-        setListener();
+        //参数依次是：视角调整区域的中心点坐标、希望调整到的缩放级别、俯仰角0°~45°（垂直与地图时为0）、偏航角 0~360° (正北方为0)
+        mLatLng = new LatLng(lat, lng);
+
+        //首次定位,选择移动到地图中心点并修改级别到15级
+        //首次定位成功才修改地图中心点，并移动
+        final float accuracy = location.getAccuracy();
+        LogUtil.d(TAG, "accuracy=" + accuracy);
+        if (mFirstLocation) {
+            aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel), new AMap.CancelableCallback() {
+                @Override
+                public void onFinish() {
+                    mCurrentGpsState = STATE_LOCKED;
+                    mGpsView.setGpsState(mCurrentGpsState);
+                    mMapType = MyLocationStyle.LOCATION_TYPE_LOCATE;
+                    addCircle(mLatLng, accuracy);//添加定位精度圆
+                    addMarker(mLatLng);//添加定位图标
+                    mSensorHelper.setCurrentMarker(mLocMarker);//定位图标旋转
+                    mFirstLocation = false;
+                }
+
+                @Override
+                public void onCancel() {
+
+                }
+            });
+        } else {
+            mCircle.setCenter(mLatLng);
+            mCircle.setRadius(accuracy);
+            mLocMarker.setPosition(mLatLng);
+//            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
+        }
     }
 
     /**
-     * 设置自定义定位蓝点
+     * 激活定位
      *
-     * @param locationType 定位模式{@link com.amap.api.maps.model.MyLocationStyle}
+     * @param listener
      */
-    private void setLocationStyle(int locationType) {
+    @Override
+    public void activate(OnLocationChangedListener listener) {
+        mLocationListener = listener;
+        LogUtil.d(TAG, "activate: mLocationListener = " + mLocationListener + "");
+        //设置定位回调监听
+        if (mLocationClient == null) {
+            mLocationClient = new AMapLocationClient(this);
+            mLocationOption = new AMapLocationClientOption();
+            //设置定位监听
+            mLocationClient.setLocationListener(this);
+            //设置为高精度定位模式
+            mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+            //设置定位参数
+            mLocationOption.setInterval(2000);//定位时间间隔，默认2000ms
+            mLocationOption.setHttpTimeOut(30000);//可选，设置网络请求超时时间。默认为30秒。在仅设备模式下无效
+            mLocationOption.setLocationCacheEnable(true);//开启定位缓存
+            mLocationClient.setLocationOption(mLocationOption);
+            mLocationClient.startLocation();
+           /* if (null != mLocationClient) {
+                mLocationClient.setLocationOption(mLocationOption);
+                //运行时权限
+                if (PermissionUtil.checkPermissions(this)) {
+                    mLocationClient.startLocation();
+                } else {
+                    //未授予权限，动态申请
+                    PermissionUtil.initPermissions(this, REQ_CODE_INIT);
+                }
+            }*/
+        }
+    }
+
+    /**
+     * 停止定位
+     */
+    @Override
+    public void deactivate() {
+        mLocationListener = null;
+        if (mLocationClient != null) {
+            mLocationClient.stopLocation();
+            mLocationClient.onDestroy();
+        }
+        mLocMarker = null;
+        mLocationClient = null;
+    }
+
+    /**
+     * 设置地图类型
+     */
+    private void setLocationStyle() {
         // 自定义系统定位蓝点
-        mLocationStyle = new MyLocationStyle();
-        mLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));
-        mLocationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));//圆圈的颜色,设为透明
+        MyLocationStyle locationStyle = new MyLocationStyle();
+        locationStyle.strokeColor(Color.argb(0, 0, 0, 0));
+        locationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));//圆圈的颜色,设为透明
         //定位、且将视角移动到地图中心点，定位点依照设备方向旋转，  并且会跟随设备移动。
-        aMap.setMyLocationStyle(mLocationStyle.myLocationType(locationType));
+        aMap.setMyLocationStyle(locationStyle.myLocationType(mMapType));
     }
 
     @Override
@@ -154,108 +241,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         }
     }
 
-    //声明AMapLocationClient类对象
-    //声明定位回调监听器
-
-    public final AMapLocationListener mLocationListener = new AMapLocationListener() {
-        //定位回调
-        @Override
-        public void onLocationChanged(AMapLocation location) {
-            if (mStopLocation) {
-                return;//停止定位，滑动停止定位后，还会定位一次，这里通过参数mStopLocation控制
-            }
-            if (null == location) {
-                return;
-            }
-            //获取经纬度
-            double lng = location.getLongitude();
-            double lat = location.getLatitude();
-            LogUtil.d(TAG, "onLocationChanged： lng" + lng + ",lat=" + lat);
-
-            //参数依次是：视角调整区域的中心点坐标、希望调整到的缩放级别、俯仰角0°~45°（垂直与地图时为0）、偏航角 0~360° (正北方为0)
-            LatLng latLng = new LatLng(lat, lng);
-            CameraUpdate mCameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(latLng, 18, 0, 0));
-            //定位蓝点
-            /*if (null == mLocationMarker) {
-                mLocationMarker = aMap.addMarker(new MarkerOptions().position(latLng)
-                        .icon_down_pressed.9.png(BitmapDescriptorFactory.fromResource(R.drawable.gps_point))
-                        .anchor(0.0f, 0.0f));
-
-
-            }*/
-            //改变定位图标状态
-            mGpsView.setGpsState(mCurLocState);
-            //首次定位,选择移动到地图中心点并修改级别到15级
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-            aMap.animateCamera(cameraUpdate, new AMap.CancelableCallback() {
-                @Override
-                public void onFinish() {
-
-                }
-
-                @Override
-                public void onCancel() {
-
-                }
-            });
-
-//            aMap.setMyLocationEnabled(false);//开启小蓝点，默认会重复定位
-
-            //避免重复定位
-//            mLocationClient.stopLocation();
-        }
-    };
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //在activity执行onDestroy时执行mMapView.onDestroy()，销毁地图
-        mMapView.onDestroy();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //在activity执行onResume时执行mMapView.onResume ()，重新绘制加载地图
-        mMapView.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
-        mMapView.onPause();
-    }
-
-
-    @Override
-    public void onGPSClick() {
-        //修改定位图标状态
-        switch (mCurLocState) {
-            case STATE_UNLOCKED:
-                mCurLocState = STATE_LOCKED;
-                setLocationStyle(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
-                break;
-            case STATE_LOCKED:
-                mCurLocState = STATE_ROTATE;
-                setLocationStyle(MyLocationStyle.LOCATION_TYPE_MAP_ROTATE);
-                break;
-            case STATE_ROTATE:
-                mCurLocState = STATE_LOCKED;
-                setLocationStyle(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
-                break;
-        }
-        aMap.setMyLocationEnabled(true);
-        mStopLocation = false;
-        mLocationOption.setOnceLocation(false);
-        mLocationClient.startLocation();
-    }
-
-    @Override
-    public void onNearbySearchClick() {
-        Toast.makeText(this, "点击附近搜索", Toast.LENGTH_SHORT).show();
-    }
 
     /**
      * 地图手势事件回调：单指双击
@@ -265,7 +250,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     @Override
     public void onDoubleTap(float v, float v1) {
-
+        mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+        setLocationStyle();
+        mCurrentGpsState = STATE_UNLOCKED;
+        mGpsView.setGpsState(mCurrentGpsState);
     }
 
     /**
@@ -299,12 +287,15 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onScroll(float v, float v1) {
         LogUtil.d(TAG, "onScroll,x=" + v + ",y=" + v1);
-        setLocationStyle(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
-        mLocationClient.stopLocation();
-        mLocationOption.setOnceLocation(true);//单次定位
-        mStopLocation = true;
-        mCurLocState = STATE_UNLOCKED;
-        mGpsView.setGpsState(mCurLocState);
+        mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+        setLocationStyle();
+//        mLocationClient.stopLocation();
+//        mLocationOption.setOnceLocation(true);//单次定位
+        mCurrentGpsState = STATE_UNLOCKED;
+        //当前没有正在定位才能修改状态
+        if (!mFirstLocation) {
+            mGpsView.setGpsState(mCurrentGpsState);
+        }
     }
 
     /**
@@ -348,4 +339,132 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     public void onMapStable() {
 
     }
+
+
+    @Override
+    public void onGPSClick() {
+        CameraUpdate cameraUpdate = null;
+        //修改定位图标状态
+        switch (mCurrentGpsState) {
+            case STATE_LOCKED:
+                mZoomLevel = 18;
+                mAnimDuartion = 500;
+                mCurrentGpsState = STATE_ROTATE;
+//                setLocationStyle(MyLocationStyle.LOCATION_TYPE_MAP_ROTATE);
+                mMapType = MyLocationStyle.LOCATION_TYPE_MAP_ROTATE;
+                cameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(mLatLng, mZoomLevel, 30, 0));
+                break;
+            case STATE_UNLOCKED:
+            case STATE_ROTATE:
+                mZoomLevel = 16;
+                mAnimDuartion = 500;
+                mCurrentGpsState = STATE_LOCKED;
+                mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+                cameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(mLatLng, mZoomLevel, 0, 0));
+                break;
+        }
+        aMap.setMyLocationEnabled(true);
+        //改变定位图标状态
+        mGpsView.setGpsState(mCurrentGpsState);
+        //执行地图动效
+        aMap.animateCamera(cameraUpdate, mAnimDuartion, new AMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                if (mFirstLocation) {
+                    mFirstLocation = false;
+                }
+                setLocationStyle();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+//        mLocationClient.startLocation();
+    }
+
+    @Override
+    public void onNearbySearchClick() {
+        Toast.makeText(this, "点击附近搜索", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 停止定位
+     */
+    private void stopLocation() {
+        if (null != mLocationClient) {
+            LogUtil.d(TAG, "stopLocation");
+            mLocationClient.stopLocation();
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //在activity执行onResume时执行mMapView.onResume ()，重新绘制加载地图
+        LogUtil.d(TAG, "onResume");
+        mMapView.onResume();
+        if (null == mSensorHelper) {
+            aMap.clear();
+            mSensorHelper = new SensorEventHelper(this);
+            //重新注册
+            if (mSensorHelper != null) {
+                mSensorHelper.registerSensorListener();
+                setUpMap();
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
+        mMapView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //在activity执行onDestroy时执行mMapView.onDestroy()，销毁地图
+        mMapView.onDestroy();
+        mFirstLocation = true;
+        if (mSensorHelper != null) {
+            mSensorHelper.unRegisterSensorListener();
+            mSensorHelper.setCurrentMarker(null);
+            mSensorHelper = null;
+        }
+        deactivate();
+        if (null != mLocationClient) {
+            mLocationClient.onDestroy();
+        }
+        if (mLocMarker != null) {
+            mLocMarker.destroy();
+        }
+    }
+
+    private void addCircle(LatLng latlng, double radius) {
+        CircleOptions options = new CircleOptions();
+        options.strokeWidth(1f);
+        options.fillColor(FILL_COLOR);
+        options.strokeColor(STROKE_COLOR);
+        options.center(latlng);
+        options.radius(radius);
+        mCircle = aMap.addCircle(options);
+    }
+
+    private void addMarker(LatLng latlng) {
+        if (mLocMarker != null) {
+            return;
+        }
+        MarkerOptions options = new MarkerOptions();
+        options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(this.getResources(),
+                R.mipmap.navi_map_gps_locked)));
+        options.anchor(0.5f, 0.5f);
+        options.position(latlng);
+        mLocMarker = aMap.addMarker(options);
+    }
+
+
 }
