@@ -36,19 +36,16 @@ public class ReportView extends BaseIconView {
         });
     }
 
+
     @Override
-    protected void initBackground() {
+    public boolean createBackground() {
+        setIconBackground(R.drawable.funicon_error_tab);
+        return true;
+    }
+
+    @Override
+    public boolean createIcon() {
         setBackgroundResource(R.drawable.icon_middle_selector);
-    }
-
-    @Override
-    public Bitmap createBitmap() {
-        return BitmapFactory.decodeResource(getResources(), R.drawable.funicon_error_tab);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        LogUtil.d(TAG, "width="+getMeasuredWidth()+",height="+getMeasuredHeight());
-        super.onDraw(canvas);
+        return true;
     }
 }

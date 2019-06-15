@@ -35,19 +35,18 @@ public class GroupTeamView extends BaseIconView {
         });
     }
 
+
+
     @Override
-    protected void initBackground() {
+    public boolean createBackground() {
         setBackgroundResource(R.drawable.icon_middle_selector);
+        return true;
     }
 
     @Override
-    public Bitmap createBitmap() {
-        return BitmapFactory.decodeResource(getResources(), R.drawable.icon_c_group);
+    public boolean createIcon() {
+        setIconBackground(R.drawable.icon_c_group);
+        return true;
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        LogUtil.d(TAG, "width=" + getMeasuredWidth() + ",height=" + getMeasuredHeight());
-        super.onDraw(canvas);
-    }
 }

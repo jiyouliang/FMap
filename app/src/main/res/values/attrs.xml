@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BaseIconView">
+        <!--IconView最外面背景图片，可以是单个图片或者selector-->
+        <attr name="biv_background" format="reference|color" />
+        <!--IconView最背里面景图片，可以是单个图片或者selector-->
+        <attr name="biv_icon" format="reference|color" />
+    </declare-styleable>
+</resources>

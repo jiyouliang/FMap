@@ -1,8 +1,6 @@
 package com.jiyouliang.fmap.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
@@ -38,13 +36,20 @@ public class MapLayerView extends BaseIconView {
 
 
     @Override
-    public Bitmap createBitmap() {
-        return BitmapFactory.decodeResource(getResources(), R.drawable.map_widget_layer_icon);
-    }
-
-    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         LogUtil.d(TAG, "width=" + getMeasuredWidth() + ",height=" + getMeasuredHeight());
+    }
+
+    @Override
+    public boolean createBackground() {
+        setIconBackground(R.drawable.map_widget_layer_icon);
+        return true;
+    }
+
+    @Override
+    public boolean createIcon() {
+        setBackgroundResource(R.drawable.ret_circle_selector);
+        return true;
     }
 }

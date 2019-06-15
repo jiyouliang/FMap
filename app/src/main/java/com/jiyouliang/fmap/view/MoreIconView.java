@@ -35,19 +35,16 @@ public class MoreIconView extends BaseIconView {
         });
     }
 
+
     @Override
-    protected void initBackground() {
+    public boolean createBackground() {
+        setIconBackground(R.drawable.icon_c_diy5);
+        return true;
+    }
+
+    @Override
+    public boolean createIcon() {
         setBackgroundResource(R.drawable.icon_down_selector);
-    }
-
-    @Override
-    public Bitmap createBitmap() {
-        return BitmapFactory.decodeResource(getResources(), R.drawable.icon_c_diy5);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        LogUtil.d(TAG, "width=" + getMeasuredWidth() + ",height=" + getMeasuredHeight());
-        super.onDraw(canvas);
+        return true;
     }
 }

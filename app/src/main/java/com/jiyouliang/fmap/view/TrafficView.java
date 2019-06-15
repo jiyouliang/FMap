@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -23,7 +24,7 @@ public class TrafficView extends BaseIconView {
     }
 
     public TrafficView(Context context, AttributeSet attrs) {
-        this(context, attrs, R.style.IconViewStyle);
+        this(context, attrs, 0);
     }
 
     public TrafficView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -34,21 +35,18 @@ public class TrafficView extends BaseIconView {
 
             }
         });
+
     }
 
     @Override
-    protected void initBackground() {
+    public boolean createBackground() {
         setBackgroundResource(R.drawable.icon_up_selector);
+        return true;
     }
 
     @Override
-    public Bitmap createBitmap() {
-        return BitmapFactory.decodeResource(getResources(), R.drawable.icon_c_traffic_open);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        LogUtil.d(TAG, "width="+getMeasuredWidth()+",height="+getMeasuredHeight());
-        super.onDraw(canvas);
+    public boolean createIcon() {
+        setIconBackground(R.drawable.icon_c_traffic_open);
+        return true;
     }
 }

@@ -23,7 +23,7 @@ public class CallTaxiView extends BaseIconView {
     }
 
     public CallTaxiView(Context context, AttributeSet attrs) {
-        this(context, attrs, R.style.IconViewStyle);
+        this(context, attrs, 0);
     }
 
     public CallTaxiView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -37,25 +37,14 @@ public class CallTaxiView extends BaseIconView {
     }
 
     @Override
-    protected void initBackground() {
+    public boolean createBackground() {
         setBackgroundResource(R.drawable.icon_middle_selector);
+        return true;
     }
 
     @Override
-    public Bitmap createBitmap() {
-//        return BitmapFactory.decodeResource(getResources(), R.drawable.poi_indicator_call_taxi);
-        //返回可修改的bitmap
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.poi_indicator_call_taxi)
-                .copy(Bitmap.Config.ARGB_8888, true);
-        LogUtil.d(TAG, "bitmap width="+bitmap.getWidth()+",bitmap height="+bitmap.getHeight());
-       /* bitmap.setHeight(48);
-        bitmap.setWidth(48);*/
-        return bitmap;
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        LogUtil.d(TAG, "width="+getMeasuredWidth()+",height="+getMeasuredHeight());
-        super.onDraw(canvas);
+    public boolean createIcon() {
+        setIconBackground(R.drawable.poi_indicator_call_taxi);
+        return true;
     }
 }

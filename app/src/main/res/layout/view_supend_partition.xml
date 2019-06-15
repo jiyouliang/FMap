@@ -16,7 +16,6 @@
     <com.jiyouliang.fmap.view.TrafficView
         android:id="@+id/tv"
         style="@style/IconViewStyle"
-        android:scaleType="centerCrop"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mv" />
 
