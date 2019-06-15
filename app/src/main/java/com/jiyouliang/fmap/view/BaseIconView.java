@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.jiyouliang.fmap.R;
@@ -67,21 +68,43 @@ public abstract class BaseIconView extends RelativeLayout implements IconViewInt
      *
      * @param resId
      */
-    protected void setIconBackground(int resId) {
+    public void setIconBackground(int resId) {
         if (mIconView != null) {
             mIconView.setBackgroundResource(resId);
         }
     }
+
 
     /**
      * 设置icon背景
      *
      * @param drawable
      */
-    protected void setIconBackground(Drawable drawable) {
+    public void setIconBackground(Drawable drawable) {
         if (mIconView != null) {
             mIconView.setBackground(drawable);
         }
+    }
+
+    public void setIconViewSelected(boolean pressed) {
+        if (mIconView != null) {
+            mIconView.setSelected(pressed);
+        }
+    }
+
+    /**
+     * 获取icon所属View selected状态
+     * @return
+     */
+    public boolean isIconViewSelected(){
+        if(mIconView != null){
+            return mIconView.isSelected();
+        }
+        return false;
+    }
+
+    public View getIconView() {
+        return mIconView;
     }
 
 }

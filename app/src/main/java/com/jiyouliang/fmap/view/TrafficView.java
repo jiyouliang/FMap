@@ -1,20 +1,17 @@
 package com.jiyouliang.fmap.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.jiyouliang.fmap.R;
-import com.jiyouliang.fmap.util.LogUtil;
 
 /**
  * 交通
  */
 public class TrafficView extends BaseIconView {
+
+    private OnTrafficChangeListener mListener;
 
     private static final String TAG = "TrafficView";
 
@@ -32,9 +29,15 @@ public class TrafficView extends BaseIconView {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //切换icon状态
+                setIconViewSelected(!isIconViewSelected());
+                if(mListener != null){
+                    mListener.onTrafficChanged(isIconViewSelected());
+                }
             }
         });
+
+        setIconViewSelected(true);
 
     }
 
@@ -46,7 +49,26 @@ public class TrafficView extends BaseIconView {
 
     @Override
     public boolean createIcon() {
-        setIconBackground(R.drawable.icon_c_traffic_open);
+        setIconBackground(R.drawable.icon_traffic_selector);
         return true;
+    }
+
+    public void setOnTrafficChangeListener(OnTrafficChangeListener listener){
+        if(listener != null){
+            mListener = listener;
+        }
+    }
+
+    /**
+     * 交通图状态改变回调监听
+     */
+    public interface OnTrafficChangeListener{
+
+        /**
+         * 交通状态回调方法
+         * @param selected
+         */
+        void onTrafficChanged(boolean selected);
+
     }
 }

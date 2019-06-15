@@ -33,8 +33,9 @@ import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.PermissionUtil;
 import com.jiyouliang.fmap.view.GPSView;
 import com.jiyouliang.fmap.view.NearbySearchView;
+import com.jiyouliang.fmap.view.TrafficView;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -67,7 +68,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private static final int FILL_COLOR = Color.argb(10, 0, 0, 180);
     private OnLocationChangedListener mLocationListener;
     private float mAccuracy;
-    //定位、但不会移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。
+    private boolean mMoveToCenter = true;//是否可以移动地图到定位点
+    private TrafficView mTrafficView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +84,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mGpsView = (GPSView) findViewById(R.id.gps_view);
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
+        //交通流量状态控件
+        mTrafficView = (TrafficView)findViewById(R.id.tv);
         aMap = mMapView.getMap();
+        //显示实时交通
+        aMap.setTrafficEnabled(true);
 
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mMapView.onCreate(savedInstanceState);
@@ -104,6 +110,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mSensorHelper = new SensorEventHelper(this);
         if (mSensorHelper != null) {
             mSensorHelper.registerSensorListener();
+        }
+        if(mTrafficView != null){
+            mTrafficView.setOnTrafficChangeListener(this);
         }
     }
 
@@ -161,7 +170,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mCircle.setCenter(mLatLng);
             mCircle.setRadius(mAccuracy);
             mLocMarker.setPosition(mLatLng);
-//            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
+            if (mMoveToCenter) {
+                aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
+            }
         }
     }
 
@@ -256,6 +267,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mGpsView.setGpsState(mCurrentGpsState);
         setLocationStyle();
         resetLocationMarker();
+        mMoveToCenter = false;
     }
 
     /**
@@ -298,6 +310,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         if (!mFirstLocation) {
             mGpsView.setGpsState(mCurrentGpsState);
         }
+        mMoveToCenter = false;
     }
 
     /**
@@ -346,6 +359,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onGPSClick() {
         CameraUpdate cameraUpdate = null;
+        mMoveToCenter = true;
         //修改定位图标状态
         switch (mCurrentGpsState) {
             case STATE_LOCKED:
@@ -369,12 +383,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         LogUtil.d(TAG, "onGPSClick:mCurrentGpsState=" + mCurrentGpsState + ",mMapType=" + mMapType);
         //改变定位图标状态
         mGpsView.setGpsState(mCurrentGpsState);
-
         //执行地图动效
         aMap.animateCamera(cameraUpdate, mAnimDuartion, new AMap.CancelableCallback() {
             @Override
             public void onFinish() {
-
             }
 
             @Override
@@ -503,4 +515,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     }
 
 
+    @Override
+    public void onTrafficChanged(boolean selected) {
+       aMap.setTrafficEnabled(selected);
+    }
 }
