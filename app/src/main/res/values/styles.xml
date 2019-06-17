@@ -25,4 +25,34 @@
         <item name="android:layout_height">@dimen/icon_height</item>
     </style>
 
+    <style name="TextLarge">
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="DividerCommon">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1px</item>
+        <item name="android:background">@drawable/common_line</item>
+    </style>
+    <!--poi详情图片样式-->
+    <style name="PoiDetailIconStyle">
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">18dp</item>
+    </style>
+    <style name="PoiDetailTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/poi_detail_loc</item>
+        <!--android:textAppearance="@android:style/TextAppearance.Small"-->
+        <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
+    </style>
+    <style name="SettingItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="SettingItem.Large">
+        <item name="android:layout_height">48dp</item>
+    </style>
+
 </resources>

@@ -1,11 +1,18 @@
 package com.jiyouliang.fmap;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CoordinatorLayout;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -70,6 +77,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private float mAccuracy;
     private boolean mMoveToCenter = true;//是否可以移动地图到定位点
     private TrafficView mTrafficView;
+    private View mBottomSheet;
+    private BottomSheetBehavior<View> mBehavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +94,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
         //交通流量状态控件
-        mTrafficView = (TrafficView)findViewById(R.id.tv);
+        mTrafficView = (TrafficView) findViewById(R.id.tv);
         aMap = mMapView.getMap();
         //显示实时交通
         aMap.setTrafficEnabled(true);
@@ -96,6 +105,19 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mGpsView.setGpsState(mCurrentGpsState);
         mNearbySearcyView = (NearbySearchView) findViewById(R.id.nearby_view);
         mPoiDetailContainer = (FrameLayout) findViewById(R.id.poi_detail_container);
+        //底部弹出BottomSheet
+        mBottomSheet = findViewById(R.id.poi_detail_bottom);
+        mBottomSheet.setVisibility(View.VISIBLE);
+        mBehavior = BottomSheetBehavior.from(mBottomSheet);
+
+      /*  WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        Point point = new Point();
+        wm.getDefaultDisplay().getSize(point);
+        int height = point.y * 3 / 5;//屏幕高度3/5
+        CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, height);
+        mBottomSheet.setLayoutParams(params);
+        mBehavior.setHideable(true);*/
+
         setUpMap();
     }
 
@@ -111,9 +133,22 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         if (mSensorHelper != null) {
             mSensorHelper.registerSensorListener();
         }
-        if(mTrafficView != null){
+        if (mTrafficView != null) {
             mTrafficView.setOnTrafficChangeListener(this);
         }
+        mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            //BottomSheet状态改变回调
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+            }
+
+            //BottomSheet滑动回调
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
     }
 
     private void setUpMap() {
@@ -171,7 +206,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mCircle.setRadius(mAccuracy);
             mLocMarker.setPosition(mLatLng);
             if (mMoveToCenter) {
-                aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
+                aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
             }
         }
     }
@@ -517,6 +552,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onTrafficChanged(boolean selected) {
-       aMap.setTrafficEnabled(selected);
+        aMap.setTrafficEnabled(selected);
     }
 }
