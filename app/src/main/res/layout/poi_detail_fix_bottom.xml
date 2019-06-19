@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/poi_detail_taxi"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/setting_item_large_height"
+    android:layout_gravity="bottom"
+    android:visibility="gone"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <View style="@style/DividerCommon" />
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_call_taxi"
+            style="@style/PoiDetailFixedStyle"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/rectangle_corner_selector"
+            android:drawableLeft="@drawable/poi_indicator_call_taxi"
+            android:gravity="center_vertical"
+            android:text="打车"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_detail"
+            style="@style/PoiDetailFixedStyle"
+            android:layout_gravity="center_vertical"
+            android:drawableLeft="@drawable/poi_indicator_details"
+            android:gravity="center_vertical"
+            android:text="查看详情"
+            android:textAppearance="@android:style/TextAppearance.Small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/tv_call_taxi"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tv_route"
+            style="@style/PoiDetailFixedStyle"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/rectangle_blue_selector"
+            android:drawableLeft="@drawable/poi_indicator_route"
+            android:gravity="center_vertical"
+            android:text="路线"
+            android:textSize="16sp"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/tv_call_taxi"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>

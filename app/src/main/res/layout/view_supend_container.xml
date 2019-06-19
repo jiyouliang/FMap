@@ -66,6 +66,7 @@
                 android:src="@drawable/icon_gps_unlocked" />
 
             <com.jiyouliang.fmap.view.RouteView
+                android:id="@+id/route_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true" />
@@ -94,6 +95,7 @@
 
 
     <include layout="@layout/poi_detail_bottom_sheet" />
+    <include layout="@layout/poi_detail_fix_bottom"/>
 
 
 </android.support.design.widget.CoordinatorLayout>

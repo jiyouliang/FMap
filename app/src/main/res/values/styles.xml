@@ -39,6 +39,7 @@
         <item name="android:layout_width">18dp</item>
         <item name="android:layout_height">18dp</item>
     </style>
+
     <style name="PoiDetailTextStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -46,13 +47,28 @@
         <!--android:textAppearance="@android:style/TextAppearance.Small"-->
         <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
     </style>
+
     <style name="SettingItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:background">@color/white</item>
     </style>
+
     <style name="SettingItem.Large">
-        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_height">@dimen/setting_item_large_height</item>
+    </style>
+    <!--固定在底部的布局样式-->
+    <style name="PoiDetailFixedStyle">
+        <item name="android:layout_height">@dimen/rect_height_medium</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/poi_detail_loc</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <!-- android:textAppearance="@android:style/TextAppearance.Small"
+         android:textColor="@color/poi_detail_loc"-->
     </style>
 
 </resources>
+

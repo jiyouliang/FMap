@@ -3,23 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/poi_detail_bottom"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/radius_top_bg"
     android:orientation="vertical"
     android:visibility="visible"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="70dp"
+    app:behavior_peekHeight="80dp"
     app:layout_behavior="@string/bottom_sheet_behavior">
-
 
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_marginBottom="@dimen/padding_size"
+        android:layout_height="60dp"
         android:layout_marginLeft="@dimen/padding_size"
         android:layout_marginTop="@dimen/padding_size"
-        android:layout_marginRight="@dimen/padding_size">
+        android:layout_marginRight="@dimen/padding_size"
+        android:layout_marginBottom="@dimen/padding_size">
 
         <TextView
             android:id="@+id/tv_title"
@@ -56,7 +55,10 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <View style="@style/DividerCommon" />
+    <View
+        style="@style/DividerCommon"
+        android:layout_marginLeft="@dimen/padding_size"
+        android:layout_marginRight="@dimen/padding_size" />
 
     <LinearLayout
         android:id="@+id/cl_root"

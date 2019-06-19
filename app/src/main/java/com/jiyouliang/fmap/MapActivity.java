@@ -8,11 +8,10 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -36,13 +35,16 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.ui.BaseActivity;
+import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.PermissionUtil;
+import com.jiyouliang.fmap.view.FrequentView;
 import com.jiyouliang.fmap.view.GPSView;
 import com.jiyouliang.fmap.view.NearbySearchView;
+import com.jiyouliang.fmap.view.RouteView;
 import com.jiyouliang.fmap.view.TrafficView;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -79,6 +81,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private TrafficView mTrafficView;
     private View mBottomSheet;
     private BottomSheetBehavior<View> mBehavior;
+    private int mMaxPeekHeight;//最大高的
+    private int mMixPeekHeight;//最小高度
+    private View mPoiColseView;
+    private RouteView mRouteView;
+    private FrequentView mFrequentView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +98,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     private void initView(Bundle savedInstanceState) {
         mGpsView = (GPSView) findViewById(R.id.gps_view);
+        mRouteView = (RouteView)findViewById(R.id.route_view);
+        mFrequentView = (FrequentView)findViewById(R.id.fv);
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
         //交通流量状态控件
@@ -107,18 +116,32 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mPoiDetailContainer = (FrameLayout) findViewById(R.id.poi_detail_container);
         //底部弹出BottomSheet
         mBottomSheet = findViewById(R.id.poi_detail_bottom);
-        mBottomSheet.setVisibility(View.VISIBLE);
+        mBottomSheet.setVisibility(View.GONE);
         mBehavior = BottomSheetBehavior.from(mBottomSheet);
+        mPoiColseView = findViewById(R.id.iv_close);
+        setBottomSheet();
+        setUpMap();
+    }
 
-      /*  WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+    /**
+     * 设置底部POI详细BottomSheet
+     */
+    private void setBottomSheet() {
+        mMixPeekHeight = mBehavior.getPeekHeight();
+        //虚拟键盘高度
+        int navigationHeight = DeviceUtils.getNavigationBarHeight(this);
+        //加上虚拟键盘高度，避免被遮挡
+//        mBehavior.setPeekHeight(mMixPeekHeight + navigationHeight);
+
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
         wm.getDefaultDisplay().getSize(point);
-        int height = point.y * 3 / 5;//屏幕高度3/5
-        CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, height);
-        mBottomSheet.setLayoutParams(params);
-        mBehavior.setHideable(true);*/
-
-        setUpMap();
+        //屏幕高度3/5
+        int height = point.y * 3 / 5;
+        mMaxPeekHeight = height;
+        //设置bottomsheet高度为屏幕 3/5
+        ViewGroup.LayoutParams params = mBottomSheet.getLayoutParams();
+        params.height = height;
     }
 
     /**
@@ -136,11 +159,32 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         if (mTrafficView != null) {
             mTrafficView.setOnTrafficChangeListener(this);
         }
+        if(null != mPoiColseView){
+            mPoiColseView.setOnClickListener(this);
+        }
         mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             //BottomSheet状态改变回调
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        log("STATE_COLLAPSED");
+                        break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        //拖拽
+                        log("STATE_DRAGGING");
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        //结束：释放
+                        log("STATE_SETTLING");
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        log("STATE_EXPANDED");
+                        break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        log("STATE_HIDDEN");
+                        break;
+                }
             }
 
             //BottomSheet滑动回调
@@ -414,6 +458,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 cameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(mLatLng, mZoomLevel, 0, 0));
                 break;
         }
+        //显示底部POI详情
+        if(mBottomSheet.getVisibility() == View.GONE){
+            showPoiDetail();
+        }
         aMap.setMyLocationEnabled(true);
         LogUtil.d(TAG, "onGPSClick:mCurrentGpsState=" + mCurrentGpsState + ",mMapType=" + mMapType);
         //改变定位图标状态
@@ -554,4 +602,43 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     public void onTrafficChanged(boolean selected) {
         aMap.setTrafficEnabled(selected);
     }
+
+    private void log(String msg){
+        LogUtil.d(TAG, msg);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == mPoiColseView){
+            hidePoiDetail();
+        }
+    }
+
+    /**
+     * 隐藏底部POI详情
+     */
+    private void hidePoiDetail(){
+        mBottomSheet.setVisibility(View.GONE);
+        mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        //gsp控件回退到原来位置、并显示底部其他控件
+        mRouteView.setVisibility(View.VISIBLE);
+        mFrequentView.setVisibility(View.VISIBLE);
+        mNearbySearcyView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 显示底部POI详情
+     */
+    private void showPoiDetail(){
+        mBottomSheet.setVisibility(View.VISIBLE);
+        mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mRouteView.setVisibility(View.GONE);
+        mFrequentView.setVisibility(View.GONE);
+        mNearbySearcyView.setVisibility(View.GONE);
+
+        mBehavior.setHideable(true);
+        mBehavior.setPeekHeight(mMixPeekHeight);
+    }
+
+
 }

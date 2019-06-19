@@ -14,6 +14,10 @@
     <dimen name="text_size_large">28sp</dimen>
     <dimen name="text_size_normal">18sp</dimen>
     <dimen name="text_size_small">14sp</dimen>
+    <!--圆角矩形-->
+    <dimen name="rect_radius_medium">16dp</dimen>
+    <dimen name="rect_height_medium">32dp</dimen>
+    <dimen name="setting_item_large_height">48dp</dimen>
 
 
 
