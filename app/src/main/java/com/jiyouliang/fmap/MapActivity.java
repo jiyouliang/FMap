@@ -82,10 +82,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private View mBottomSheet;
     private BottomSheetBehavior<View> mBehavior;
     private int mMaxPeekHeight;//最大高的
-    private int mMixPeekHeight;//最小高度
+    private int mMinPeekHeight;//最小高度
     private View mPoiColseView;
     private RouteView mRouteView;
     private FrequentView mFrequentView;
+    private View mPoiDetailTaxi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +120,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mBottomSheet.setVisibility(View.GONE);
         mBehavior = BottomSheetBehavior.from(mBottomSheet);
         mPoiColseView = findViewById(R.id.iv_close);
+        //底部：查看详情、打车、路线
+        mPoiDetailTaxi = findViewById(R.id.poi_detail_taxi);
+        mPoiDetailTaxi.setVisibility(View.GONE);
         setBottomSheet();
         setUpMap();
     }
@@ -127,11 +131,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      * 设置底部POI详细BottomSheet
      */
     private void setBottomSheet() {
-        mMixPeekHeight = mBehavior.getPeekHeight();
+        mMinPeekHeight = mBehavior.getPeekHeight();
         //虚拟键盘高度
         int navigationHeight = DeviceUtils.getNavigationBarHeight(this);
         //加上虚拟键盘高度，避免被遮挡
-//        mBehavior.setPeekHeight(mMixPeekHeight + navigationHeight);
+//        mBehavior.setPeekHeight(mMinPeekHeight + navigationHeight);
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
@@ -619,6 +623,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     private void hidePoiDetail(){
         mBottomSheet.setVisibility(View.GONE);
+        //底部：打车、路线...
+        mPoiDetailTaxi.setVisibility(View.GONE);
         mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         //gsp控件回退到原来位置、并显示底部其他控件
         mRouteView.setVisibility(View.VISIBLE);
@@ -635,9 +641,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mRouteView.setVisibility(View.GONE);
         mFrequentView.setVisibility(View.GONE);
         mNearbySearcyView.setVisibility(View.GONE);
+        //底部：打车、路线...
+        mPoiDetailTaxi.setVisibility(View.VISIBLE);
+
+        //int poiTaxiHeight = mPoiDetailTaxi.getMeasuredHeight(); //为0
+        int poiTaxiHeight = getResources().getDimensionPixelSize(R.dimen.setting_item_large_height);
 
         mBehavior.setHideable(true);
-        mBehavior.setPeekHeight(mMixPeekHeight);
+        mBehavior.setPeekHeight(mMinPeekHeight + poiTaxiHeight);
     }
 
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/setting_item_large_height"
     android:layout_gravity="bottom"
-    android:visibility="gone"
+    android:visibility="visible"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -52,8 +52,8 @@
             android:gravity="center_vertical"
             android:text="路线"
             android:textSize="16sp"
-            android:paddingLeft="18dp"
-            android:paddingRight="18dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/tv_call_taxi"
