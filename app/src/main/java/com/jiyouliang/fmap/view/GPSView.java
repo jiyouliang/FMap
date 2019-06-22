@@ -7,12 +7,16 @@ import android.view.View;
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.util.LogUtil;
 
+/**
+ * 自定义GPS定位控件
+ */
 public class GPSView extends android.support.v7.widget.AppCompatImageButton implements View.OnClickListener {
     private static final String TAG = "GPSView";
     private OnGPSViewClickListener mGPSClickListener;
     private static final int STATE_UNLOCKED = 0;//未定位状态，默认状态
     private static final int STATE_LOCKED = 1;//定位状态
     private static final int STATE_ROTATE = 2;//根据地图方向旋转状态
+    private boolean isAbovePoiDetail;//GPSView当前是否在poi detail上面
 
     public GPSView(Context context) {
         this(context, null);
@@ -66,5 +70,17 @@ public class GPSView extends android.support.v7.widget.AppCompatImageButton impl
             return;
         }
         this.mGPSClickListener = listener;
+    }
+
+    /**
+     * GPSView是否poi detail上面
+     * @return
+     */
+    public boolean isAbovePoiDetail() {
+        return isAbovePoiDetail;
+    }
+
+    public void setAbovePoiDetail(boolean above) {
+        isAbovePoiDetail = above;
     }
 }

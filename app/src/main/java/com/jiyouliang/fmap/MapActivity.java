@@ -1,5 +1,6 @@
 package com.jiyouliang.fmap;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -7,11 +8,15 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -61,7 +66,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private GPSView mGpsView;
     private NearbySearchView mNearbySearcyView;
     private static boolean mFirstLocation = true;//第一次定位
-    private FrameLayout mPoiDetailContainer;
     private int mCurrentGpsState = STATE_UNLOCKED;//当前定位状态
     private static final int STATE_UNLOCKED = 0;//未定位状态，默认状态
     private static final int STATE_LOCKED = 1;//定位状态
@@ -87,6 +91,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private RouteView mRouteView;
     private FrequentView mFrequentView;
     private View mPoiDetailTaxi;
+    private int mPadding;
+    //poi detail动画时长
+    private static final int DURATION = 100;
+    private View mGspContainer;
+    private float mTransY;
+    private float mOriginalGspY;
+    private int moveY;
+    private int[] mBottomSheetLoc = new int[2];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +111,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     private void initView(Bundle savedInstanceState) {
         mGpsView = (GPSView) findViewById(R.id.gps_view);
-        mRouteView = (RouteView)findViewById(R.id.route_view);
-        mFrequentView = (FrequentView)findViewById(R.id.fv);
+        mRouteView = (RouteView) findViewById(R.id.route_view);
+        mFrequentView = (FrequentView) findViewById(R.id.fv);
         //获取地图控件引用
         mMapView = (MapView) findViewById(R.id.map);
         //交通流量状态控件
@@ -114,17 +126,19 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         mGpsView.setGpsState(mCurrentGpsState);
         mNearbySearcyView = (NearbySearchView) findViewById(R.id.nearby_view);
-        mPoiDetailContainer = (FrameLayout) findViewById(R.id.poi_detail_container);
         //底部弹出BottomSheet
         mBottomSheet = findViewById(R.id.poi_detail_bottom);
-        mBottomSheet.setVisibility(View.GONE);
         mBehavior = BottomSheetBehavior.from(mBottomSheet);
+        mBottomSheet.setVisibility(View.GONE);
         mPoiColseView = findViewById(R.id.iv_close);
         //底部：查看详情、打车、路线
         mPoiDetailTaxi = findViewById(R.id.poi_detail_taxi);
         mPoiDetailTaxi.setVisibility(View.GONE);
+        mGspContainer = findViewById(R.id.gps_view_container);
         setBottomSheet();
         setUpMap();
+
+        mPadding = getResources().getDimensionPixelSize(R.dimen.padding_size);
     }
 
     /**
@@ -163,10 +177,13 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         if (mTrafficView != null) {
             mTrafficView.setOnTrafficChangeListener(this);
         }
-        if(null != mPoiColseView){
+        if (null != mPoiColseView) {
             mPoiColseView.setOnClickListener(this);
         }
         mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+
+            private boolean dragging;
+
             //BottomSheet状态改变回调
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -175,6 +192,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                         log("STATE_COLLAPSED");
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
+                        dragging = true;
                         //拖拽
                         log("STATE_DRAGGING");
                         break;
@@ -187,6 +205,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
                         log("STATE_HIDDEN");
+                        if(dragging){
+                            hidePoiDetail();
+                            resetGpsButtonPosition();
+                            dragging = false;
+                        }
+
                         break;
                 }
             }
@@ -235,7 +259,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel), new AMap.CancelableCallback() {
                 @Override
                 public void onFinish() {
-                    mCurrentGpsState = STATE_LOCKED;
+                    mCurrentGpsState = STATE_UNLOCKED;
                     mGpsView.setGpsState(mCurrentGpsState);
                     mMapType = MyLocationStyle.LOCATION_TYPE_LOCATE;
                     addCircle(mLatLng, mAccuracy);//添加定位精度圆
@@ -463,9 +487,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 break;
         }
         //显示底部POI详情
-        if(mBottomSheet.getVisibility() == View.GONE){
+        if (mBottomSheet.getVisibility() == View.GONE || mBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
             showPoiDetail();
+            moveGspButtonAbove();
         }
+
         aMap.setMyLocationEnabled(true);
         LogUtil.d(TAG, "onGPSClick:mCurrentGpsState=" + mCurrentGpsState + ",mMapType=" + mMapType);
         //改变定位图标状态
@@ -607,13 +633,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         aMap.setTrafficEnabled(selected);
     }
 
-    private void log(String msg){
+    private void log(String msg) {
         LogUtil.d(TAG, msg);
     }
 
     @Override
     public void onClick(View v) {
-        if(v == mPoiColseView){
+        if (v == mPoiColseView) {
+            resetGpsButtonPosition();
             hidePoiDetail();
         }
     }
@@ -621,7 +648,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     /**
      * 隐藏底部POI详情
      */
-    private void hidePoiDetail(){
+    private void hidePoiDetail() {
         mBottomSheet.setVisibility(View.GONE);
         //底部：打车、路线...
         mPoiDetailTaxi.setVisibility(View.GONE);
@@ -635,7 +662,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     /**
      * 显示底部POI详情
      */
-    private void showPoiDetail(){
+    private void showPoiDetail() {
+        mGpsView.setVisibility(View.VISIBLE);
         mBottomSheet.setVisibility(View.VISIBLE);
         mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         mRouteView.setVisibility(View.GONE);
@@ -649,6 +677,56 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         mBehavior.setHideable(true);
         mBehavior.setPeekHeight(mMinPeekHeight + poiTaxiHeight);
+    }
+
+    /**
+     * 将GpsButton移动到poi detail上面
+     */
+    private void moveGspButtonAbove() {
+
+        mBottomSheet.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if(mGpsView.isAbovePoiDetail()){
+                    //已经在上面，不需要重复调用
+                    return;
+                }
+                LogUtil.d(TAG, "moveGspButtonAbove");
+                if (moveY == 0) {
+                    //计算Y轴方向移动距离
+                    moveY = mGspContainer.getTop() - mBottomSheet.getTop() + mGspContainer.getMeasuredHeight() + mPadding;
+                    mBottomSheet.getLocationInWindow(mBottomSheetLoc);
+                }
+                if (moveY > 0) {
+                    mGspContainer.setTranslationY(-moveY);
+                    mGpsView.setAbovePoiDetail(true);
+                }
+            }
+        });
+
+
+    }
+
+    /**
+     * 将GpsButton移动到原来位置
+     */
+    private void resetGpsButtonPosition() {
+
+        mBottomSheet.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                if(!mGpsView.isAbovePoiDetail()){
+                    //已经在下面，不需要重复调用
+                    return;
+                }
+                //回到原来位置
+                mGspContainer.setTranslationY(0);
+                mGpsView.setAbovePoiDetail(false);
+                LogUtil.d(TAG, "resetGpsButtonPosition");
+            }
+        });
+
     }
 
 
