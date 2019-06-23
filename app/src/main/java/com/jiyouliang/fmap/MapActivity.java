@@ -11,6 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -160,6 +162,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         //设置bottomsheet高度为屏幕 3/5
         ViewGroup.LayoutParams params = mBottomSheet.getLayoutParams();
         params.height = height;
+
     }
 
     /**
@@ -190,6 +193,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 switch (newState) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         log("STATE_COLLAPSED");
+                        mPoiColseView.setVisibility(View.VISIBLE);
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
                         dragging = true;
@@ -202,14 +206,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
                         log("STATE_EXPANDED");
+
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
                         log("STATE_HIDDEN");
-                        if(dragging){
-                            hidePoiDetail();
-                            resetGpsButtonPosition();
-                            dragging = false;
-                        }
 
                         break;
                 }
@@ -218,9 +218,26 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             //BottomSheet滑动回调
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                log("onSlide:slideOffset="+slideOffset+",getBottom="+bottomSheet.getBottom());
+                if(slideOffset > 0){
+                    mPoiColseView.setVisibility(View.GONE);
+                }else if(slideOffset == 0){
+                    mPoiColseView.setVisibility(View.VISIBLE);
+                }else if(slideOffset < 0){
+                    //setHideable(false)禁止Behavior执行：可以实现禁止向下滑动消失
+                    mBehavior.setHideable(false);
+                }
 
             }
         });
+
+        mBottomSheet.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
+
     }
 
     private void setUpMap() {
@@ -640,6 +657,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onClick(View v) {
         if (v == mPoiColseView) {
+            mBehavior.setHideable(true);
             resetGpsButtonPosition();
             hidePoiDetail();
         }
