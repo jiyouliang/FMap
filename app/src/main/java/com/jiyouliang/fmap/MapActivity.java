@@ -1,6 +1,5 @@
 package com.jiyouliang.fmap;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -11,14 +10,13 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
-import android.view.DragEvent;
-import android.view.MotionEvent;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -40,6 +38,7 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.jiyouliang.fmap.base.view.MapViewInterface;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.util.DeviceUtils;
@@ -47,11 +46,14 @@ import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.PermissionUtil;
 import com.jiyouliang.fmap.view.FrequentView;
 import com.jiyouliang.fmap.view.GPSView;
+import com.jiyouliang.fmap.view.MapHeaderView;
 import com.jiyouliang.fmap.view.NearbySearchView;
+import com.jiyouliang.fmap.view.PoiDetailBottomView;
 import com.jiyouliang.fmap.view.RouteView;
+import com.jiyouliang.fmap.view.SupendPartitionView;
 import com.jiyouliang.fmap.view.TrafficView;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -92,7 +94,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private View mPoiColseView;
     private RouteView mRouteView;
     private FrequentView mFrequentView;
-    private View mPoiDetailTaxi;
+    private PoiDetailBottomView mPoiDetailTaxi;
     private int mPadding;
     //poi detail动画时长
     private static final int DURATION = 100;
@@ -101,6 +103,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private float mOriginalGspY;
     private int moveY;
     private int[] mBottomSheetLoc = new int[2];
+    private String mPoiName;
+    private TextView mTvLocation;
+    private MapHeaderView mMapHeaderView;
+    private View mFeedbackContainer;
+    private SupendPartitionView mSupendPartitionView;
+    private int mScreenHeight;
+    private int mScreenWidth;
+    private boolean isMinMap; //缩小显示地图
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,9 +144,16 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mBottomSheet.setVisibility(View.GONE);
         mPoiColseView = findViewById(R.id.iv_close);
         //底部：查看详情、打车、路线
-        mPoiDetailTaxi = findViewById(R.id.poi_detail_taxi);
+        mPoiDetailTaxi = (PoiDetailBottomView) findViewById(R.id.poi_detail_taxi);
         mPoiDetailTaxi.setVisibility(View.GONE);
         mGspContainer = findViewById(R.id.gps_view_container);
+
+        mTvLocation = (TextView) findViewById(R.id.tv_my_loc);
+        mMapHeaderView = (MapHeaderView) findViewById(R.id.mhv);
+        mFeedbackContainer = findViewById(R.id.feedback_container);
+        mFeedbackContainer.setVisibility(View.GONE);
+        mSupendPartitionView = (SupendPartitionView) findViewById(R.id.spv);
+
         setBottomSheet();
         setUpMap();
 
@@ -154,12 +171,18 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 //        mBehavior.setPeekHeight(mMinPeekHeight + navigationHeight);
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        if(null == wm){
+            LogUtil.e(TAG, "获取WindowManager失败:" + wm);
+            return;
+        }
         Point point = new Point();
         wm.getDefaultDisplay().getSize(point);
         //屏幕高度3/5
-        int height = point.y * 3 / 5;
-        mMaxPeekHeight = height;
+        mScreenHeight = point.y;
+        mScreenWidth = point.x;
         //设置bottomsheet高度为屏幕 3/5
+        int height = mScreenHeight * 3 / 5;
+        mMaxPeekHeight =  height;
         ViewGroup.LayoutParams params = mBottomSheet.getLayoutParams();
         params.height = height;
 
@@ -193,7 +216,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 switch (newState) {
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         log("STATE_COLLAPSED");
+                        //BottomSheet折叠：显示头部搜索、隐藏反馈、显示右边侧边栏
                         mPoiColseView.setVisibility(View.VISIBLE);
+                        mMapHeaderView.setVisibility(View.VISIBLE);
+                        mFeedbackContainer.setVisibility(View.GONE);
+                        mSupendPartitionView.setVisibility(View.VISIBLE);
+                        maxMapView();
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
                         dragging = true;
@@ -206,6 +234,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED:
                         log("STATE_EXPANDED");
+                        //BottomSheet展开：隐藏头部搜索、显示反馈、隐藏右边侧边栏
+                        mMapHeaderView.setVisibility(View.GONE);
+                        mFeedbackContainer.setVisibility(View.VISIBLE);
+                        mSupendPartitionView.setVisibility(View.GONE);
+                        minMapView();
 
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
@@ -218,12 +251,15 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             //BottomSheet滑动回调
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                log("onSlide:slideOffset="+slideOffset+",getBottom="+bottomSheet.getBottom());
-                if(slideOffset > 0){
+                log("onSlide:slideOffset=" + slideOffset + ",getBottom=" + bottomSheet.getBottom());
+                if (slideOffset > 0) {
+                    // > 0:向上拖动
                     mPoiColseView.setVisibility(View.GONE);
-                }else if(slideOffset == 0){
+                    showBackToMapState();
+                } else if (slideOffset == 0) {
                     mPoiColseView.setVisibility(View.VISIBLE);
-                }else if(slideOffset < 0){
+                    showPoiDetailState();
+                } else if (slideOffset < 0) {
                     //setHideable(false)禁止Behavior执行：可以实现禁止向下滑动消失
                     mBehavior.setHideable(false);
                 }
@@ -231,13 +267,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             }
         });
 
-        mBottomSheet.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-        });
-
+        mPoiDetailTaxi.setOnPoiDetailBottomClickListener(this);
     }
 
     private void setUpMap() {
@@ -252,7 +282,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onLocationChanged(final AMapLocation location) {
 
-
         if (null == mLocationListener || null == location || location.getErrorCode() != 0) {
             if (location != null) {
                 LogUtil.d(TAG, "定位失败：errorCode=" + location.getErrorCode() + ",errorMsg=" + location.getErrorInfo());
@@ -262,7 +291,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         //获取经纬度
         double lng = location.getLongitude();
         double lat = location.getLatitude();
-        LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat + ",mLocMarker=" + mLocMarker);
+        mPoiName = location.getPoiName();
+        LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat + ",mLocMarker=" + mLocMarker + ",poiName=" + mPoiName);
 
         //参数依次是：视角调整区域的中心点坐标、希望调整到的缩放级别、俯仰角0°~45°（垂直与地图时为0）、偏航角 0~360° (正北方为0)
         mLatLng = new LatLng(lat, lng);
@@ -272,11 +302,20 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mAccuracy = location.getAccuracy();
         LogUtil.d(TAG, "accuracy=" + mAccuracy);
         LogUtil.d(TAG, "mFirstLocation=" + mFirstLocation);
+        if(isMinMap){
+            LogUtil.e(TAG, "isMinMap="+isMinMap);
+            ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
+            //还原：全屏，避免下拉BottomSheet底部白屏
+            lp.bottomMargin = 0;
+            mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+            setLocationStyle();
+            mMoveToCenter = false;
+        }
         if (mFirstLocation) {
             aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel), new AMap.CancelableCallback() {
                 @Override
                 public void onFinish() {
-                    mCurrentGpsState = STATE_UNLOCKED;
+                    mCurrentGpsState = STATE_LOCKED;
                     mGpsView.setGpsState(mCurrentGpsState);
                     mMapType = MyLocationStyle.LOCATION_TYPE_LOCATE;
                     addCircle(mLatLng, mAccuracy);//添加定位精度圆
@@ -291,13 +330,17 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 }
             });
         } else {
+            //BottomSheet顶上显示,地图缩小显示
             mCircle.setCenter(mLatLng);
             mCircle.setRadius(mAccuracy);
             mLocMarker.setPosition(mLatLng);
             if (mMoveToCenter) {
                 aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel));
             }
+
         }
+
+
     }
 
     /**
@@ -666,7 +709,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     /**
      * 隐藏底部POI详情
      */
-    private void hidePoiDetail() {
+    @Override
+    public void hidePoiDetail() {
         mBottomSheet.setVisibility(View.GONE);
         //底部：打车、路线...
         mPoiDetailTaxi.setVisibility(View.GONE);
@@ -680,7 +724,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     /**
      * 显示底部POI详情
      */
-    private void showPoiDetail() {
+    @Override
+    public void showPoiDetail() {
         mGpsView.setVisibility(View.VISIBLE);
         mBottomSheet.setVisibility(View.VISIBLE);
         mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -689,12 +734,17 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mNearbySearcyView.setVisibility(View.GONE);
         //底部：打车、路线...
         mPoiDetailTaxi.setVisibility(View.VISIBLE);
+        //我的位置
+        if (!TextUtils.isEmpty(mPoiName)) {
+            mTvLocation.setText("在" + mPoiName + "附近");
+        }
 
         //int poiTaxiHeight = mPoiDetailTaxi.getMeasuredHeight(); //为0
         int poiTaxiHeight = getResources().getDimensionPixelSize(R.dimen.setting_item_large_height);
 
         mBehavior.setHideable(true);
         mBehavior.setPeekHeight(mMinPeekHeight + poiTaxiHeight);
+
     }
 
     /**
@@ -705,7 +755,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mBottomSheet.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if(mGpsView.isAbovePoiDetail()){
+                if (mGpsView.isAbovePoiDetail()) {
                     //已经在上面，不需要重复调用
                     return;
                 }
@@ -734,7 +784,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
             @Override
             public void onGlobalLayout() {
-                if(!mGpsView.isAbovePoiDetail()){
+                if (!mGpsView.isAbovePoiDetail()) {
                     //已经在下面，不需要重复调用
                     return;
                 }
@@ -748,4 +798,58 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     }
 
 
+    @Override
+    public void showBackToMapState() {
+        //显示:查看详情
+        mPoiDetailTaxi.setPoiDetailState(PoiDetailBottomView.STATE_MAP);
+        //BottomSheet展开:这里不建议修改BottomSheet状态，backToMap方法可能在BottomSheet状态回调中调用，避免互相调用死循环
+    }
+
+    @Override
+    public void showPoiDetailState() {
+        mPoiDetailTaxi.setPoiDetailState(PoiDetailBottomView.STATE_DETAIL);
+    }
+
+    @Override
+    public void minMapView() {
+        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
+        lp.bottomMargin = mScreenHeight * 3 / 5;
+        mMapView.setLayoutParams(lp);
+
+        isMinMap = true;
+
+    }
+
+    @Override
+    public void maxMapView() {
+        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
+        lp.bottomMargin = 0;
+        mMapView.setLayoutParams(lp);
+        isMinMap = false;
+    }
+
+    @Override
+    public void onDetailClick() {
+        int state = mPoiDetailTaxi.getPoiDetailState();
+        switch (state) {
+            case PoiDetailBottomView.STATE_DETAIL:
+                mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                break;
+            case PoiDetailBottomView.STATE_MAP:
+                mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                break;
+        }
+    }
+
+
+
+    @Override
+    public void onCallTaxiClick() {
+
+    }
+
+    @Override
+    public void onRouteClick() {
+
+    }
 }

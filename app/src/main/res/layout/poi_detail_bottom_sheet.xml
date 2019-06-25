@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="26dp"
             android:gravity="center_vertical"
-            android:text="在壹方城海滨广场公园附近"
+            android:text="正在获取位置"
             android:textAppearance="@android:style/TextAppearance.Small"
             android:textColor="@color/poi_detail_loc"
             app:layout_constraintLeft_toLeftOf="parent"

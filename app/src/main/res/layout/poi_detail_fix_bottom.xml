@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/poi_detail_taxi"
     android:layout_width="match_parent"
     android:layout_height="@dimen/setting_item_large_height"
-    android:layout_gravity="bottom"
-    android:visibility="visible"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -33,9 +30,10 @@
             android:id="@+id/tv_detail"
             style="@style/PoiDetailFixedStyle"
             android:layout_gravity="center_vertical"
-            android:drawableLeft="@drawable/poi_indicator_details"
+            android:drawableLeft="@drawable/poi_indicator_details_selector"
             android:gravity="center_vertical"
             android:text="查看详情"
+            android:textColor="@color/poi_detail_text"
             android:textAppearance="@android:style/TextAppearance.Small"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

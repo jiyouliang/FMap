@@ -19,8 +19,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <include
+            android:visibility="gone"
+            layout="@layout/view_map_top_feedback"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
         <com.jiyouliang.fmap.view.SupendPartitionView
+            android:id="@+id/spv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/padding_size"
@@ -29,8 +36,6 @@
 
 
     </android.support.constraint.ConstraintLayout>
-
-
 
 
     <LinearLayout
@@ -89,7 +94,13 @@
 
     <include layout="@layout/poi_detail_bottom_sheet" />
 
-    <include layout="@layout/poi_detail_fix_bottom" />
+    <!--<include layout="@layout/poi_detail_fix_bottom" />-->
+    <com.jiyouliang.fmap.view.PoiDetailBottomView
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        android:id="@+id/poi_detail_taxi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
 </android.support.design.widget.CoordinatorLayout>
