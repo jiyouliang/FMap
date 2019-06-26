@@ -111,6 +111,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private int mScreenHeight;
     private int mScreenWidth;
     private boolean isMinMap; //缩小显示地图
+    private boolean onScrolling;//正在滑动地图
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,6 +210,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
 
             private boolean dragging;
+            private float lastOffset;
+            private boolean slidingDown;//向下滑动
 
             //BottomSheet状态改变回调
             @Override
@@ -221,7 +224,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                         mMapHeaderView.setVisibility(View.VISIBLE);
                         mFeedbackContainer.setVisibility(View.GONE);
                         mSupendPartitionView.setVisibility(View.VISIBLE);
-                        maxMapView();
+//                        maxMapView();
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
                         dragging = true;
@@ -256,6 +259,13 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                     // > 0:向上拖动
                     mPoiColseView.setVisibility(View.GONE);
                     showBackToMapState();
+                    lastOffset = slideOffset;
+                    if(slideOffset < 1){
+//                        mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+//                        setLocationStyle();
+                        mMoveToCenter = false;
+                        maxMapView();
+                    }
                 } else if (slideOffset == 0) {
                     mPoiColseView.setVisibility(View.VISIBLE);
                     showPoiDetailState();
@@ -288,6 +298,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             }
             return;
         }
+        if(onScrolling){
+            LogUtil.e(TAG, "MapView is Scrolling by user,can not operate...");
+            return;
+        }
         //获取经纬度
         double lng = location.getLongitude();
         double lat = location.getLatitude();
@@ -302,7 +316,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mAccuracy = location.getAccuracy();
         LogUtil.d(TAG, "accuracy=" + mAccuracy);
         LogUtil.d(TAG, "mFirstLocation=" + mFirstLocation);
-        if(isMinMap){
+        /*if(isMinMap){
             LogUtil.e(TAG, "isMinMap="+isMinMap);
             ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
             //还原：全屏，避免下拉BottomSheet底部白屏
@@ -310,7 +324,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
             setLocationStyle();
             mMoveToCenter = false;
-        }
+        }*/
         if (mFirstLocation) {
             aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel), new AMap.CancelableCallback() {
                 @Override
@@ -467,17 +481,21 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     @Override
     public void onScroll(float v, float v1) {
-        LogUtil.d(TAG, "onScroll,x=" + v + ",y=" + v1);
-        mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
-        setLocationStyle();
-//        mLocationClient.stopLocation();
-//        mLocationOption.setOnceLocation(true);//单次定位
-        mCurrentGpsState = STATE_UNLOCKED;
-        //当前没有正在定位才能修改状态
-        if (!mFirstLocation) {
-            mGpsView.setGpsState(mCurrentGpsState);
+        //避免重复调用闪屏，当手指up才重置为false
+        if(!onScrolling){
+            onScrolling = true;
+            LogUtil.d(TAG, "onScroll,x=" + v + ",y=" + v1);
+            //旋转不移动到中心点
+            mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+            mCurrentGpsState = STATE_UNLOCKED;
+            //当前没有正在定位才能修改状态
+            if (!mFirstLocation) {
+                mGpsView.setGpsState(mCurrentGpsState);
+            }
+            mMoveToCenter = false;
+            setLocationStyle();
+            resetLocationMarker();
         }
-        mMoveToCenter = false;
     }
 
     /**
@@ -511,7 +529,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onUp(float v, float v1) {
         LogUtil.d(TAG, "onUp");
-
+        onScrolling = false;
     }
 
     /**
@@ -813,6 +831,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void minMapView() {
         ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
+        if(lp.bottomMargin == mScreenHeight * 3 / 5){
+            //避免重复设置LayoutParams
+            return;
+        }
         lp.bottomMargin = mScreenHeight * 3 / 5;
         mMapView.setLayoutParams(lp);
 
@@ -823,6 +845,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void maxMapView() {
         ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
+        if(lp.bottomMargin == 0){
+            //避免重复设置LayoutParams
+            return;
+        }
         lp.bottomMargin = 0;
         mMapView.setLayoutParams(lp);
         isMinMap = false;
