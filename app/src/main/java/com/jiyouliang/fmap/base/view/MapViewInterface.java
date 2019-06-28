@@ -34,4 +34,20 @@ public interface MapViewInterface {
      * BottomSheet折叠或者隐藏后,放大地图,全屏显示
      */
     void maxMapView();
+
+    /**
+     * poi detail折叠
+     */
+    void onPoiDetailCollapsed();
+
+    /**
+     * poi detail展开
+     */
+    void onPoiDetailExpanded();
+
+    /**
+     * 当PoiDetail向上滑动时，平滑向上移动地图
+     * @param slideOffset
+     */
+    void smoothSlideUpMap(float slideOffset);
 }

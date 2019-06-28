@@ -9,13 +9,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.CoordinatorLayout;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -172,7 +170,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 //        mBehavior.setPeekHeight(mMinPeekHeight + navigationHeight);
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        if(null == wm){
+        if (null == wm) {
             LogUtil.e(TAG, "获取WindowManager失败:" + wm);
             return;
         }
@@ -183,7 +181,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mScreenWidth = point.x;
         //设置bottomsheet高度为屏幕 3/5
         int height = mScreenHeight * 3 / 5;
-        mMaxPeekHeight =  height;
+        mMaxPeekHeight = height;
         ViewGroup.LayoutParams params = mBottomSheet.getLayoutParams();
         params.height = height;
 
@@ -209,25 +207,35 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         }
         mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
 
-            private boolean dragging;
-            private float lastOffset;
-            private boolean slidingDown;//向下滑动
+            private float lastSlide;//上次slideOffset
+            private float currSlide;//当前slideOffset
+            private boolean slideDown;//向下滑动
+
 
             //BottomSheet状态改变回调
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
+                    //展开
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        log("STATE_EXPANDED");
+
+                        break;
+                    //折叠
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         log("STATE_COLLAPSED");
-                        //BottomSheet折叠：显示头部搜索、隐藏反馈、显示右边侧边栏
-                        mPoiColseView.setVisibility(View.VISIBLE);
-                        mMapHeaderView.setVisibility(View.VISIBLE);
-                        mFeedbackContainer.setVisibility(View.GONE);
-                        mSupendPartitionView.setVisibility(View.VISIBLE);
-//                        maxMapView();
+                        if(slideDown){
+                            maxMapView();
+                            slideDown = false;
+                        }
+
+                        onPoiDetailCollapsed();
+                        break;
+                    //隐藏
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        log("STATE_HIDDEN");
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING:
-                        dragging = true;
                         //拖拽
                         log("STATE_DRAGGING");
                         break;
@@ -235,44 +243,47 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                         //结束：释放
                         log("STATE_SETTLING");
                         break;
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        log("STATE_EXPANDED");
-                        //BottomSheet展开：隐藏头部搜索、显示反馈、隐藏右边侧边栏
-                        mMapHeaderView.setVisibility(View.GONE);
-                        mFeedbackContainer.setVisibility(View.VISIBLE);
-                        mSupendPartitionView.setVisibility(View.GONE);
-                        minMapView();
 
-                        break;
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        log("STATE_HIDDEN");
-
-                        break;
                 }
             }
 
-            //BottomSheet滑动回调
+            /**
+             * BottomSheet滑动回调
+             */
+
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                log("onSlide:slideOffset=" + slideOffset + ",getBottom=" + bottomSheet.getBottom());
+                currSlide = slideOffset;
+                log("onSlide:slideOffset=" + slideOffset + ",getBottom=" + bottomSheet.getBottom() + ",currSlide=" + currSlide + ",lastSlide=" + lastSlide);
                 if (slideOffset > 0) {
                     // > 0:向上拖动
                     mPoiColseView.setVisibility(View.GONE);
                     showBackToMapState();
-                    lastOffset = slideOffset;
-                    if(slideOffset < 1){
-//                        mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
-//                        setLocationStyle();
-                        mMoveToCenter = false;
+                    if (slideOffset < 1) {
+
+                    }
+                    mMoveToCenter = false;
+                    if(currSlide - lastSlide > 0){
+                        log(">>>>>向上滑动");
+                        slideDown = false;
+//                        smoothSlideUpMap(slideOffset);
+                    }else if(currSlide - lastSlide < 0){
+                        log("<<<<<向下滑动");
+//                        smoothSlideDownMap(slideOffset);
+                        slideDown = true;
                         maxMapView();
                     }
                 } else if (slideOffset == 0) {
+                    //滑动到COLLAPSED状态
                     mPoiColseView.setVisibility(View.VISIBLE);
                     showPoiDetailState();
                 } else if (slideOffset < 0) {
+                    //从COLLAPSED向HIDDEN状态滑动，此处禁止BottomSheet隐藏
                     //setHideable(false)禁止Behavior执行：可以实现禁止向下滑动消失
                     mBehavior.setHideable(false);
                 }
+
+                lastSlide = currSlide;
 
             }
         });
@@ -298,7 +309,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             }
             return;
         }
-        if(onScrolling){
+        if (onScrolling) {
             LogUtil.e(TAG, "MapView is Scrolling by user,can not operate...");
             return;
         }
@@ -314,17 +325,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         //首次定位,选择移动到地图中心点并修改级别到15级
         //首次定位成功才修改地图中心点，并移动
         mAccuracy = location.getAccuracy();
-        LogUtil.d(TAG, "accuracy=" + mAccuracy);
-        LogUtil.d(TAG, "mFirstLocation=" + mFirstLocation);
-        /*if(isMinMap){
-            LogUtil.e(TAG, "isMinMap="+isMinMap);
-            ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
-            //还原：全屏，避免下拉BottomSheet底部白屏
-            lp.bottomMargin = 0;
-            mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
-            setLocationStyle();
-            mMoveToCenter = false;
-        }*/
+        LogUtil.d(TAG, "accuracy=" + mAccuracy + ",mFirstLocation=" + mFirstLocation);
         if (mFirstLocation) {
             aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, mZoomLevel), new AMap.CancelableCallback() {
                 @Override
@@ -482,7 +483,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onScroll(float v, float v1) {
         //避免重复调用闪屏，当手指up才重置为false
-        if(!onScrolling){
+        if (!onScrolling) {
             onScrolling = true;
             LogUtil.d(TAG, "onScroll,x=" + v + ",y=" + v1);
             //旋转不移动到中心点
@@ -831,27 +832,25 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void minMapView() {
         ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
-        if(lp.bottomMargin == mScreenHeight * 3 / 5){
-            //避免重复设置LayoutParams
+        //避免重复设置LayoutParams
+        if (lp.bottomMargin == mMaxPeekHeight) {
             return;
         }
-        lp.bottomMargin = mScreenHeight * 3 / 5;
+        lp.bottomMargin = mMaxPeekHeight;
         mMapView.setLayoutParams(lp);
 
-        isMinMap = true;
 
     }
 
     @Override
     public void maxMapView() {
         ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
-        if(lp.bottomMargin == 0){
-            //避免重复设置LayoutParams
+        //避免重复设置LayoutParams
+        if (lp.bottomMargin == 0) {
             return;
         }
         lp.bottomMargin = 0;
         mMapView.setLayoutParams(lp);
-        isMinMap = false;
     }
 
     @Override
@@ -860,6 +859,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         switch (state) {
             case PoiDetailBottomView.STATE_DETAIL:
                 mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                onPoiDetailExpanded();
+                minMapView();
                 break;
             case PoiDetailBottomView.STATE_MAP:
                 mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -867,7 +868,39 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         }
     }
 
+    @Override
+    public void onPoiDetailCollapsed() {
+        //BottomSheet折叠：显示头部搜索、隐藏反馈、显示右边侧边栏
+        mPoiColseView.setVisibility(View.VISIBLE);
+        mMapHeaderView.setVisibility(View.VISIBLE);
+        mFeedbackContainer.setVisibility(View.GONE);
+        mSupendPartitionView.setVisibility(View.VISIBLE);
+    }
 
+    @Override
+    public void onPoiDetailExpanded() {
+        //BottomSheet展开：隐藏头部搜索、显示反馈、隐藏右边侧边栏
+        mMapHeaderView.setVisibility(View.GONE);
+        mFeedbackContainer.setVisibility(View.VISIBLE);
+        mSupendPartitionView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void smoothSlideUpMap(float slideOffset) {
+        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
+        lp.bottomMargin = (int) (mMaxPeekHeight * slideOffset);
+        mMapView.setLayoutParams(lp);
+
+        mMapView.setTranslationY(-(int) (mMaxPeekHeight * slideOffset));
+    }
+
+    public void smoothSlideDownMap(float slideOffset) {
+        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
+        lp.bottomMargin = (int) (mMaxPeekHeight * slideOffset);
+        mMapView.setLayoutParams(lp);
+
+//        mMapView.scrollTo(0, (int) (mMaxPeekHeight * slideOffset));
+    }
 
     @Override
     public void onCallTaxiClick() {
