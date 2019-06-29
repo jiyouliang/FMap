@@ -110,6 +110,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private int mScreenWidth;
     private boolean isMinMap; //缩小显示地图
     private boolean onScrolling;//正在滑动地图
+    private MyLocationStyle mLocationStyle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,16 +220,16 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                     //展开
                     case BottomSheetBehavior.STATE_EXPANDED:
                         log("STATE_EXPANDED");
-
+                        smoothSlideUpMap();
                         break;
                     //折叠
                     case BottomSheetBehavior.STATE_COLLAPSED:
                         log("STATE_COLLAPSED");
-                        if(slideDown){
+                        /*if (slideDown) {
                             maxMapView();
                             slideDown = false;
-                        }
-
+                        }*/
+                        smoothSlideDownMap();
                         onPoiDetailCollapsed();
                         break;
                     //隐藏
@@ -263,15 +264,21 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
                     }
                     mMoveToCenter = false;
-                    if(currSlide - lastSlide > 0){
+                    if (currSlide - lastSlide > 0) {
                         log(">>>>>向上滑动");
                         slideDown = false;
-//                        smoothSlideUpMap(slideOffset);
-                    }else if(currSlide - lastSlide < 0){
+                        onPoiDetailExpanded();
+                        //smoothSlideUpMap(slideOffset);
+                    } else if (currSlide - lastSlide < 0) {
                         log("<<<<<向下滑动");
-//                        smoothSlideDownMap(slideOffset);
+                        //smoothSlideDownMap(slideOffset);
                         slideDown = true;
-                        maxMapView();
+                        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
+                        if (lp.bottomMargin != 0) {
+                            lp.bottomMargin = 0;
+                            mMapView.setLayoutParams(lp);
+                        }
+                        //maxMapView();
                     }
                 } else if (slideOffset == 0) {
                     //滑动到COLLAPSED状态
@@ -413,11 +420,13 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     private void setLocationStyle() {
         // 自定义系统定位蓝点
-        MyLocationStyle locationStyle = new MyLocationStyle();
-        locationStyle.strokeColor(Color.argb(0, 0, 0, 0));
-        locationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));//圆圈的颜色,设为透明
+        if (null == mLocationStyle) {
+            mLocationStyle = new MyLocationStyle();
+            mLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));
+            mLocationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));//圆圈的颜色,设为透明
+        }
         //定位、且将视角移动到地图中心点，定位点依照设备方向旋转，  并且会跟随设备移动。
-        aMap.setMyLocationStyle(locationStyle.myLocationType(mMapType));
+        aMap.setMyLocationStyle(mLocationStyle.myLocationType(mMapType));
     }
 
     @Override
@@ -596,7 +605,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private void resetLocationMarker() {
         aMap.clear();
         mLocMarker = null;
-        if (mCurrentGpsState == STATE_ROTATE) {
+        if (mGpsView.getGpsState() == GPSView.STATE_ROTATE) {
             //ROTATE模式不需要方向传感器
             //mSensorHelper.unRegisterSensorListener();
             addRotateMarker(mLatLng);
@@ -859,8 +868,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         switch (state) {
             case PoiDetailBottomView.STATE_DETAIL:
                 mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                onPoiDetailExpanded();
-                minMapView();
+
+                //minMapView();
                 break;
             case PoiDetailBottomView.STATE_MAP:
                 mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -885,21 +894,88 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mSupendPartitionView.setVisibility(View.GONE);
     }
 
-    @Override
-    public void smoothSlideUpMap(float slideOffset) {
-        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
-        lp.bottomMargin = (int) (mMaxPeekHeight * slideOffset);
-        mMapView.setLayoutParams(lp);
+    /**
+     * 地图平滑上移，重置新的marker
+     */
+    private void slideUpMarker() {
+        aMap.clear();
+        mLocMarker = null;
+        addRotateMarker(mLatLng);
+        if (null != mLocMarker) {
+            mSensorHelper.setCurrentMarker(mLocMarker);
+        }
+        addCircle(mLatLng, mAccuracy);
 
-        mMapView.setTranslationY(-(int) (mMaxPeekHeight * slideOffset));
+//        aMap.clear();
+//        mLocMarker = null;
+//        if (mGpsView.getGpsState() == GPSView.STATE_ROTATE) {
+//            //ROTATE模式不需要方向传感器
+//            //mSensorHelper.unRegisterSensorListener();
+//
+//        } else {
+//            //mSensorHelper.registerSensorListener();
+//            addMarker(mLatLng);
+//            if (null != mLocMarker) {
+//                mSensorHelper.setCurrentMarker(mLocMarker);
+//            }
+//        }
+//
+//        addCircle(mLatLng, mAccuracy);
     }
 
-    public void smoothSlideDownMap(float slideOffset) {
-        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
-        lp.bottomMargin = (int) (mMaxPeekHeight * slideOffset);
-        mMapView.setLayoutParams(lp);
+    @Override
+    public void smoothSlideUpMap() {
+        switch (mGpsView.getGpsState()) {
+            case GPSView.STATE_ROTATE:
+                mMapType = MyLocationStyle.LOCATION_TYPE_MAP_ROTATE;
+                break;
+            case GPSView.STATE_UNLOCKED:
+            case GPSView.STATE_LOCKED:
+                mZoomLevel = 16;
+                mAnimDuartion = 500;
+                mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+                break;
+        }
+        setLocationStyle();
+        //禁用手势操作
+        aMap.getUiSettings().setAllGesturesEnabled(false);
+        mMoveToCenter = false;
+        Point point = new Point(mScreenWidth / 2, mScreenHeight * 4 / 5);
+        LatLng latLng = aMap.getProjection().fromScreenLocation(point);
 
-//        mMapView.scrollTo(0, (int) (mMaxPeekHeight * slideOffset));
+        //设置当前缩放级别
+        aMap.animateCamera(CameraUpdateFactory.newLatLng(latLng), 100, new AMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                resetLocationMarker();
+                ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) mMapView.getLayoutParams();
+                lp.bottomMargin = mScreenHeight * 3 / 5;
+                mMapView.setLayoutParams(lp);
+                aMap.moveCamera(CameraUpdateFactory.newLatLng(mLatLng));
+                mMoveToCenter = true;
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+
+
+    }
+
+    @Override
+    public void smoothSlideDownMap() {
+        //启用手势操作
+        aMap.getUiSettings().setAllGesturesEnabled(true);
+//        mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE;
+//        setLocationStyle();
+        resetLocationMarker();
+        if (mLatLng != null) {
+
+            aMap.animateCamera(CameraUpdateFactory.newLatLng(mLatLng), 100, null);
+            mMoveToCenter = true;
+        }
     }
 
     @Override

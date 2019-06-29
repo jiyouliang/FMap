@@ -47,7 +47,11 @@ public interface MapViewInterface {
 
     /**
      * 当PoiDetail向上滑动时，平滑向上移动地图
-     * @param slideOffset
      */
-    void smoothSlideUpMap(float slideOffset);
+    void smoothSlideUpMap();
+
+    /**
+     * 当PoiDetail向下滑动时，平滑向下移动地图
+     */
+    void smoothSlideDownMap();
 }
