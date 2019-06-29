@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
 
     <com.amap.api.maps.MapView
         android:id="@+id/map"
-        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="parent" />
-
+        android:layout_height="match_parent"/>
 
     <com.jiyouliang.fmap.view.SupendViewContainer
         android:layout_width="match_parent"
