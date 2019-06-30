@@ -8,13 +8,14 @@
 
     <com.jiyouliang.fmap.view.MapLayerView
         android:id="@+id/mv"
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="@dimen/icon_size"
+        style="@style/IconViewStyle"
+        android:layout_marginTop="@dimen/padding_size"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.jiyouliang.fmap.view.TrafficView
         android:id="@+id/tv"
+        android:layout_marginTop="@dimen/padding_size"
         style="@style/IconViewStyle"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mv" />

@@ -49,7 +49,7 @@ public class MapLayerView extends BaseIconView {
 
     @Override
     public boolean createIcon() {
-        setBackgroundResource(R.drawable.ret_circle_selector);
+        setBackgroundResource(R.drawable.single_bg_selector);
         return true;
     }
 }
