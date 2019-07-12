@@ -20,6 +20,5 @@ public class SupendPartitionView extends ConstraintLayout {
         super(context, attrs, defStyleAttr);
         ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.view_supend_partition, this, true);
-
     }
 }
