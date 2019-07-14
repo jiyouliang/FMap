@@ -35,6 +35,7 @@
 
 
     <TextView
+        android:id="@+id/tv_search"
         style="@style/EditTextStyle"
         android:layout_toLeftOf="@id/iv_voice"
         android:layout_toRightOf="@id/iv_user"

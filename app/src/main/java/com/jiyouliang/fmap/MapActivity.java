@@ -301,6 +301,28 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         });
 
         mPoiDetailTaxi.setOnPoiDetailBottomClickListener(this);
+
+        //头部View点击处理
+        mMapHeaderView.setOnMapHeaderViewClickListener(new MapHeaderView.OnMapHeaderViewClickListener() {
+            @Override
+            public void onUserClick() {
+            }
+
+            @Override
+            public void onSearchClick() {
+
+            }
+
+            @Override
+            public void onVoiceClick() {
+
+            }
+
+            @Override
+            public void onQrScanClick() {
+
+            }
+        });
     }
 
     private void setUpMap() {
