@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="@dimen/padding_size"
+    android:paddingRight="@dimen/padding_size"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.user.LoginActivity">
+
+    <EditText
+        android:id="@+id/et_phone"
+        android:inputType="phone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/EditTextStyle" />
+
+
+    <Button
+        android:id="@+id/btn_send_sms"
+        android:layout_width="match_parent"
+        android:textColor="@color/white"
+        android:text="获取验证码"
+        android:enabled="false"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_marginTop="@dimen/padding_size"
+        app:layout_constraintTop_toBottomOf="@id/et_phone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/btn_blue_large_selector"
+        android:layout_height="@dimen/height_btn_large" />
+
+
+
+</android.support.constraint.ConstraintLayout>

@@ -118,4 +118,12 @@ public class DeviceUtils {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dipValue * scale + 0.5f);
     }
+
+    /**
+     * 获取时间戳:毫秒
+     * @return
+     */
+    public static long getTimestamp(){
+        return System.currentTimeMillis();
+    }
 }

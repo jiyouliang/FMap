@@ -18,6 +18,10 @@
     <dimen name="rect_radius_medium">18dp</dimen>
     <dimen name="rect_height_medium">36dp</dimen>
     <dimen name="setting_item_large_height">52dp</dimen>
+    <!--Button样式-->
+    <dimen name="height_btn_large">@dimen/input_height</dimen>
+    <dimen name="radius_btn_large">23dp</dimen>
+
 
 
 

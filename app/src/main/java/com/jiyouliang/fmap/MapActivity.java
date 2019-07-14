@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -45,6 +46,7 @@ import com.amap.api.maps.model.MyLocationStyle;
 import com.jiyouliang.fmap.base.view.MapViewInterface;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.ui.BaseActivity;
+import com.jiyouliang.fmap.ui.user.LoginActivity;
 import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.PermissionUtil;
@@ -306,6 +308,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mMapHeaderView.setOnMapHeaderViewClickListener(new MapHeaderView.OnMapHeaderViewClickListener() {
             @Override
             public void onUserClick() {
+                userLogin();
             }
 
             @Override
@@ -740,6 +743,13 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         markerOptions.anchor(0.5f, 0.5f);
         markerOptions.position(latlng);
         mLocMarker = aMap.addMarker(markerOptions);
+    }
+
+    /**
+     * 跳转用户登录 TODO,后面修改为用户页面，从用户界面再跳转登录
+     */
+    private void userLogin() {
+        startActivity(new Intent(MapActivity.this, LoginActivity.class));
     }
 
 
