@@ -12,6 +12,7 @@ import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.LogUtil;
+import com.jiyouliang.fmap.util.net.BaseHttpTask;
 import com.jiyouliang.fmap.util.net.HttpTaskClient;
 import com.jiyouliang.fmap.util.security.KeystoreUtil;
 import com.jiyouliang.fmap.util.security.RSACrypt;
@@ -104,7 +105,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         //请求参数
         String jsonParams = getHttpRequestParams();
-        HttpTaskClient.getInstance().post("http://10.0.3.2:8000/fmap/sms/sendSms", jsonParams, new HttpTaskClient.OnHttpResponseListener() {
+        HttpTaskClient.getInstance().sendSms(jsonParams, new BaseHttpTask.OnHttpResponseListener() {
             @Override
             public void onFailed(Exception e) {
                 log("发送验证码失败,"+e.getMessage());
