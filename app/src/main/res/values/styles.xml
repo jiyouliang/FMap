@@ -70,5 +70,18 @@
          android:textColor="@color/poi_detail_loc"-->
     </style>
 
+    <!--顶部标题栏-->
+    <style name="TitleBarStyle">
+        <item name="android:layout_height">46dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+    <!--登录Button样式-->
+    <style name="BtnLoginStyle" >
+        <item name="android:layout_height">@dimen/height_btn_large</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>
 

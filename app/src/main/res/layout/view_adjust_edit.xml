@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+
+    <EditText
+        android:id="@+id/et_phone"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/input_height"
+        android:background="@null"
+        android:layout_centerVertical="true"
+        android:hint="请输入手机号"
+        android:padding="@dimen/padding_size" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:background="@drawable/commute_tips_close2"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content" />
+
+
+    <View style="@style/DividerCommon"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
