@@ -17,6 +17,7 @@ import com.jiyouliang.fmap.util.net.HttpTaskClient;
 import com.jiyouliang.fmap.util.security.KeystoreUtil;
 import com.jiyouliang.fmap.util.security.RSACrypt;
 import com.jiyouliang.fmap.util.security.ValidateUtil;
+import com.jiyouliang.fmap.view.ButtonLoadingView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +28,7 @@ import org.json.JSONObject;
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private EditText mEtPhone;
-    private Button mBtnLogin;
+    private ButtonLoadingView mBtnLogin;
     private static final String TAG = "LoginActivity";
     private static final boolean DEBUGGING = true;
     private String timestamp;
@@ -37,7 +38,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_user_sms_login);
         initView();
         setListener();
     }
@@ -70,7 +71,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void initView() {
         mEtPhone = (EditText) findViewById(R.id.et_phone);
-        mBtnLogin = (Button) findViewById(R.id.btn_send_sms);
+        mBtnLogin = (ButtonLoadingView) findViewById(R.id.btn_send_sms);
 
         mBtnLogin.setOnClickListener(this);
     }
@@ -88,6 +89,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * 发送短信验证码
      */
     private void sendSms() {
+        if(mBtnLogin.getLoadingState()){
+            //避免重复点击请求
+            return;
+        }
         if (!mEtPhone.isEnabled()) {
             return;
         }
@@ -103,17 +108,21 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             return;
         }
 
+        //显示button加载
+        mBtnLogin.startLoading();
         //请求参数
         String jsonParams = getHttpRequestParams();
         HttpTaskClient.getInstance().sendSms(jsonParams, new BaseHttpTask.OnHttpResponseListener() {
             @Override
             public void onFailed(Exception e) {
                 log("发送验证码失败,"+e.getMessage());
+                mBtnLogin.stopLoading();
             }
 
             @Override
             public void onSuccess(String response) {
                 log("发送验证码成功:" + response);
+                mBtnLogin.stopLoading();
             }
         });
     }

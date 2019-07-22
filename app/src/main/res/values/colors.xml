@@ -16,8 +16,8 @@
     <color name="blue_color">#4287FF</color>
     <!--Button color-->
     <color name="btn_disable_normal">#B3CFFF</color>
-    <color name="btn_enable_normal">@color/blue_color</color>
-    <color name="btn_enable_pressed">#3D53FF</color>
+    <color name="btn_enable_normal">#DD4C6BFF</color>
+    <color name="btn_enable_pressed">#DD3D53FF</color>
     <!--登录Button颜色-->
     <color name="btn_login_pressed_stroke">#CECECE</color>
     <color name="btn_login_press_solid">#F2F2F2</color>

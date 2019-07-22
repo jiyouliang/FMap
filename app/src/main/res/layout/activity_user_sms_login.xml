@@ -46,43 +46,16 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rl_title" />
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/adjust_edit"
+    <com.jiyouliang.fmap.view.ClearEditText
+        android:id="@+id/et_phone"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/input_height"
         android:layout_marginTop="40dp"
+        android:layout_height="@dimen/input_height"
+        android:layout_marginLeft="@dimen/padding_large2"
+        android:layout_marginRight="@dimen/padding_large2"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:paddingLeft="@dimen/padding_large2"
-        android:paddingRight="@dimen/padding_large2"
-        app:layout_constraintTop_toBottomOf="@id/tv_desc">
+        app:layout_constraintTop_toBottomOf="@id/tv_desc" />
 
-        <EditText
-            android:id="@+id/et_phone"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/input_height"
-            android:layout_centerVertical="true"
-            android:background="@null"
-            android:hint="请输入手机号"
-            android:paddingLeft="0dp"
-            android:inputType="phone"
-            android:maxLength="11"
-            android:padding="@dimen/padding_size" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/commute_tips_close2" />
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/text_color_black" />
-
-    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_login_error"
@@ -93,10 +66,9 @@
         android:layout_marginRight="@dimen/padding_large2"
         android:text="登录遇到问题？"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/adjust_edit" />
+        app:layout_constraintTop_toBottomOf="@id/et_phone" />
 
-
-    <Button
+    <com.jiyouliang.fmap.view.ButtonLoadingView
         android:id="@+id/btn_send_sms"
         style="@style/BtnLoginStyle"
         android:layout_marginLeft="@dimen/padding_large2"
@@ -109,15 +81,16 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_login_error" />
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/tv_other_login"
-        android:layout_marginBottom="@dimen/padding_large2"
         android:layout_marginLeft="@dimen/padding_large2"
         android:layout_marginTop="30dp"
         android:layout_marginRight="@dimen/padding_large2"
+        android:layout_marginBottom="@dimen/padding_large2"
         android:background="@drawable/btn_login_alipay_selector"
+        app:layout_constraintBottom_toTopOf="@id/tv_other_login"
         app:layout_constraintLeft_toLeftOf="parent">
 
         <TextView
