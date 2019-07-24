@@ -13,6 +13,7 @@
     <dimen name="icon_height">40dp</dimen>
     <dimen name="rect_radius">8dp</dimen>
     <dimen name="text_size_large">28sp</dimen>
+    <dimen name="text_size_keyboard">36sp</dimen>
     <dimen name="text_size_normal">18sp</dimen>
     <dimen name="text_size_small">14sp</dimen>
     <!--圆角矩形-->

@@ -1,5 +1,6 @@
 package com.jiyouliang.fmap.ui.user;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -122,8 +123,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             public void onSuccess(String response) {
                 log("发送验证码成功:" + response);
                 mBtnLogin.stopLoading();
+                showInputSmsCode();
             }
         });
+    }
+
+    /**
+     * 跳转输入短信验证码页面
+     */
+    private void showInputSmsCode() {
+        Intent intent = new Intent(LoginActivity.this, InputSmsCodeActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     /**

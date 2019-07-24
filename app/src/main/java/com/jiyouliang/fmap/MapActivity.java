@@ -37,7 +37,8 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
-import com.jiyouliang.fmap.base.view.MapViewInterface;
+import com.jiyouliang.fmap.ui.user.InputSmsCodeActivity;
+import com.jiyouliang.fmap.view.base.MapViewInterface;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.ui.user.LoginActivity;
@@ -743,7 +744,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      * 跳转用户登录 TODO,后面修改为用户页面，从用户界面再跳转登录
      */
     private void userLogin() {
-        startActivity(new Intent(MapActivity.this, LoginActivity.class));
+        //startActivity(new Intent(MapActivity.this, LoginActivity.class));
+        //暂时跳转输入验证码页面,避免浪费验证码
+        startActivity(new Intent(MapActivity.this, InputSmsCodeActivity.class));
     }
 
 

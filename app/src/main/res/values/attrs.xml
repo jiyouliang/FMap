@@ -6,4 +6,7 @@
         <!--IconView最背里面景图片，可以是单个图片或者selector-->
         <attr name="biv_icon" format="reference|color" />
     </declare-styleable>
+    <declare-styleable name="TopTitleView">
+        <attr name="ttvRightTitleVisiable" format="boolean" />
+    </declare-styleable>
 </resources>

@@ -1,4 +1,4 @@
-package com.jiyouliang.fmap.base.view;
+package com.jiyouliang.fmap.view.base;
 
 /**
  * MapActivity 接口：将常用功能抽取出来，便于后面管理
