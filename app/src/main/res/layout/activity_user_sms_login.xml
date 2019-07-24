@@ -7,31 +7,13 @@
     android:background="@color/white"
     tools:context=".ui.user.LoginActivity">
 
-    <RelativeLayout
+    <com.jiyouliang.fmap.view.widget.TopTitleView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/rl_title"
-        style="@style/TitleBarStyle"
-        android:paddingLeft="@dimen/padding_large2"
-        android:paddingRight="@dimen/padding_large2"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_centerVertical="true"
-            android:background="@drawable/title_bar_close" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="密码登录"
-            android:textColor="@color/poi_detail_loc"
-            android:textSize="16sp" />
-
-    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_desc"
@@ -49,9 +31,9 @@
     <com.jiyouliang.fmap.view.widget.ClearEditText
         android:id="@+id/et_phone"
         android:layout_width="match_parent"
-        android:layout_marginTop="40dp"
         android:layout_height="@dimen/input_height"
         android:layout_marginLeft="@dimen/padding_large2"
+        android:layout_marginTop="40dp"
         android:layout_marginRight="@dimen/padding_large2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_desc" />
