@@ -1,4 +1,4 @@
-package com.jiyouliang.fmap.view;
+package com.jiyouliang.fmap.view.widget;
 
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;

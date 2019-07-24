@@ -1,8 +1,5 @@
 package com.jiyouliang.fmap;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,9 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,14 +44,14 @@ import com.jiyouliang.fmap.ui.user.LoginActivity;
 import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.PermissionUtil;
-import com.jiyouliang.fmap.view.FrequentView;
-import com.jiyouliang.fmap.view.GPSView;
-import com.jiyouliang.fmap.view.MapHeaderView;
-import com.jiyouliang.fmap.view.NearbySearchView;
-import com.jiyouliang.fmap.view.PoiDetailBottomView;
-import com.jiyouliang.fmap.view.RouteView;
-import com.jiyouliang.fmap.view.SupendPartitionView;
-import com.jiyouliang.fmap.view.TrafficView;
+import com.jiyouliang.fmap.view.map.FrequentView;
+import com.jiyouliang.fmap.view.map.GPSView;
+import com.jiyouliang.fmap.view.map.MapHeaderView;
+import com.jiyouliang.fmap.view.map.NearbySearchView;
+import com.jiyouliang.fmap.view.map.PoiDetailBottomView;
+import com.jiyouliang.fmap.view.map.RouteView;
+import com.jiyouliang.fmap.view.map.SupendPartitionView;
+import com.jiyouliang.fmap.view.map.TrafficView;
 
 public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener {
     private static final String TAG = "MapActivity";

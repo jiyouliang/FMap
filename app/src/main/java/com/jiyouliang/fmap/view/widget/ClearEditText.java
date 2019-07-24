@@ -1,4 +1,4 @@
-package com.jiyouliang.fmap.view;
+package com.jiyouliang.fmap.view.widget;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;

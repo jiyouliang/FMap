@@ -1,10 +1,11 @@
-package com.jiyouliang.fmap.view;
+package com.jiyouliang.fmap.view.map;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.jiyouliang.fmap.R;
+import com.jiyouliang.fmap.view.base.BaseIconView;
 
 /**
  * 交通

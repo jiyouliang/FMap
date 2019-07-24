@@ -1,14 +1,11 @@
-package com.jiyouliang.fmap.view;
+package com.jiyouliang.fmap.view.map;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.jiyouliang.fmap.R;
-import com.jiyouliang.fmap.util.LogUtil;
+import com.jiyouliang.fmap.view.base.BaseIconView;
 
 /**
  * 打的

@@ -46,7 +46,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rl_title" />
 
-    <com.jiyouliang.fmap.view.ClearEditText
+    <com.jiyouliang.fmap.view.widget.ClearEditText
         android:id="@+id/et_phone"
         android:layout_width="match_parent"
         android:layout_marginTop="40dp"
@@ -68,7 +68,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_phone" />
 
-    <com.jiyouliang.fmap.view.ButtonLoadingView
+    <com.jiyouliang.fmap.view.widget.ButtonLoadingView
         android:id="@+id/btn_send_sms"
         style="@style/BtnLoginStyle"
         android:layout_marginLeft="@dimen/padding_large2"

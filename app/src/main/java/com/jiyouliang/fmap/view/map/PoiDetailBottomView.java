@@ -1,4 +1,4 @@
-package com.jiyouliang.fmap.view;
+package com.jiyouliang.fmap.view.map;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

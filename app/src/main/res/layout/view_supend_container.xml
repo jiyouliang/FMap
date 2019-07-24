@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.jiyouliang.fmap.view.MapHeaderView
+        <com.jiyouliang.fmap.view.map.MapHeaderView
             android:id="@+id/mhv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <com.jiyouliang.fmap.view.SupendPartitionView
+        <com.jiyouliang.fmap.view.map.SupendPartitionView
             android:id="@+id/spv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             app:layout_constraintBottom_toTopOf="@id/nearby_view"
             app:layout_constraintLeft_toLeftOf="parent">
 
-            <com.jiyouliang.fmap.view.GPSView
+            <com.jiyouliang.fmap.view.map.GPSView
                 android:id="@+id/gps_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -64,14 +64,14 @@
                 android:background="@drawable/gps_loc_selector"
                 android:src="@drawable/icon_gps_unlocked" />
 
-            <com.jiyouliang.fmap.view.RouteView
+            <com.jiyouliang.fmap.view.map.RouteView
                 android:id="@+id/route_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true" />
 
 
-            <com.jiyouliang.fmap.view.FrequentView
+            <com.jiyouliang.fmap.view.map.FrequentView
                 android:id="@+id/fv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                 android:layout_centerVertical="true" />
         </RelativeLayout>
 
-        <com.jiyouliang.fmap.view.NearbySearchView
+        <com.jiyouliang.fmap.view.map.NearbySearchView
             android:id="@+id/nearby_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
     <include layout="@layout/poi_detail_bottom_sheet" />
 
     <!--<include layout="@layout/poi_detail_fix_bottom" />-->
-    <com.jiyouliang.fmap.view.PoiDetailBottomView
+    <com.jiyouliang.fmap.view.map.PoiDetailBottomView
         android:layout_gravity="bottom"
         android:visibility="gone"
         android:id="@+id/poi_detail_taxi"

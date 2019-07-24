@@ -6,39 +6,39 @@
     android:background="@color/transparent"
     android:padding="0dp">
 
-    <com.jiyouliang.fmap.view.MapLayerView
+    <com.jiyouliang.fmap.view.map.MapLayerView
         android:id="@+id/mv"
         style="@style/IconViewStyle"
         android:layout_marginTop="@dimen/padding_size"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.jiyouliang.fmap.view.TrafficView
+    <com.jiyouliang.fmap.view.map.TrafficView
         android:id="@+id/tv"
         android:layout_marginTop="@dimen/padding_size"
         style="@style/IconViewStyle"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mv" />
 
-    <com.jiyouliang.fmap.view.CallTaxiView
+    <com.jiyouliang.fmap.view.map.CallTaxiView
         android:id="@+id/ctv"
         style="@style/IconViewStyle"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv" />
 
-    <com.jiyouliang.fmap.view.GroupTeamView
+    <com.jiyouliang.fmap.view.map.GroupTeamView
         android:id="@+id/gtv"
         style="@style/IconViewStyle"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ctv" />
 
-    <com.jiyouliang.fmap.view.ReportView
+    <com.jiyouliang.fmap.view.map.ReportView
         android:id="@+id/rv"
         style="@style/IconViewStyle"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gtv" />
 
-    <com.jiyouliang.fmap.view.MoreIconView
+    <com.jiyouliang.fmap.view.map.MoreIconView
         android:id="@+id/miv"
         style="@style/IconViewStyle"
         app:layout_constraintRight_toRightOf="parent"

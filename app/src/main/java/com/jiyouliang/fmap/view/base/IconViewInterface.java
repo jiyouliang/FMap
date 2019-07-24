@@ -1,4 +1,4 @@
-package com.jiyouliang.fmap.view;
+package com.jiyouliang.fmap.view.base;
 
 import android.graphics.Bitmap;
 

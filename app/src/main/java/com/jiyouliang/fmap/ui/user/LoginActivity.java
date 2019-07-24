@@ -5,7 +5,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.jiyouliang.fmap.R;
@@ -17,7 +16,7 @@ import com.jiyouliang.fmap.util.net.HttpTaskClient;
 import com.jiyouliang.fmap.util.security.KeystoreUtil;
 import com.jiyouliang.fmap.util.security.RSACrypt;
 import com.jiyouliang.fmap.util.security.ValidateUtil;
-import com.jiyouliang.fmap.view.ButtonLoadingView;
+import com.jiyouliang.fmap.view.widget.ButtonLoadingView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
