@@ -27,7 +27,7 @@
         app:layout_constraintTop_toBottomOf="@id/rl_title" />
 
     <TextView
-        android:id="@+id/tv_tip"
+        android:id="@+id/tv_login_send_tip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/padding_large2"
@@ -40,7 +40,7 @@
 
 
     <com.jiyouliang.fmap.view.widget.KeyboardContainerView
-        android:id="@+id/key_container_view"
+        android:id="@+id/keyboard_container_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -50,7 +50,7 @@
         app:layout_constraintLeft_toLeftOf="parent">
 
         <TextView
-            android:id="@+id/tv_error"
+            android:id="@+id/tv_sms_error"
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,19 +59,18 @@
             android:textSize="14sp" />
 
         <com.jiyouliang.fmap.view.widget.KeyboardInputView
-            android:id="@+id/keyboard_input_view"
             android:layout_width="wrap_content"
             android:layout_height="46dp"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="30dp" />
 
         <TextView
-            android:id="@+id/tv_sms_status"
+            android:id="@+id/tv_login_resend_sms"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:enabled="false"
             android:text="@string/resend_sms_code"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="80dp"
             android:textColor="@color/resend_sms_color" />
 
         <com.jiyouliang.fmap.view.widget.NumberKeyboardView

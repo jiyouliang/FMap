@@ -1,6 +1,10 @@
 package com.jiyouliang.fmap.util.security;
 
+import android.content.Context;
+import android.text.TextUtils;
+
 import com.jiyouliang.fmap.util.Base64;
+import com.jiyouliang.fmap.util.LogUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.security.KeyFactory;
@@ -395,7 +399,7 @@ public class RSACrypt {
     /**
      * 对已加密数据进行签名
      *
-     * @param data       已加密的数据
+     * @param data 已加密的数据
      * @return 对已加密数据生成的签名
      * @throws Exception
      */
@@ -435,8 +439,8 @@ public class RSACrypt {
     /**
      * 验签
      *
-     * @param data      签名之前的数据
-     * @param sign      签名之后的数据
+     * @param data 签名之前的数据
+     * @param sign 签名之后的数据
      * @return 验签是否成功
      * @throws Exception
      */
@@ -449,6 +453,18 @@ public class RSACrypt {
         signature.initVerify(publicK);
         signature.update(data);
         return signature.verify(Base64.decode(sign));
+    }
+
+
+    public static String genSign(Context context, String timestamp) throws Exception {
+        String keystoreMD5 = KeystoreUtil.getMD5Signatures(context.getPackageManager(), context.getPackageName());
+        if (TextUtils.isEmpty(keystoreMD5)) {
+            return null;
+        }
+        StringBuilder data = new StringBuilder();
+        data.append(keystoreMD5).append(timestamp);
+        //生成RSA 签名
+        return sign(data.toString().getBytes());
     }
 
 

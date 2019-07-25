@@ -126,4 +126,12 @@ public class DeviceUtils {
     public static long getTimestamp(){
         return System.currentTimeMillis();
     }
+
+    /**
+     * 获取时间戳字符串：毫秒
+     * @return
+     */
+    public static String getTimestampStr(){
+        return String.valueOf(System.currentTimeMillis());
+    }
 }

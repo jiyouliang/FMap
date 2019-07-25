@@ -7,13 +7,14 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.jiyouliang.fmap.R;
+import com.jiyouliang.fmap.server.data.UserLoginData;
+import com.jiyouliang.fmap.server.net.HttpTaskClient;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.LogUtil;
-import com.jiyouliang.fmap.util.net.BaseHttpTask;
-import com.jiyouliang.fmap.util.net.HttpTaskClient;
 import com.jiyouliang.fmap.util.security.KeystoreUtil;
 import com.jiyouliang.fmap.util.security.RSACrypt;
 import com.jiyouliang.fmap.util.security.ValidateUtil;
@@ -112,18 +113,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mBtnLogin.startLoading();
         //请求参数
         String jsonParams = getHttpRequestParams();
-        HttpTaskClient.getInstance().sendSms(jsonParams, new BaseHttpTask.OnHttpResponseListener() {
+        HttpTaskClient.getInstance().sendSms(jsonParams, UserLoginData.class, new HttpTaskClient.OnHttpResponseListener<UserLoginData>() {
             @Override
-            public void onFailed(Exception e) {
+            public void onException(Exception e) {
                 log("发送验证码失败,"+e.getMessage());
                 mBtnLogin.stopLoading();
             }
 
             @Override
-            public void onSuccess(String response) {
+            public void onResponse(UserLoginData response) {
                 log("发送验证码成功:" + response);
                 mBtnLogin.stopLoading();
-                showInputSmsCode();
+                if(response.getCode() == 0){
+                    showInputSmsCode();
+                }else{
+                    Toast.makeText(LoginActivity.this, "发送验证码失败(code:"+response.getCode()+",msg:"+response.getMsg()+")" , Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -132,7 +137,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * 跳转输入短信验证码页面
      */
     private void showInputSmsCode() {
-        Intent intent = new Intent(LoginActivity.this, InputSmsCodeActivity.class);
+        Intent intent = new Intent(LoginActivity.this, UserLoginSendSmsActivity.class);
         startActivity(intent);
         finish();
     }
@@ -155,10 +160,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     /**
-     * 生成签名：签名格式=keystore md5 + timestamp
      *
+     * 生成签名：签名格式=keystore md5 + timestamp
+     * @deprecated 请使用RSACrypt.genSign
+     * @see RSACrypt#genSign
      * @return
      */
+    @Deprecated
     private String getSign() {
         String keystoreMD5 = KeystoreUtil.getMD5Signatures(getPackageManager(), getPackageName());
         if (TextUtils.isEmpty(keystoreMD5)) {

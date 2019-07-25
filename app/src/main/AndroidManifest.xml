@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.user.InputSmsCodeActivity"></activity>
+        <activity android:name=".ui.user.UserLoginSendSmsActivity"></activity>
         <activity android:name=".ui.user.LoginActivity" />
         <activity android:name=".MapActivity">
             <intent-filter>
