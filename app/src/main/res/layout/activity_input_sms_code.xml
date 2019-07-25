@@ -6,7 +6,7 @@
     android:background="@color/white">
 
     <com.jiyouliang.fmap.view.widget.TopTitleView
-        android:id="@+id/rl_title"
+        android:id="@+id/top_title_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:ttvRightTitleVisiable="false"
@@ -59,6 +59,7 @@
             android:textSize="14sp" />
 
         <com.jiyouliang.fmap.view.widget.KeyboardInputView
+            android:id="@+id/keyboard_input_view"
             android:layout_width="wrap_content"
             android:layout_height="46dp"
             android:layout_marginTop="30dp"

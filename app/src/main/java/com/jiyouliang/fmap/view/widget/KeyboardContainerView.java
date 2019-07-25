@@ -16,6 +16,8 @@ public class KeyboardContainerView extends LinearLayout {
     private KeyboardInputView mKeyboardInputView;
     private NumberKeyboardView mNumberKeyboardView;
     private OnTextChangedListener mListener;
+    // 当前是否可以输入验证码,用于屏同一时间多次输入问题
+    private boolean mInputEnable = true;
 
     public KeyboardContainerView(Context context) {
         this(context, null);
@@ -67,7 +69,9 @@ public class KeyboardContainerView extends LinearLayout {
                         if (TextUtils.isEmpty(num)) {
                             return;
                         }
-                        mKeyboardInputView.setText(num);
+                        if(mInputEnable){
+                            mKeyboardInputView.setText(num);
+                        }
                     }
 
                     @Override
@@ -82,6 +86,14 @@ public class KeyboardContainerView extends LinearLayout {
 
     public void setOnTextChangedListener(OnTextChangedListener listener) {
         this.mListener = listener;
+    }
+
+    /**
+     * 设置当前是否可以向键盘输入内容
+     * @param state
+     */
+    public void setInputEnable(boolean state){
+        this.mInputEnable = state;
     }
 
 

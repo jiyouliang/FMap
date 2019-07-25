@@ -21,7 +21,7 @@ public interface IUserLoginSendSmsView {
     /**
      * 验证码错误:红色文字提示+左右摇摆动画
      */
-    void smsCodeError();
+    void showSmsCodeError();
 
 
     /**
@@ -39,6 +39,9 @@ public interface IUserLoginSendSmsView {
      * @param e
      */
     void showUnknownError(Exception e);
+
+
+
 
 
 }

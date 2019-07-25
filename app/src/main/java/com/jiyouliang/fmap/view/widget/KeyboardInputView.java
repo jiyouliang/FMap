@@ -175,6 +175,18 @@ public class KeyboardInputView extends BaseView {
         postInvalidate();
     }
 
+    /**
+     * 清除所有文字
+     */
+    public void clearAllText(){
+        if(mStringBuilder == null || mStringBuilder.length() == 0){
+            return;
+        }
+        mStringBuilder.delete(0, mStringBuilder.length());
+        mStartIndex = 0;
+        postInvalidate();
+    }
+
     public String getText(){
         return mStringBuilder.toString();
     }

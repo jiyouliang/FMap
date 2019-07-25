@@ -52,6 +52,7 @@ public class UserLoginSendSmsPresenter implements HttpTaskClient.OnHttpResponseL
             view.loginSuccess(response);
         }else if(response.getCode() != 0){
             view.loginFailed(response);
+            view.showSmsCodeError();
         }
     }
 

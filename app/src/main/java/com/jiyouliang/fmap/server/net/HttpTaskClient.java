@@ -1,6 +1,7 @@
 package com.jiyouliang.fmap.server.net;
 
 import com.alibaba.fastjson.JSON;
+import com.jiyouliang.fmap.util.LogUtil;
 
 /**
  * 网络请求相关
@@ -35,31 +36,45 @@ public class HttpTaskClient<T> {
     }
 
     public void get(String url, String json, final Class<T> clazz, final OnHttpResponseListener<T> listener) {
+        LogUtil.d(TAG, String.format("get request url=%s, json=%s", url, json));
         //调用OkHttp请求网络,后期如果需要修改，至今修改get方法获取post方法即可
         OkHttpTaskClient.getInstance().get(url, json, new BaseHttpTask.BaseHttpResponse() {
             @Override
             public void onFailed(Exception e) {
                 listener.onException(e);
+                if (e != null) {
+                    LogUtil.d(TAG, String.format("get method onException %s", e.getMessage()));
+                }
             }
 
             @Override
             public void onSuccess(String response) {
                 listener.onResponse(parseToObject(response, clazz));
+                if (response != null) {
+                    LogUtil.d(TAG, String.format("get method onSuccess %s", response));
+                }
             }
         });
 
     }
 
     public void post(String url, String json, final Class<T> clazz, final OnHttpResponseListener<T> listener) {
+        LogUtil.d(TAG, String.format("post request url=%s, json=%s", url, json));
         OkHttpTaskClient.getInstance().post(url, json, new BaseHttpTask.BaseHttpResponse() {
             @Override
             public void onFailed(Exception e) {
                 listener.onException(e);
+                if (e != null) {
+                    LogUtil.d(TAG, String.format("post method onException %s", e.getMessage()));
+                }
             }
 
             @Override
             public void onSuccess(String response) {
                 listener.onResponse(parseToObject(response, clazz));
+                if (response != null) {
+                    LogUtil.d(TAG, String.format("post method onSuccess %s", response));
+                }
             }
         });
     }
