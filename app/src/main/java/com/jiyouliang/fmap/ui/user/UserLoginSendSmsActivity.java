@@ -56,7 +56,8 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
         mKeyboardInputView = findViewById(R.id.keyboard_input_view);
         //设置手机号
         StringBuilder hidePhone = new StringBuilder();
-        hidePhone.append(mPhone.substring(0, 3)).append("****").append(mPhone.substring(hidePhone.length() - 4, hidePhone.length()));
+        hidePhone.append(mPhone.substring(0, 3)).append("****")
+                .append(mPhone.substring(hidePhone.length() - 4, hidePhone.length()));
         mTvLoginSendTip.setText(String.format(mTvLoginSendTip.getText().toString(), hidePhone));
 
         mContext = this;
@@ -85,8 +86,7 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
                 }
                 //短信验证码长度4位
                 if (text.length() == 4) {
-                    /// TODO 暂时写死手机号,后面改为从上个页面传递过来
-                    mPresenter.loginBySms("17722832071", text);
+                    mPresenter.loginBySms(mPhone, text);
                 }
             }
         });
@@ -153,6 +153,18 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
         mKeyboardInputView.clearAllText();
     }
 
+    @Override
+    public void sendSmsSuccess() {
+        mTvSmsError.setVisibility(View.GONE);
+        showToast("验证码发送成功");
+    }
+
+    @Override
+    public void sendSmsError(UserLoginData response) {
+        mTvSmsError.setVisibility(View.GONE);
+        showToast(String.format("验证码发送失败(%s, %s)", response.getMsg(), response.getCode()));
+    }
+
     /**
      * 显示倒计时60m
      */
@@ -200,6 +212,7 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
         if(v == mTvLoginResendSms){
             //重新发送验证码
             showCountDown();
+            mPresenter.sendSms(mPhone);
         }
     }
 }

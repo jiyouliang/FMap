@@ -40,8 +40,14 @@ public interface IUserLoginSendSmsView {
      */
     void showUnknownError(Exception e);
 
+    /**
+     * 验证码发送成功
+     */
+    void sendSmsSuccess();
 
-
-
-
+    /**
+     * 验证码发送失败
+     * @param response
+     */
+    void sendSmsError(UserLoginData response);
 }

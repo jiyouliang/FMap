@@ -8,7 +8,7 @@ import com.jiyouliang.fmap.util.LogUtil;
  *
  * @author jiyouliang
  */
-public class HttpTaskClient<T> {
+public class HttpTaskClient {
     private static final String TAG = "HttpTaskClient";
     private static HttpTaskClient instance;
 
@@ -35,7 +35,7 @@ public class HttpTaskClient<T> {
         return instance;
     }
 
-    public void get(String url, String json, final Class<T> clazz, final OnHttpResponseListener<T> listener) {
+    public <T> void get(String url, String json, final int reqCode, final Class<T> clazz, final OnHttpResponseListener<T> listener) {
         LogUtil.d(TAG, String.format("get request url=%s, json=%s", url, json));
         //调用OkHttp请求网络,后期如果需要修改，至今修改get方法获取post方法即可
         OkHttpTaskClient.getInstance().get(url, json, new BaseHttpTask.BaseHttpResponse() {
@@ -49,7 +49,7 @@ public class HttpTaskClient<T> {
 
             @Override
             public void onSuccess(String response) {
-                listener.onResponse(parseToObject(response, clazz));
+                listener.onResponse(reqCode, parseToObject(response, clazz));
                 if (response != null) {
                     LogUtil.d(TAG, String.format("get method onSuccess %s", response));
                 }
@@ -58,7 +58,7 @@ public class HttpTaskClient<T> {
 
     }
 
-    public void post(String url, String json, final Class<T> clazz, final OnHttpResponseListener<T> listener) {
+    public <T> void post(String url, String json, final int reqCode, final Class<T> clazz, final OnHttpResponseListener<T> listener) {
         LogUtil.d(TAG, String.format("post request url=%s, json=%s", url, json));
         OkHttpTaskClient.getInstance().post(url, json, new BaseHttpTask.BaseHttpResponse() {
             @Override
@@ -71,7 +71,7 @@ public class HttpTaskClient<T> {
 
             @Override
             public void onSuccess(String response) {
-                listener.onResponse(parseToObject(response, clazz));
+                listener.onResponse(reqCode, parseToObject(response, clazz));
                 if (response != null) {
                     LogUtil.d(TAG, String.format("post method onSuccess %s", response));
                 }
@@ -86,8 +86,8 @@ public class HttpTaskClient<T> {
      * @param json
      * @param listener
      */
-    public void sendSms(String json, Class<T> clazz, OnHttpResponseListener<T> listener) {
-        post(URL_SEND_SMS, json, clazz, listener);
+    public <T> void sendSms(String json, final int reqCode, Class<T> clazz, OnHttpResponseListener<T> listener) {
+        post(URL_SEND_SMS, json, reqCode, clazz, listener);
     }
 
 
@@ -97,8 +97,8 @@ public class HttpTaskClient<T> {
      * @param json
      * @param listener
      */
-    public void loginBySms(String json, Class<T> clazz, OnHttpResponseListener<T> listener) {
-        post(URL_LOGIN_SMS, json, clazz, listener);
+    public <T> void loginBySms(String json, final int reqCode, Class<T> clazz, OnHttpResponseListener<T> listener) {
+        post(URL_LOGIN_SMS, json, reqCode, clazz, listener);
     }
 
     /**
@@ -116,9 +116,10 @@ public class HttpTaskClient<T> {
         /**
          * 服务器成功返回数据,客户端需要根据错误状态码code判断成功与失败
          *
+         * @param reqCode  请求状态码,用于标识不同请求,以便同一个回调方法处理不通请求
          * @param response 对于数据Bean对象
          */
-        void onResponse(T response);
+        void onResponse(int reqCode, T response);
     }
 
     /**
@@ -128,7 +129,7 @@ public class HttpTaskClient<T> {
      * @param clazz
      * @return
      */
-    private T parseToObject(String data, Class<T> clazz) {
+    private <T> T parseToObject(String data, Class<T> clazz) {
         return JSON.parseObject(data, clazz);
     }
 

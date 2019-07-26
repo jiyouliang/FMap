@@ -35,6 +35,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private String timestamp;
     private String sign;
     private String phone;
+    private static final int REQ_CODE_SMS = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +114,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mBtnLogin.startLoading();
         //请求参数
         String jsonParams = getHttpRequestParams();
-        HttpTaskClient.getInstance().sendSms(jsonParams, UserLoginData.class, new HttpTaskClient.OnHttpResponseListener<UserLoginData>() {
+        HttpTaskClient.getInstance().sendSms(jsonParams, REQ_CODE_SMS, UserLoginData.class, new HttpTaskClient.OnHttpResponseListener<UserLoginData>() {
             @Override
             public void onException(Exception e) {
                 log("发送验证码失败,"+e.getMessage());
@@ -121,7 +122,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             }
 
             @Override
-            public void onResponse(UserLoginData response) {
+            public void onResponse(int reqCode, UserLoginData response) {
                 log("发送验证码成功:" + response);
                 mBtnLogin.stopLoading();
                 if(response.getCode() == 0){
