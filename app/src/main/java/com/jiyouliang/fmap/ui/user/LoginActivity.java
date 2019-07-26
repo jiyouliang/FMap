@@ -138,6 +138,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      */
     private void showInputSmsCode() {
         Intent intent = new Intent(LoginActivity.this, UserLoginSendSmsActivity.class);
+        intent.putExtra("phone", phone);
         startActivity(intent);
         finish();
     }

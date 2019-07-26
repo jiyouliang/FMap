@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">FMap</string>
     <string name="input_sms_code">输入短信验证码</string>
-    <string name="sms_code_had_send">验证码已发送至$phone，请在下方输入框内输入4位数验证码</string>
+    <string name="sms_code_had_send">验证码已发送至%s，请在下方输入框内输入4位数验证码</string>
     <string name="sms_code_incorrect">验证码错误</string>
     <string name="resend_sms_code">重新发送</string>
 </resources>

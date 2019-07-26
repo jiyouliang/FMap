@@ -1,8 +1,5 @@
 package com.jiyouliang.fmap.ui.user;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -16,6 +13,7 @@ import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.server.data.UserLoginData;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.util.LogUtil;
+import com.jiyouliang.fmap.util.os.CountDownThreadTimer;
 import com.jiyouliang.fmap.view.widget.KeyboardContainerView;
 import com.jiyouliang.fmap.view.widget.KeyboardInputView;
 import com.jiyouliang.fmap.view.widget.TopTitleView;
@@ -23,7 +21,7 @@ import com.jiyouliang.fmap.view.widget.TopTitleView;
 /**
  * 发送短信验证码登录
  */
-public class UserLoginSendSmsActivity extends BaseActivity implements IUserLoginSendSmsView {
+public class UserLoginSendSmsActivity extends BaseActivity implements IUserLoginSendSmsView, View.OnClickListener {
 
     private static final String TAG = "UserLoginSendSmsActivity";
 
@@ -36,11 +34,14 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
     private KeyboardInputView mKeyboardInputView;
     private Context mContext;
     private UserLoginSendSmsPresenter mPresenter;
+    private CountDownThreadTimer mCountDownTimer;
+    private String mPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_sms_code);
+        initData();
         initView();
         setListener();
     }
@@ -53,11 +54,19 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
         mKeyboardContainerView = (KeyboardContainerView) findViewById(R.id.keyboard_container_view);
         mDialog = new ProgressDialog(this);
         mKeyboardInputView = findViewById(R.id.keyboard_input_view);
+        //设置手机号
+        StringBuilder hidePhone = new StringBuilder();
+        hidePhone.append(mPhone.substring(0, 3)).append("****").append(mPhone.substring(hidePhone.length() - 4, hidePhone.length()));
+        mTvLoginSendTip.setText(String.format(mTvLoginSendTip.getText().toString(), hidePhone));
 
         mContext = this;
         //初始化Presenter
         mPresenter = new UserLoginSendSmsPresenter(mContext, this);
-        showCountDownAnim();
+        showCountDown();
+    }
+
+    private void initData() {
+        mPhone = getIntent().getStringExtra("phone");
     }
 
     /**
@@ -67,20 +76,22 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
         mKeyboardContainerView.setOnTextChangedListener(new KeyboardContainerView.OnTextChangedListener() {
             @Override
             public void onTextChanged(String text) {
-                if(TextUtils.isEmpty(text)){
+                if (TextUtils.isEmpty(text)) {
                     return;
                 }
                 //不允许发送请求过程中多次输入验证码
-                if(mDialog.isShowing()){
+                if (mDialog.isShowing()) {
                     return;
                 }
                 //短信验证码长度4位
-                if(text.length() == 4){
+                if (text.length() == 4) {
                     /// TODO 暂时写死手机号,后面改为从上个页面传递过来
                     mPresenter.loginBySms("17722832071", text);
                 }
             }
         });
+
+        mTvLoginResendSms.setOnClickListener(this);
     }
 
     @Override
@@ -105,13 +116,20 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
         mKeyboardInputView.startAnimation(shake);
         //显示重新发送验证码
         mTvLoginResendSms.clearAnimation();
+
         mTvLoginResendSms.setText(getString(R.string.resend_sms_code));
         mTvLoginResendSms.setEnabled(true);
+        if(mCountDownTimer != null){
+            mCountDownTimer.cancel();
+        }
     }
 
     @Override
     public void loginSuccess(UserLoginData userData) {
         /// 登录成功,关闭当前页面进入用户首页 TODO 别忘了存储用户数据到本地
+        if(mCountDownTimer != null){
+            mCountDownTimer.cancel();
+        }
         finish();
     }
 
@@ -136,31 +154,31 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
     }
 
     /**
-     * 显示倒计时60m动画
+     * 显示倒计时60m
      */
-    private void showCountDownAnim() {
-        ValueAnimator animator = ValueAnimator.ofInt(60, 0);
-        animator.setStartDelay(0);
-        animator.setDuration(60 * 1000);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+    private void showCountDown() {
+        mTvLoginResendSms.setEnabled(false);
+        if(mCountDownTimer != null){
+            // 关闭上一个任务
+            mCountDownTimer.cancel();
+        }
+        mCountDownTimer = new CountDownThreadTimer(60 * 1000, 1000) {
+
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int value = (int) animation.getAnimatedValue();
+            public void onTick(long mills) {
                 //谷歌建议使用String.format拼接字符串,而不是:字符串+字符串方式
-                mTvLoginResendSms.setText(String.format("%ss后重新发送", value));
+                mTvLoginResendSms.setText(String.format("%ss后重新发送", mills/1000));
             }
-        });
-        animator.addListener(new AnimatorListenerAdapter() {
+
             @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
+            public void onFinish() {
                 mTvLoginResendSms.setEnabled(true);
                 mTvLoginResendSms.setText(getString(R.string.resend_sms_code));
             }
-        });
-        animator.start();
-        mTvLoginResendSms.clearAnimation();
-        mTvLoginResendSms.setEnabled(false);
+        };
+
+        mCountDownTimer.start();
+
     }
 
     @Override
@@ -169,6 +187,19 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
         if (mDialog.isShowing()) {
             mDialog.dismiss();
         }
-        mTvLoginResendSms.clearAnimation();
+       if(mCountDownTimer != null){
+           mCountDownTimer.cancel();
+       }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == null){
+            return;
+        }
+        if(v == mTvLoginResendSms){
+            //重新发送验证码
+            showCountDown();
+        }
     }
 }
