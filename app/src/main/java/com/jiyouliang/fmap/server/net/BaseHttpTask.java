@@ -1,12 +1,19 @@
 package com.jiyouliang.fmap.server.net;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
+import android.view.View;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jiyouliang.fmap.util.Constants;
+import com.jiyouliang.fmap.util.DeviceUtils;
+import com.jiyouliang.fmap.util.security.RSACrypt;
 
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -16,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import okhttp3.OkHttpClient;
 
 
-public abstract class BaseHttpTask{
+public abstract class BaseHttpTask {
 
     //连接超时时间
     protected static final long TIMEOUT_CONNECT = 10;
@@ -54,8 +61,22 @@ public abstract class BaseHttpTask{
      * @param url
      * @param json     json格式参数
      * @param listener
+     * @deprecated 该方法已过期, 请使用
+     * {@link #get(String, Map, BaseHttpResponse)}替代当前方法
      */
+    @Deprecated
     abstract void get(String url, String json, BaseHttpResponse listener);
+
+    /**
+     * get请求,该方法用于替换就版本{@link #get(String, String, BaseHttpResponse)},就版本get方法每次都需要
+     * 手动生成timestamp和RSA sign.新版本get方法已将生成sign统一封装,避免每次都需要生成.
+     *
+     * @param url
+     * @param params   Map格式参数,
+     * @param listener
+     */
+    abstract void get(String url, Map<String, String> params, BaseHttpResponse listener);
+
 
     /**
      * post请求
@@ -63,8 +84,21 @@ public abstract class BaseHttpTask{
      * @param url
      * @param json     json格式参数
      * @param listener
+     * @deprecated 该方法已过期, 请使用{@link #post(String, Map, Context, BaseHttpResponse)}替代当前方法
      */
+    @Deprecated
     abstract void post(String url, String json, BaseHttpResponse listener);
+
+
+    /**
+     * post请求,该方法用于替换就版本{@link #post(String, String, BaseHttpResponse)} )},就版本post方法每次都需要
+     * 手动生成timestamp和RSA sign.新版本get方法已将生成sign统一封装,避免每次都需要生成.
+     *
+     * @param url
+     * @param params   Map格式参数,
+     * @param listener
+     */
+    abstract void post(String url, Map<String, String> params, Context context, BaseHttpResponse listener) throws Exception;
 
     protected void setListener(BaseHttpResponse listener) {
         sHandler.setListener(listener);
@@ -154,8 +188,9 @@ public abstract class BaseHttpTask{
 
     /**
      * 网络请求回调
-     * @deprecated 该回调接口已过期,请使用下面Listener替换
+     *
      * @see BaseHttpResponse
+     * @deprecated 该回调接口已过期, 请使用下面Listener替换
      */
     @Deprecated
     public interface OnHttpResponseListener {
@@ -214,4 +249,43 @@ public abstract class BaseHttpTask{
     public String getFullUrl(String url) {
         return getUrlPrefix() + url;
     }
+
+
+    /**
+     * 组装网络请求参数,通过参数timestamp和sign请勿传递进来
+     *
+     * @return
+     */
+    protected String assembleReqParams(Context context, Map<String, String> map) throws Exception {
+        //遍历key和value,存储到json作为请求参数
+        JSONObject json = getCommonJsonObject(context);
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (entry == null) {
+                continue;
+            }
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (TextUtils.isEmpty(key) || TextUtils.isEmpty(value)) {
+                continue;
+            }
+
+            json.put(key, value);
+        }
+        return json.toString();
+    }
+
+    /**
+     * 组装网络请求通用json对象,该对象存储sign和timestame两个字段,避免每次发起网络请求都需要重复添加
+     *
+     * @return
+     */
+    private JSONObject getCommonJsonObject(Context context) throws Exception {
+        JSONObject json = new JSONObject();
+        String timestamp = DeviceUtils.getTimestampStr();
+        String sign = RSACrypt.genSign(context, timestamp);
+        json.put("timestamp", timestamp);
+        json.put("sign", sign);
+        return json;
+    }
+
 }

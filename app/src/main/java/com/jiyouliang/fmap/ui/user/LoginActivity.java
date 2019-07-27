@@ -1,5 +1,6 @@
 package com.jiyouliang.fmap.ui.user;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -26,7 +27,7 @@ import org.json.JSONObject;
 /**
  * 用户登录
  */
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener, IUserLoginView {
 
     private EditText mEtPhone;
     private ButtonLoadingView mBtnLogin;
@@ -36,6 +37,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private String sign;
     private String phone;
     private static final int REQ_CODE_SMS = 0;
+    private Context mContext;
+    private UserLoginPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         setContentView(R.layout.activity_user_sms_login);
         initView();
         setListener();
+        initData();
+    }
+
+    private void initView() {
+        mEtPhone = (EditText) findViewById(R.id.et_phone);
+        mBtnLogin = (ButtonLoadingView) findViewById(R.id.btn_send_sms);
+        mBtnLogin.setEnabled(false);
+
+
     }
 
     private void setListener() {
@@ -69,120 +81,24 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             }
         });
+        mBtnLogin.setOnClickListener(this);
     }
 
-    private void initView() {
-        mEtPhone = (EditText) findViewById(R.id.et_phone);
-        mBtnLogin = (ButtonLoadingView) findViewById(R.id.btn_send_sms);
-
-        mBtnLogin.setOnClickListener(this);
+    private void initData() {
+        mContext = this;
+        mPresenter = new UserLoginPresenter(this, mContext);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_send_sms:
-                sendSms();
+                if(mEtPhone.getText() != null){
+                    phone = mEtPhone.getText().toString();
+                }
+                mPresenter.sendSms(phone);
                 break;
         }
-    }
-
-    /**
-     * 发送短信验证码
-     */
-    private void sendSms() {
-        if(mBtnLogin.getLoadingState()){
-            //避免重复点击请求
-            return;
-        }
-        if (!mEtPhone.isEnabled()) {
-            return;
-        }
-        phone = mEtPhone.getText().toString().trim();
-        if (!ValidateUtil.isPhone(phone)) {
-            showToast("请输入正确手机号码");
-            return;
-        }
-        timestamp = String.valueOf(DeviceUtils.getTimestamp());
-        sign = getSign();
-        if (TextUtils.isEmpty(sign)) {
-            showToast("RSA签名失败");
-            return;
-        }
-
-        //显示button加载
-        mBtnLogin.startLoading();
-        //请求参数
-        String jsonParams = getHttpRequestParams();
-        HttpTaskClient.getInstance().sendSms(jsonParams, REQ_CODE_SMS, UserLoginData.class, new HttpTaskClient.OnHttpResponseListener<UserLoginData>() {
-            @Override
-            public void onException(Exception e) {
-                log("发送验证码失败,"+e.getMessage());
-                mBtnLogin.stopLoading();
-            }
-
-            @Override
-            public void onResponse(int reqCode, UserLoginData response) {
-                log("发送验证码成功:" + response);
-                mBtnLogin.stopLoading();
-                if(response.getCode() == 0){
-                    showInputSmsCode();
-                }else{
-                    Toast.makeText(LoginActivity.this, "发送验证码失败(code:"+response.getCode()+",msg:"+response.getMsg()+")" , Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    /**
-     * 跳转输入短信验证码页面
-     */
-    private void showInputSmsCode() {
-        Intent intent = new Intent(LoginActivity.this, UserLoginSendSmsActivity.class);
-        intent.putExtra("phone", phone);
-        startActivity(intent);
-        finish();
-    }
-
-    /**
-     * 生成http请求参数
-     *
-     * @return
-     */
-    private String getHttpRequestParams() {
-        JSONObject json = new JSONObject();
-        try {
-            json.put("mobile", phone);
-            json.put("timestamp", timestamp);
-            json.put("sign", sign);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return json.toString();
-    }
-
-    /**
-     *
-     * 生成签名：签名格式=keystore md5 + timestamp
-     * @deprecated 请使用RSACrypt.genSign
-     * @see RSACrypt#genSign
-     * @return
-     */
-    @Deprecated
-    private String getSign() {
-        String keystoreMD5 = KeystoreUtil.getMD5Signatures(getPackageManager(), getPackageName());
-        if (TextUtils.isEmpty(keystoreMD5)) {
-            return null;
-        }
-        StringBuilder data = new StringBuilder();
-        data.append(keystoreMD5).append(timestamp);
-        try {
-            //生成RSA 签名
-            return RSACrypt.sign(data.toString().getBytes());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private void log(String msg) {
@@ -190,5 +106,52 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             LogUtil.d(TAG, msg);
         }
 
+    }
+
+    @Override
+    public void showMoibleError() {
+        showToast(getString(R.string.please_input_correct_mobile));
+    }
+
+    /**
+     * 暂时不需要加载Dialog,Button已有进度显示
+     */
+    @Override
+    public void hideLoadingDialog() {
+
+    }
+
+    @Override
+    public void showLoadingBtn() {
+        //显示button加载
+        mBtnLogin.startLoading();
+    }
+
+    @Override
+    public void showNormalBtn() {
+        mBtnLogin.stopLoading();
+    }
+
+    @Override
+    public void sendSmsSuccess() {
+        // 发送验证码成功,跳转下一个页面
+        Intent intent = new Intent(LoginActivity.this, UserLoginSendSmsActivity.class);
+        intent.putExtra("phone", phone);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void sendSmsException(Exception e) {
+        if(e != null){
+            showToast(e.getMessage());
+        }
+    }
+
+    @Override
+    public void sendSmsFailed(String erroMsg) {
+        if(!TextUtils.isEmpty(erroMsg)){
+            showToast(erroMsg);
+        }
     }
 }

@@ -11,6 +11,9 @@ public class ValidateUtil {
      * @return
      */
     public static boolean isPhone(String phone){
+        if(null == phone){
+            return false;
+        }
         return phone.matches("^1[356789]\\d{9}$");
     }
 }

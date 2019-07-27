@@ -134,6 +134,9 @@ public class ButtonLoadingView extends Button {
         mLoadingState = true;
     }
 
+    /**
+     * 停止加载动画
+     */
     public void stopLoading(){
         if(!TextUtils.isEmpty(mText)){
             setText(mText);

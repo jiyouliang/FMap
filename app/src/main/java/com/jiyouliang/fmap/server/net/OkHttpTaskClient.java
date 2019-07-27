@@ -1,10 +1,17 @@
 package com.jiyouliang.fmap.server.net;
 
+import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
+
+import com.alibaba.fastjson.JSONObject;
+import com.jiyouliang.fmap.util.DeviceUtils;
+import com.jiyouliang.fmap.util.security.RSACrypt;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -24,6 +31,7 @@ public class OkHttpTaskClient extends BaseHttpTask {
     private static OkHttpTaskClient instance;
 
     private static OkHttpClient mOkHttpClient;
+    private static final String CONTENT_TYPE = "application/json; charset=utf-8";;
 
     private OkHttpTaskClient() {
         super();
@@ -43,6 +51,16 @@ public class OkHttpTaskClient extends BaseHttpTask {
         return instance;
     }
 
+    /**
+     * get请求，TODO 还么有将参数设置到请求中
+     *
+     * @param url
+     * @param json     json格式参数
+     * @param listener
+     * @deprecated 该方法已过期, 请使用
+     * {@link #get(String, Map, BaseHttpResponse)}替代当前方法
+     */
+    @Deprecated
     @Override
     public void get(String url, String json, BaseHttpResponse listener) {
         setListener(listener);
@@ -56,13 +74,44 @@ public class OkHttpTaskClient extends BaseHttpTask {
         executeTask(call);
     }
 
+    /**
+     * TODO 还么有将参数设置到请求中
+     * get请求,该方法用于替换就版本{@link #get(String, String, BaseHttpResponse)},就版本get方法每次都需要
+     * 手动生成timestamp和RSA sign.新版本get方法已将生成sign统一封装,避免每次都需要生成.
+     *
+     * @param url
+     * @param params   Map格式参数,
+     * @param listener
+     */
+    @Override
+    void get(String url, Map<String, String> params, BaseHttpResponse listener) {
+        setListener(listener);
+        String fullUrl = getFullUrl(url);
+        //构造请求对象
+        Request request = new Request.Builder()
+                .url(getFullUrl(fullUrl))//请求的url,10.0.3.2为genymotion访问本地服务器ip
+                .get()
+                .build();
+        Call call = mOkHttpClient.newCall(request);
+        executeTask(call);
+    }
 
+
+    /**
+     * post请求
+     *
+     * @param url
+     * @param json     json格式参数
+     * @param listener
+     * @deprecated 该方法已过期, 请使用{@link #post(String, String, BaseHttpResponse)}替代当前方法
+     */
+    @Deprecated
     @Override
     public void post(String url, String json, BaseHttpResponse listener) {
         setListener(listener);
         String fullUrl = getFullUrl(url);
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8")
-                , json);
+
+        RequestBody requestBody = getRequestBody(json);
         //构造请求对象
         Request request = new Request.Builder()
                 .url(fullUrl)//请求的url,10.0.3.2为genymotion访问本地服务器ip
@@ -70,6 +119,40 @@ public class OkHttpTaskClient extends BaseHttpTask {
                 .build();
         Call call = mOkHttpClient.newCall(request);
         executeTask(call);
+    }
+
+    /**
+     * post请求,该方法用于替换就版本{@link #post(String, String, BaseHttpResponse)} )},就版本post方法每次都需要
+     * 手动生成timestamp和RSA sign.新版本get方法已将生成sign统一封装,避免每次都需要生成.
+     *
+     * @param url
+     * @param params   Map格式参数,
+     * @param listener
+     */
+    @Override
+    void post(String url, Map<String, String> params, Context context, BaseHttpResponse listener) throws Exception {
+        setListener(listener);
+        String fullUrl = getFullUrl(url);
+        String json = assembleReqParams(context, params);
+        RequestBody requestBody = getRequestBody(json);
+        //构造请求对象
+        Request request = new Request.Builder()
+                .url(fullUrl)//请求的url,10.0.3.2为genymotion访问本地服务器ip
+                .post(requestBody)
+                .build();
+        Call call = mOkHttpClient.newCall(request);
+        executeTask(call);
+    }
+
+    /**
+     * 将json参数转成请求RequestBody对象
+     * @param json
+     * @return
+     */
+    @NotNull
+    private RequestBody getRequestBody(String json) {
+        return RequestBody.create(MediaType.parse(CONTENT_TYPE)
+                    , json);
     }
 
     /**
@@ -104,6 +187,7 @@ public class OkHttpTaskClient extends BaseHttpTask {
                 .writeTimeout(TIMEOUT_WRITE, TimeUnit.SECONDS)
                 .readTimeout(TIMEOUT_READ, TimeUnit.SECONDS).build();
     }
+
 
 
 }
