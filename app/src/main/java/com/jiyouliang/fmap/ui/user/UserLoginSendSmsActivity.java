@@ -16,6 +16,7 @@ import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.os.CountDownThreadTimer;
 import com.jiyouliang.fmap.view.widget.KeyboardContainerView;
 import com.jiyouliang.fmap.view.widget.KeyboardInputView;
+import com.jiyouliang.fmap.view.widget.LoadingDialog;
 import com.jiyouliang.fmap.view.widget.TopTitleView;
 
 /**
@@ -30,7 +31,7 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
     private TextView mTvSmsError;
     private TextView mTvLoginResendSms;
     private KeyboardContainerView mKeyboardContainerView;
-    private ProgressDialog mDialog;
+    private LoadingDialog mDialog;
     private KeyboardInputView mKeyboardInputView;
     private Context mContext;
     private UserLoginSendSmsPresenter mPresenter;
@@ -52,7 +53,7 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
         mTvSmsError = (TextView) findViewById(R.id.tv_sms_error);
         mTvLoginResendSms = (TextView) findViewById(R.id.tv_login_resend_sms);
         mKeyboardContainerView = (KeyboardContainerView) findViewById(R.id.keyboard_container_view);
-        mDialog = new ProgressDialog(this);
+        mDialog = new LoadingDialog(this);
         mKeyboardInputView = findViewById(R.id.keyboard_input_view);
         //设置手机号
         StringBuilder hidePhone = new StringBuilder();

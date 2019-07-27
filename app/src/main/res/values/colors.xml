@@ -23,4 +23,5 @@
     <color name="btn_login_press_solid">#F2F2F2</color>
     <color name="btn_login_normal_stroke">@color/blue_color</color>
 
+    <drawable name="transparent">#00000000</drawable>
 </resources>

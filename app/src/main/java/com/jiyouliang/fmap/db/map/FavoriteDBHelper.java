@@ -2,10 +2,10 @@ package com.jiyouliang.fmap.db.map;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Nullable;
 
 import com.jiyouliang.fmap.db.BaseSqliteOpenHelper;
 
-import androidx.annotation.Nullable;
 
 /**
  * 我的收藏

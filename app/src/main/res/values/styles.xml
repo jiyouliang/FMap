@@ -83,5 +83,13 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <!--dialog样式-->
+    <style name="BaseDialogTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/transparent</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
 </resources>
 
