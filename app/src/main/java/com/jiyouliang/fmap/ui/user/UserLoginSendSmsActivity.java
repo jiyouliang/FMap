@@ -92,6 +92,7 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
             }
         });
 
+
         mTvLoginResendSms.setOnClickListener(this);
     }
 

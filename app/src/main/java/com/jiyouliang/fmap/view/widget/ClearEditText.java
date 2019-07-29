@@ -50,6 +50,7 @@ public class ClearEditText extends EditText implements View.OnClickListener {
     private ValueAnimator mAnimator;
     private float mDownX;
     private float mDownY;
+    private OnClearEditClickListener mListener;
 
 
     public ClearEditText(Context context) {
@@ -184,8 +185,10 @@ public class ClearEditText extends EditText implements View.OnClickListener {
                 float upX = event.getX();
                 float upY = event.getY();
                 if(isCloseClick(mDownX, mDownY) && isCloseClick(upX, upY)){
-                    //点击了close图标,清空文字
-                    setText("");
+                    //点击了close图标回调
+                    if(mListener != null){
+                        mListener.onDelete();
+                    }
                     return true;
                 }
                 break;
@@ -210,6 +213,17 @@ public class ClearEditText extends EditText implements View.OnClickListener {
         //y轴方向判断
         boolean isYIn = (y >= top - offset) && (y <= top + mBtmClose.getHeight() + offset);
         return isXIn && isYIn;
+    }
+
+    public void setOnClearEditClickListener(OnClearEditClickListener listener){
+        this.mListener = listener;
+    }
+
+    public interface OnClearEditClickListener{
+        /**
+         * 点击删除文字回调
+         */
+        void onDelete();
     }
 
 }

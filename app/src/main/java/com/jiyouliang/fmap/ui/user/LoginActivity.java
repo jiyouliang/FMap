@@ -20,6 +20,7 @@ import com.jiyouliang.fmap.util.security.KeystoreUtil;
 import com.jiyouliang.fmap.util.security.RSACrypt;
 import com.jiyouliang.fmap.util.security.ValidateUtil;
 import com.jiyouliang.fmap.view.widget.ButtonLoadingView;
+import com.jiyouliang.fmap.view.widget.ClearEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +30,7 @@ import org.json.JSONObject;
  */
 public class LoginActivity extends BaseActivity implements View.OnClickListener, IUserLoginView {
 
-    private EditText mEtPhone;
+    private ClearEditText mEtPhone;
     private ButtonLoadingView mBtnLogin;
     private static final String TAG = "LoginActivity";
     private static final boolean DEBUGGING = true;
@@ -50,7 +51,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void initView() {
-        mEtPhone = (EditText) findViewById(R.id.et_phone);
+        mEtPhone = (ClearEditText) findViewById(R.id.et_phone);
         mBtnLogin = (ButtonLoadingView) findViewById(R.id.btn_send_sms);
         mBtnLogin.setEnabled(false);
 
@@ -81,6 +82,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
             }
         });
+
+        mEtPhone.setOnClearEditClickListener(new ClearEditText.OnClearEditClickListener() {
+            @Override
+            public void onDelete() {
+                //清空文字
+                mEtPhone.setText("");
+                mBtnLogin.setEnabled(false);
+            }
+        });
+
         mBtnLogin.setOnClickListener(this);
     }
 
