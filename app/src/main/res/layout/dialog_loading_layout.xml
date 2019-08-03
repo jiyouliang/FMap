@@ -9,8 +9,7 @@
         android:id="@+id/iv_loading"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_gravity="center_vertical"
-        android:background="@drawable/amap_loading" />
+        android:layout_gravity="center_vertical" />
 
     <TextView
         android:layout_width="wrap_content"
