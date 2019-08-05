@@ -5,4 +5,8 @@
     <string name="resend_sms_code">重新发送</string>
     <string name="sms_code_incorrect">验证码错误</string>
     <string name="please_input_correct_mobile">请输入正确手机号</string>
+    <string name="click_login">点击登录</string>
+    <string name="login_experience_more">登录后体验更多新鲜功能</string>
+    <string name="login_activity_reward">活动/奖励</string>
+    <string name="login_sign_reward">签到领奖</string>
 </resources>

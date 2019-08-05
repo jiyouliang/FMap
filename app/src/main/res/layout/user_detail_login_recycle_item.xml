@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="@dimen/padding_large2">
+
+    <TextView
+        android:id="@+id/tv_login"
+        style="@style/BiggerTextTheme.BaseTextTheme"
+        android:text="@string/click_login"
+        android:textColor="#464646"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_experience_more"
+        style="@style/NormalTextTheme.BaseTextTheme"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/login_experience_more"
+        android:textColor="#9F9F9F"
+        app:layout_constraintLeft_toLeftOf="@id/tv_login"
+        app:layout_constraintTop_toBottomOf="@id/tv_login" />
+
+    <TextView
+        android:id="@+id/tv_activity_reward"
+        style="@style/LittleTextTheme.BaseTextTheme"
+        android:layout_height="30dp"
+        android:layout_marginTop="@dimen/padding_large"
+        android:background="@drawable/user_detail_login_rect_bg"
+        android:drawableEnd="@drawable/user_detail_triangle_icon"
+        android:drawablePadding="4dp"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingRight="@dimen/padding_large"
+        android:text="@string/login_activity_reward"
+        android:textColor="#9F9F9F"
+        app:layout_constraintLeft_toLeftOf="@id/tv_experience_more"
+        app:layout_constraintTop_toBottomOf="@id/tv_experience_more" />
+
+    <TextView
+        android:id="@+id/tv_sign_reward"
+        style="@style/LittleTextTheme.BaseTextTheme"
+        android:layout_height="30dp"
+        android:layout_marginLeft="@dimen/padding_large"
+        android:background="@drawable/user_detail_login_rect_bg"
+        android:drawableEnd="@drawable/user_detail_triangle_icon"
+        android:drawablePadding="4dp"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingRight="@dimen/padding_large"
+        android:text="@string/login_sign_reward"
+        android:textColor="#9F9F9F"
+        app:layout_constraintBottom_toBottomOf="@id/tv_activity_reward"
+        app:layout_constraintLeft_toRightOf="@id/tv_activity_reward"
+        app:layout_constraintTop_toTopOf="@id/tv_activity_reward" />
+
+    <ImageView
+        android:id="@+id/iv_user_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/user_detail_logo_icon"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>

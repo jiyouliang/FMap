@@ -48,6 +48,11 @@ public class UserDetailActivity extends BaseActivity {
          */
         private static final int TYPE_HEADER = 0;
 
+        /**
+         * 点击登录部分
+         */
+        private static final int TYPE_LOGIN = 1;
+
         @NonNull
         @Override
         public UserDetailViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
@@ -56,14 +61,19 @@ public class UserDetailActivity extends BaseActivity {
             if (inflater == null) {
                 return null;
             }
-            View itemView;
+            View itemView = null;
             switch (viewType) {
                 case TYPE_HEADER:
                     itemView = inflater.inflate(R.layout.user_detail_header_recycle_item, parent, false);
-                    return new UserDetailViewHolder(itemView);
+                    break;
+                case TYPE_LOGIN:
+                    itemView = inflater.inflate(R.layout.user_detail_login_recycle_item, parent, false);
+                    break;
                 default:
-                    return null;
+                    break;
             }
+
+            return new UserDetailViewHolder(itemView);
         }
 
         @Override
@@ -81,17 +91,12 @@ public class UserDetailActivity extends BaseActivity {
 
         @Override
         public int getItemViewType(int position) {
-            switch (position) {
-                case TYPE_HEADER:
-                    return TYPE_HEADER;
-                default:
-                    return position;
-            }
+            return position;
         }
 
         @Override
         public int getItemCount() {
-            return 1;
+            return 2;
         }
     }
 
@@ -100,7 +105,7 @@ public class UserDetailActivity extends BaseActivity {
      */
     private static class UserDetailViewHolder extends RecyclerView.ViewHolder {
 
-        public UserDetailViewHolder(@NonNull View itemView) {
+        private UserDetailViewHolder(@NonNull View itemView) {
             super(itemView);
         }
     }

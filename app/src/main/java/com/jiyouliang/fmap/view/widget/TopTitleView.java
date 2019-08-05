@@ -20,7 +20,7 @@ import com.jiyouliang.fmap.R;
  */
 public class TopTitleView extends RelativeLayout {
     private ImageView mIvLeft;
-    private TextView mTvRight;
+    private TextView mTextRight;
     private boolean visiable;
     private ImageView mIvRight;
 
@@ -54,8 +54,8 @@ public class TopTitleView extends RelativeLayout {
 
     private void initView() {
         mIvLeft = findViewById(R.id.iv_left);
-        mTvRight = findViewById(R.id.tv_right);
-        mTvRight.setVisibility(View.GONE);
+        mTextRight = findViewById(R.id.tv_right);
+        mTextRight.setVisibility(View.GONE);
 
         mIvRight = findViewById(R.id.iv_right);
         mIvRight.setVisibility(View.GONE);
@@ -67,12 +67,12 @@ public class TopTitleView extends RelativeLayout {
      */
     public void setRightText(String text){
         mIvRight.setVisibility(View.GONE);
-        mTvRight.setVisibility(View.VISIBLE);
-        mTvRight.setText(text);
+        mTextRight.setVisibility(View.VISIBLE);
+        mTextRight.setText(text);
     }
 
     public void setRightTextVisibility(boolean visiable) {
-        mTvRight.setVisibility(visiable ? View.VISIBLE : View.GONE);
+        mTextRight.setVisibility(visiable ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -83,12 +83,14 @@ public class TopTitleView extends RelativeLayout {
         if(drawable == null){
             return;
         }
+        mIvRight.setVisibility(View.VISIBLE);
+        mTextRight.setVisibility(View.GONE);
         mIvRight.setImageDrawable(drawable);
     }
 
     public void setRightDrawable(int resId){
         mIvRight.setVisibility(View.VISIBLE);
-        mTvRight.setVisibility(View.GONE);
+        mTextRight.setVisibility(View.GONE);
         mIvRight.setImageDrawable(getResources().getDrawable(resId));
     }
 }
