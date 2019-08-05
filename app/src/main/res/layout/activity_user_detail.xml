@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.jiyouliang.fmap.view.widget.ReboundLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/user_detail_bg"
+    android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycle_view"
+    <com.jiyouliang.fmap.view.widget.TopTitleView
+        android:id="@+id/top_title_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:alpha="0"
+        android:layout_height="wrap_content"
+        app:ttvRightIcon="@drawable/user_detail_setting_icon"
+        app:ttvRightTitleVisiable="false" />
 
-</com.jiyouliang.fmap.view.widget.ReboundLinearLayout>
+    <com.jiyouliang.fmap.view.widget.ReboundLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycle_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.jiyouliang.fmap.view.widget.ReboundLinearLayout>
+
+</LinearLayout>

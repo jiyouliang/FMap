@@ -2,6 +2,7 @@ package com.jiyouliang.fmap.view.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ public class TopTitleView extends RelativeLayout {
     private ImageView mIvLeft;
     private TextView mTvRight;
     private boolean visiable;
+    private ImageView mIvRight;
 
     public TopTitleView(Context context) {
         this(context, null);
@@ -32,7 +34,7 @@ public class TopTitleView extends RelativeLayout {
 
     public TopTitleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
+        //初始化布局
         ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.view_top_title, this, true);
 
@@ -44,17 +46,49 @@ public class TopTitleView extends RelativeLayout {
     private void initFromAttributes(Context context, @Nullable AttributeSet attrs) {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.TopTitleView);
         boolean rightTitleVisiable = ta.getBoolean(R.styleable.TopTitleView_ttvRightTitleVisiable, true);
+        Drawable drawableRight = ta.getDrawable(R.styleable.TopTitleView_ttvRightIcon);
+        setRightDrawable(drawableRight);
         ta.recycle();
-
         setRightTextVisibility(rightTitleVisiable);
     }
 
     private void initView() {
         mIvLeft = findViewById(R.id.iv_left);
         mTvRight = findViewById(R.id.tv_right);
+        mTvRight.setVisibility(View.GONE);
+
+        mIvRight = findViewById(R.id.iv_right);
+        mIvRight.setVisibility(View.GONE);
+    }
+
+    /**
+     * 右侧文字
+     * @param text
+     */
+    public void setRightText(String text){
+        mIvRight.setVisibility(View.GONE);
+        mTvRight.setVisibility(View.VISIBLE);
+        mTvRight.setText(text);
     }
 
     public void setRightTextVisibility(boolean visiable) {
         mTvRight.setVisibility(visiable ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * 设置右侧图片
+     * @param drawable
+     */
+    public void setRightDrawable(Drawable drawable){
+        if(drawable == null){
+            return;
+        }
+        mIvRight.setImageDrawable(drawable);
+    }
+
+    public void setRightDrawable(int resId){
+        mIvRight.setVisibility(View.VISIBLE);
+        mTvRight.setVisibility(View.GONE);
+        mIvRight.setImageDrawable(getResources().getDrawable(resId));
     }
 }

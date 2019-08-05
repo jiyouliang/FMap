@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -89,6 +89,50 @@
         <item name="android:windowBackground">@drawable/transparent</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+
+    <!--TextView相关样式-->
+    <style name="BaseTextTheme">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+   <!--
+    阿里巴巴：
+    之所以文本大小也推荐使用 dp 而非 sp，因为 sp 是 Android 早期推荐使用的，但其
+    实 sp 不仅和 dp 一样受屏幕密度的影响，还受到系统设置里字体大小的影响，所以
+    使用 dp 对于应用开发会更加保证 UI 的一致性和还原度。
+    -->
+
+    <style name="BiggerTextTheme.BaseTextTheme" parent="BaseTextTheme">
+        <item name="android:textSize" tools:ignore="SpUsage">26dp</item>
+    </style>
+
+    <style name="BigTextTheme.BaseTextTheme" parent="BaseTextTheme">
+        <item name="android:textSize" tools:ignore="SpUsage">24dp</item>
+    </style>
+
+    <style name="LargerTextTheme.BaseTextTheme" parent="BaseTextTheme">
+        <item name="android:textSize" tools:ignore="SpUsage">22dp</item>
+    </style>
+
+    <style name="LargeTextTheme.BaseTextTheme" parent="BaseTextTheme">
+        <item name="android:textSize" tools:ignore="SpUsage">20dp</item>
+    </style>
+
+    <style name="MediumTextTheme.BaseTextTheme" parent="BaseTextTheme">
+        <item name="android:textSize" tools:ignore="SpUsage">18dp</item>
+    </style>
+
+    <style name="NormalTextTheme.BaseTextTheme" parent="BaseTextTheme">
+        <item name="android:textSize" tools:ignore="SpUsage">16dp</item>
+    </style>
+    <style name="SmallTextTheme.BaseTextTheme" parent="BaseTextTheme">
+        <item name="android:textSize" tools:ignore="SpUsage">14dp</item>
+    </style>
+
+    <style name="LittleTextTheme.BaseTextTheme" parent="BaseTextTheme">
+        <item name="android:textSize" tools:ignore="SpUsage">12dp</item>
     </style>
 
 </resources>

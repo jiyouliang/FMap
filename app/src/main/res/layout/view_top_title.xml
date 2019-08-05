@@ -14,11 +14,20 @@
     <TextView
         android:id="@+id/tv_right"
         android:layout_width="wrap_content"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:text="密码登录"
         android:textColor="@color/poi_detail_loc"
         android:textSize="16sp" />
+
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/iv_right"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
 
 </RelativeLayout>
