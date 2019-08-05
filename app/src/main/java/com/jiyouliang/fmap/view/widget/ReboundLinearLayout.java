@@ -25,7 +25,7 @@ public class ReboundLinearLayout extends LinearLayout implements NestedScrolling
     /**
      * 摩擦力,摩擦力越大view移动距离越小
      */
-    private static final float FORCE = 4.5f;
+    private static final float FORCE = 3.5f;
 
     /**
      * 滑动值

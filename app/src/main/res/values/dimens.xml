@@ -24,7 +24,10 @@
     <dimen name="height_btn_large">@dimen/input_height</dimen>
     <dimen name="radius_btn_large">23dp</dimen>
 
+    <!--用户详情页-->
+    <dimen name="user_detail_rect_circle_radius">15dp</dimen>
+    <dimen name="user_detail_rect_circle_text_height">30dp</dimen>
 
-
-
+    <!--分割线宽度高度-->
+    <dimen name="divider_line_width">1px</dimen>
 </resources>

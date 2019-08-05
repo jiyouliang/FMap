@@ -26,31 +26,23 @@
 
     <TextView
         android:id="@+id/tv_activity_reward"
-        style="@style/LittleTextTheme.BaseTextTheme"
-        android:layout_height="30dp"
-        android:layout_marginTop="@dimen/padding_large"
+        style="@style/UserDetailRectCircleText"
+        android:layout_marginTop="@dimen/padding_size"
         android:background="@drawable/user_detail_login_rect_bg"
         android:drawableEnd="@drawable/user_detail_triangle_icon"
         android:drawablePadding="4dp"
-        android:paddingLeft="@dimen/padding_large"
-        android:paddingRight="@dimen/padding_large"
         android:text="@string/login_activity_reward"
-        android:textColor="#9F9F9F"
         app:layout_constraintLeft_toLeftOf="@id/tv_experience_more"
         app:layout_constraintTop_toBottomOf="@id/tv_experience_more" />
 
     <TextView
         android:id="@+id/tv_sign_reward"
-        style="@style/LittleTextTheme.BaseTextTheme"
-        android:layout_height="30dp"
-        android:layout_marginLeft="@dimen/padding_large"
+        style="@style/UserDetailRectCircleText"
+        android:layout_marginLeft="@dimen/padding_size"
         android:background="@drawable/user_detail_login_rect_bg"
         android:drawableEnd="@drawable/user_detail_triangle_icon"
         android:drawablePadding="4dp"
-        android:paddingLeft="@dimen/padding_large"
-        android:paddingRight="@dimen/padding_large"
         android:text="@string/login_sign_reward"
-        android:textColor="#9F9F9F"
         app:layout_constraintBottom_toBottomOf="@id/tv_activity_reward"
         app:layout_constraintLeft_toRightOf="@id/tv_activity_reward"
         app:layout_constraintTop_toTopOf="@id/tv_activity_reward" />

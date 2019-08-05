@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--用户详情页style-->
-
+    <!--用户详情样式-->
+    <style name="UserDetailRectCircleText" parent="NormalTextTheme.BaseTextTheme">
+        <item name="android:layout_height">@dimen/user_detail_rect_circle_text_height</item>
+        <item name="android:paddingLeft">@dimen/padding_size</item>
+        <item name="android:paddingRight">@dimen/padding_size</item>
+        <item name="android:textColor">#FF9F9F9F</item>
+    </style>
 </resources>

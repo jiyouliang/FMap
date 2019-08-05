@@ -53,21 +53,27 @@ public class UserDetailActivity extends BaseActivity {
          */
         private static final int TYPE_LOGIN = 1;
 
+        /**
+         * 收藏夹、离线地图等工具
+         */
+        private static final int TYPE_FAVORITE = 2;
+        private Context mContext;
+
         @NonNull
         @Override
         public UserDetailViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
+            this.mContext = parent.getContext();
             int viewType = getItemViewType(position);
-            LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            if (inflater == null) {
-                return null;
-            }
             View itemView = null;
             switch (viewType) {
                 case TYPE_HEADER:
-                    itemView = inflater.inflate(R.layout.user_detail_header_recycle_item, parent, false);
+                    itemView = inflateLayout(parent, R.layout.user_detail_header_recycle_item);
                     break;
                 case TYPE_LOGIN:
-                    itemView = inflater.inflate(R.layout.user_detail_login_recycle_item, parent, false);
+                    itemView = inflateLayout(parent, R.layout.user_detail_login_recycle_item);
+                    break;
+                case TYPE_FAVORITE:
+                    itemView = inflateLayout(parent, R.layout.user_detail_fav_tools_recycle_item);
                     break;
                 default:
                     break;
@@ -76,16 +82,26 @@ public class UserDetailActivity extends BaseActivity {
             return new UserDetailViewHolder(itemView);
         }
 
+        /**
+         * 布局生成View
+         * @param parent
+         * @param resId
+         * @return
+         */
+        private View inflateLayout(ViewGroup parent, int resId) {
+            return ((LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                    .inflate(resId, parent, false);
+        }
+
         @Override
         public void onBindViewHolder(@NonNull UserDetailViewHolder userDetailViewHolder, int position) {
             int viewType = getItemViewType(position);
-            switch (viewType) {
+            /*switch (viewType) {
                 case TYPE_HEADER:
-
                     break;
                 default:
                     break;
-            }
+            }*/
         }
 
 
@@ -96,7 +112,7 @@ public class UserDetailActivity extends BaseActivity {
 
         @Override
         public int getItemCount() {
-            return 2;
+            return 3;
         }
     }
 
