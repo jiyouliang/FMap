@@ -5,6 +5,7 @@
 
     <TextView
         android:id="@+id/tv_title"
+        android:textStyle="bold"
         android:layout_centerVertical="true"
         style="@style/SmallTextTheme.BaseTextTheme"
         android:textColor="@color/user_detail_title_color"

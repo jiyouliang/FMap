@@ -2,6 +2,7 @@ package com.jiyouliang.fmap.view.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -12,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jiyouliang.fmap.R;
+import com.jiyouliang.fmap.util.DeviceUtils;
 
 /**
  * @author YouLiang.Ji
@@ -51,8 +53,8 @@ public class SettingItemView extends RelativeLayout {
         // 关联布局
         ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.setting_item_view, this, true);
-        initFromAttributes(context, attrs, defStyleAttr, defStyleRes);
         initViews();
+        initFromAttributes(context, attrs, defStyleAttr, defStyleRes);
     }
 
     private void initViews() {
@@ -76,6 +78,7 @@ public class SettingItemView extends RelativeLayout {
         boolean titleVisiable = ta.getBoolean(R.styleable.SettingItemView_sivTitleVisiable, true);
         int titleSize = ta.getDimensionPixelSize(R.styleable.SettingItemView_sivTitleSize, getDefaultTitleTextSize());
         int titleColor = ta.getColor(R.styleable.SettingItemView_sivTitleColor, 0);
+        boolean titleIsBlod = ta.getBoolean(R.styleable.SettingItemView_sivTitleBlod, false);
 
         String subTitleText = ta.getString(R.styleable.SettingItemView_sivSubtitle);
         boolean subTitleVisiable = ta.getBoolean(R.styleable.SettingItemView_sivSubtitleVisiable, false);
@@ -87,6 +90,11 @@ public class SettingItemView extends RelativeLayout {
         setTitleSize(titleSize);
         if(titleColor != 0){
             setTitleColor(titleColor);
+        }
+        //设置文字加粗
+        if(titleIsBlod){
+            TextPaint paint = mTvTitle.getPaint();
+            paint.setFakeBoldText(true);
         }
 
         setSubTitleText(subTitleText);
@@ -112,7 +120,7 @@ public class SettingItemView extends RelativeLayout {
      * @param size px
      */
     public void setTitleSize(float size) {
-        mTvTitle.setTextSize(size);
+        mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
     }
 
     /**
@@ -139,20 +147,15 @@ public class SettingItemView extends RelativeLayout {
      * @param size px
      */
     public void setSubTitleSize(float size) {
-        mTvSubtitle.setTextSize(size);
+        mTvSubtitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
     }
 
     private int getDefaultTitleTextSize(){
-        return (int) dp2px(DEFAULT_TITLE_TEXT_SIZE);
+        return DeviceUtils.dip2px(getContext(), DEFAULT_TITLE_TEXT_SIZE);
     }
 
     private int getDefaultSubTitleTextSize() {
-        return (int) dp2px(DEFAULT_SUB_TITLE_TEXT_SIZE);
+        return DeviceUtils.dip2px(getContext(), DEFAULT_SUB_TITLE_TEXT_SIZE);
     }
 
-    private float dp2px(float dpValue) {
-        return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dpValue, getResources()
-                        .getDisplayMetrics());
-    }
 }

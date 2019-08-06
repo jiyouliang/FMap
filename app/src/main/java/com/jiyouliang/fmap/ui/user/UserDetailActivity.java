@@ -35,6 +35,11 @@ public class UserDetailActivity extends BaseActivity {
      */
     private static final int TYPE_FAVORITE = 2;
 
+    /**
+     * 我的成就、勋章
+     */
+    private static final int TYPE_MEDAL = 3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +83,9 @@ public class UserDetailActivity extends BaseActivity {
                 case TYPE_FAVORITE:
                     itemView = inflateLayout(parent, R.layout.user_detail_fav_tools_recycle_item);
                     break;
+                case TYPE_MEDAL:
+                    itemView = inflateLayout(parent, R.layout.user_detail_medal_level_recycle_item);
+                    break;
                 default:
                     break;
             }
@@ -87,6 +95,7 @@ public class UserDetailActivity extends BaseActivity {
 
         /**
          * 布局生成View
+         *
          * @param parent
          * @param resId
          * @return
@@ -115,7 +124,7 @@ public class UserDetailActivity extends BaseActivity {
 
         @Override
         public int getItemCount() {
-            return 3;
+            return 4;
         }
     }
 
@@ -126,10 +135,11 @@ public class UserDetailActivity extends BaseActivity {
 
         private Context mContext;
         ImageView ivLogo;
+
         private UserDetailViewHolder(Context context, @NonNull View itemView, int viewType) {
             super(itemView);
             this.mContext = context;
-            if(viewType == TYPE_LOGIN){
+            if (viewType == TYPE_LOGIN) {
                 ivLogo = itemView.findViewById(R.id.iv_user_logo);
                 ivLogo.setOnClickListener(this);
             }
@@ -137,12 +147,12 @@ public class UserDetailActivity extends BaseActivity {
 
         @Override
         public void onClick(View v) {
-            if(v == ivLogo){
+            if (v == ivLogo) {
                 showUserLoginPage();
             }
         }
 
-        private void showUserLoginPage(){
+        private void showUserLoginPage() {
             Intent intent = new Intent(mContext, LoginActivity.class);
             mContext.startActivity(intent);
         }

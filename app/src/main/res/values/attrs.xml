@@ -22,7 +22,9 @@
         <!--文字大小-->
         <attr name="sivTitleSize" format="dimension|reference"/>
         <!--文字颜色-->
-        <attr name="sivTitleColor" format="color"/>
+        <attr name="sivTitleColor" format="color|reference"/>
+        <!--文字是否加粗-->
+        <attr name="sivTitleBlod" format="boolean"/>
 
         <attr name="sivSubtitle" format="string|reference"/>
         <attr name="sivSubtitleVisiable" format="boolean"/>
