@@ -58,7 +58,7 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
         //设置手机号
         StringBuilder hidePhone = new StringBuilder();
         hidePhone.append(mPhone.substring(0, 3)).append("****")
-                .append(mPhone.substring(hidePhone.length() - 4, hidePhone.length()));
+                .append(mPhone.substring(7, 11));
         mTvLoginSendTip.setText(String.format(mTvLoginSendTip.getText().toString(), hidePhone));
 
         mContext = this;

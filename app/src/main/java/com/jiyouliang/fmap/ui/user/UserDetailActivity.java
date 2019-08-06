@@ -1,6 +1,7 @@
 package com.jiyouliang.fmap.ui.user;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.ui.BaseActivity;
@@ -18,6 +20,20 @@ import com.jiyouliang.fmap.ui.BaseActivity;
 public class UserDetailActivity extends BaseActivity {
 
     private RecyclerView mRecycleView;
+    /**
+     * 头部图片
+     */
+    private static final int TYPE_HEADER = 0;
+
+    /**
+     * 点击登录部分
+     */
+    private static final int TYPE_LOGIN = 1;
+
+    /**
+     * 收藏夹、离线地图等工具
+     */
+    private static final int TYPE_FAVORITE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,20 +59,7 @@ public class UserDetailActivity extends BaseActivity {
      */
     private static class UserDetailAdapter extends RecyclerView.Adapter<UserDetailViewHolder> {
 
-        /**
-         * 头部图片
-         */
-        private static final int TYPE_HEADER = 0;
 
-        /**
-         * 点击登录部分
-         */
-        private static final int TYPE_LOGIN = 1;
-
-        /**
-         * 收藏夹、离线地图等工具
-         */
-        private static final int TYPE_FAVORITE = 2;
         private Context mContext;
 
         @NonNull
@@ -79,7 +82,7 @@ public class UserDetailActivity extends BaseActivity {
                     break;
             }
 
-            return new UserDetailViewHolder(itemView);
+            return new UserDetailViewHolder(mContext, itemView, viewType);
         }
 
         /**
@@ -119,10 +122,31 @@ public class UserDetailActivity extends BaseActivity {
     /**
      * ViewHolder
      */
-    private static class UserDetailViewHolder extends RecyclerView.ViewHolder {
+    private static class UserDetailViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private UserDetailViewHolder(@NonNull View itemView) {
+        private Context mContext;
+        ImageView ivLogo;
+        private UserDetailViewHolder(Context context, @NonNull View itemView, int viewType) {
             super(itemView);
+            this.mContext = context;
+            if(viewType == TYPE_LOGIN){
+                ivLogo = itemView.findViewById(R.id.iv_user_logo);
+                ivLogo.setOnClickListener(this);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(v == ivLogo){
+                showUserLoginPage();
+            }
+        }
+
+        private void showUserLoginPage(){
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            mContext.startActivity(intent);
         }
     }
+
+
 }
