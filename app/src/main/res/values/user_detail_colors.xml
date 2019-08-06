@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--大标题-->
+    <color name="user_detail_color_black">#272727</color>
+    <!--常规标题-->
+    <color name="user_detail_title_color">#262626</color>
+    <!--副标题-->
+    <color name="user_detail_subtitle_color">#9D9D9D</color>
+
+</resources>

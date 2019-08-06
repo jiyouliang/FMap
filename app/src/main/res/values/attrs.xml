@@ -12,4 +12,20 @@
         <!--drawble-->
         <attr name="ttvRightIcon" format="reference" />
     </declare-styleable>
+
+    <!--SettingItemView-->
+    <declare-styleable name="SettingItemView">
+        <!--内容-->
+        <attr name="sivTitle" format="string|reference"/>
+        <!--是否显示-->
+        <attr name="sivTitleVisiable" format="boolean"/>
+        <!--文字大小-->
+        <attr name="sivTitleSize" format="dimension|reference"/>
+        <!--文字颜色-->
+        <attr name="sivTitleColor" format="color"/>
+
+        <attr name="sivSubtitle" format="string|reference"/>
+        <attr name="sivSubtitleVisiable" format="boolean"/>
+        <attr name="sivSubtitleSize" format="dimension|reference"/>
+    </declare-styleable>
 </resources>

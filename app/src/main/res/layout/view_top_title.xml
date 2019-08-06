@@ -12,7 +12,7 @@
         android:background="@drawable/title_bar_close" />
 
     <TextView
-        android:id="@+id/tv_right"
+        android:id="@+id/tv_subtitle"
         android:layout_width="wrap_content"
         android:visibility="gone"
         android:layout_height="wrap_content"

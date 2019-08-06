@@ -11,4 +11,5 @@
     <string name="login_sign_reward">签到领奖</string>
     <string name="user_detail_tool_tip">离线地图、收藏夹、组队等工具搬到首页了</string>
     <string name="user_detail_to_see">去看看</string>
+    <string name="temp_content">内容</string>
 </resources>

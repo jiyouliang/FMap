@@ -54,7 +54,7 @@ public class TopTitleView extends RelativeLayout {
 
     private void initView() {
         mIvLeft = findViewById(R.id.iv_left);
-        mTextRight = findViewById(R.id.tv_right);
+        mTextRight = findViewById(R.id.tv_subtitle);
         mTextRight.setVisibility(View.GONE);
 
         mIvRight = findViewById(R.id.iv_right);
