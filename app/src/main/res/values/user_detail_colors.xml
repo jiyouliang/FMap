@@ -7,4 +7,9 @@
     <!--副标题-->
     <color name="user_detail_subtitle_color">#9D9D9D</color>
 
+    <!--工具箱-->
+    <color name="user_detail_tool">@color/user_detail_color_black</color>
+    <!--查看更多-->
+    <color name="user_detail_to_see">#4287FF</color>
+
 </resources>

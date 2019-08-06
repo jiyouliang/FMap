@@ -10,7 +10,7 @@
     <com.jiyouliang.fmap.view.widget.SettingItemView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:sivTitle="@string/user_detail_my_achieved"
+        app:sivTitle="@string/user_detail_data_contribute"
         app:sivTitleBlod="true"
         app:sivTitleColor="@color/user_detail_color_black"
         app:sivTitleSize="18dp" />

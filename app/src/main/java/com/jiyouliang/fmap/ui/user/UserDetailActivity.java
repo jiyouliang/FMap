@@ -40,6 +40,11 @@ public class UserDetailActivity extends BaseActivity {
      */
     private static final int TYPE_MEDAL = 3;
 
+    /**
+     * 数据贡献
+     */
+    private static final int TYPE_DATA_CONTRIBUTE = 4;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +91,9 @@ public class UserDetailActivity extends BaseActivity {
                 case TYPE_MEDAL:
                     itemView = inflateLayout(parent, R.layout.user_detail_medal_level_recycle_item);
                     break;
+                case TYPE_DATA_CONTRIBUTE:
+                    itemView = inflateLayout(parent, R.layout.user_detail_data_contribute_recycle_item);
+                    break;
                 default:
                     break;
             }
@@ -124,7 +132,7 @@ public class UserDetailActivity extends BaseActivity {
 
         @Override
         public int getItemCount() {
-            return 4;
+            return 5;
         }
     }
 

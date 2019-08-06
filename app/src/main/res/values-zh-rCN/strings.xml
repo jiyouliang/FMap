@@ -9,7 +9,11 @@
     <string name="login_experience_more">登录后体验更多新鲜功能</string>
     <string name="login_activity_reward">活动/奖励</string>
     <string name="login_sign_reward">签到领奖</string>
-    <string name="user_detail_tool_tip">离线地图、收藏夹、组队等工具搬到首页了</string>
+    <string name="user_detail_tool_tip">工具箱搬到首页</string>
     <string name="user_detail_to_see">去看看</string>
     <string name="temp_content">内容</string>
+    <string name="user_detail_my_achieved">我的成就</string>
+    <string name="user_detail_login_see_achieved">登录查看已获得成就</string>
+    <string name="user_detail_data_contribute">数据贡献</string>
+    <string name="user_detail_offline_tip">离线地图移至搜索框下</string>
 </resources>
