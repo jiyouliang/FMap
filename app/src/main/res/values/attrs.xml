@@ -30,4 +30,12 @@
         <attr name="sivSubtitleVisiable" format="boolean"/>
         <attr name="sivSubtitleSize" format="dimension|reference"/>
     </declare-styleable>
+
+    <!--VerticalIconTextView-->
+    <declare-styleable name="VerticalIconTextView">
+        <!--图标-->
+        <attr name="vitIcon" format="reference"/>
+        <!--下部分文字内容-->
+        <attr name="vitTitle" format="string|reference"/>
+    </declare-styleable>
 </resources>
