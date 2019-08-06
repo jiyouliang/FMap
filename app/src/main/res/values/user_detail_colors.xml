@@ -12,4 +12,6 @@
     <!--查看更多-->
     <color name="user_detail_to_see">#4287FF</color>
 
+    <color name="user_detail_gray_color">#747474</color>
+
 </resources>

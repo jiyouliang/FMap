@@ -10,63 +10,124 @@
     <com.jiyouliang.fmap.view.widget.SettingItemView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:sivSubtitle="@string/user_detail_see_contribute"
+        app:sivSubtitleSize="14dp"
+        app:sivSubtitleVisiable="true"
         app:sivTitle="@string/user_detail_data_contribute"
         app:sivTitleBlod="true"
         app:sivTitleColor="@color/user_detail_color_black"
         app:sivTitleSize="18dp" />
 
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_large"
         android:background="@drawable/user_detail_medal_rect_bg"
+        android:orientation="vertical"
         android:padding="@dimen/padding_large">
 
         <LinearLayout
             android:id="@+id/ll_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding_size"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="wrap_content"
+            <com.jiyouliang.fmap.view.widget.VerticalIconTextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/padding_large"
                 android:layout_weight="1"
-                android:src="@drawable/member_primary" />
+                app:vitIcon="@drawable/user_detail_loc_unlock_icon"
+                app:vitTitle="@string/user_detail_loc_unlock" />
 
-            <ImageView
-                android:layout_width="wrap_content"
+            <com.jiyouliang.fmap.view.widget.VerticalIconTextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/padding_large"
                 android:layout_weight="1"
-                android:src="@drawable/member_platinum" />
+                app:vitIcon="@drawable/user_detail_add_loc_icon"
+                app:vitTitle="@string/user_detail_add_loc" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/padding_large"
-                android:layout_weight="1"
-                android:src="@drawable/member_golden" />
-
-            <ImageView
-                android:layout_width="wrap_content"
+            <com.jiyouliang.fmap.view.widget.VerticalIconTextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/member_diamond" />
+                app:vitIcon="@drawable/user_detail_add_merchant_icon"
+                app:vitTitle="@string/user_detail_add_merchant" />
 
         </LinearLayout>
 
-        <TextView
-            android:layout_marginTop="@dimen/padding_large"
-            android:layout_above="@id/ll_container"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            style="@style/SmallTextTheme.BaseTextTheme"
-            android:text="@string/user_detail_login_see_achieved"/>
 
-    </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_margin="@dimen/padding_size"
+            android:background="@drawable/common_line" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_size">
+
+            <TextView
+                android:id="@+id/tv_question1"
+                style="@style/NormalTextTheme.BaseTextTheme"
+                android:layout_alignParentLeft="true"
+                android:layout_toStartOf="@id/tv_to_answer1"
+                android:text="@string/user_detail_contribute_question1"
+                android:textColor="@color/user_detail_title_color" />
+
+            <TextView
+                android:id="@+id/tv_to_answer1"
+                style="@style/UserDetailRectCircleText"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/padding_size"
+                android:background="@drawable/user_detail_login_rect_bg"
+                android:drawablePadding="4dp"
+                android:text="@string/user_detail_to_answer" />
+
+            <TextView
+                android:layout_below="@id/tv_question1"
+                android:layout_marginTop="@dimen/padding_size"
+                style="@style/SmallTextTheme.BaseTextTheme"
+                android:layout_alignParentLeft="true"
+                android:text="@string/user_detail_help_count230"
+                android:textColor="@color/user_detail_gray_color" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_size">
+
+            <TextView
+                android:id="@+id/tv_question2"
+                style="@style/NormalTextTheme.BaseTextTheme"
+                android:layout_alignParentLeft="true"
+                android:layout_toStartOf="@id/tv_to_answer2"
+                android:text="@string/user_detail_contribute_question2"
+                android:textColor="@color/user_detail_title_color" />
+
+            <TextView
+                android:id="@+id/tv_to_answer2"
+                style="@style/UserDetailRectCircleText"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/padding_size"
+                android:background="@drawable/user_detail_login_rect_bg"
+                android:drawablePadding="4dp"
+                android:text="@string/user_detail_to_answer" />
+
+            <TextView
+                android:layout_below="@id/tv_question2"
+                android:layout_marginTop="@dimen/padding_size"
+                style="@style/SmallTextTheme.BaseTextTheme"
+                android:layout_alignParentLeft="true"
+                android:text="@string/user_detail_help_count228"
+                android:textColor="@color/user_detail_gray_color" />
+
+        </RelativeLayout>
+    </LinearLayout>
 
 
 </LinearLayout>

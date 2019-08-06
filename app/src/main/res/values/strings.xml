@@ -16,4 +16,13 @@
     <string name="user_detail_login_see_achieved">登录查看已获得成就</string>
     <string name="user_detail_data_contribute">数据贡献</string>
     <string name="user_detail_offline_tip">离线地图移至搜索框下</string>
+    <string name="user_detail_see_contribute">查看贡献进度</string>
+    <string name="user_detail_loc_unlock">地点解密</string>
+    <string name="user_detail_add_loc">地点新增</string>
+    <string name="user_detail_add_merchant">商户新增</string>
+    <string name="user_detail_contribute_question1">奥体工作室(壹方城店)还正常营业么？</string>
+    <string name="user_detail_to_answer">去回答</string>
+    <string name="user_detail_contribute_question2">美味烧鹅茶餐厅还在营业么？</string>
+    <string name="user_detail_help_count230">预计帮助230人</string>
+    <string name="user_detail_help_count228">预计帮助228人</string>
 </resources>

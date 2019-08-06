@@ -53,7 +53,9 @@ public class VerticalIconTextView extends LinearLayout {
         mIvIcon.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         mTvTitle = new TextView(getContext());
-        mTvTitle.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.topMargin = getResources().getDimensionPixelSize(R.dimen.padding_size);
+        mTvTitle.setLayoutParams(lp);
         mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, DeviceUtils.dip2px(getContext(), 14));
         mTvTitle.setTextColor(getResources().getColor(R.color.user_detail_color_black));
 
