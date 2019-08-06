@@ -72,7 +72,7 @@
             <TextView
                 android:id="@+id/tv_question1"
                 style="@style/NormalTextTheme.BaseTextTheme"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_toStartOf="@id/tv_to_answer1"
                 android:text="@string/user_detail_contribute_question1"
                 android:textColor="@color/user_detail_title_color" />
@@ -80,17 +80,19 @@
             <TextView
                 android:id="@+id/tv_to_answer1"
                 style="@style/UserDetailRectCircleText"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="@dimen/padding_size"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="@dimen/padding_size"
                 android:background="@drawable/user_detail_login_rect_bg"
                 android:drawablePadding="4dp"
+                android:paddingLeft="@dimen/padding_large2"
+                android:paddingRight="@dimen/padding_large2"
                 android:text="@string/user_detail_to_answer" />
 
             <TextView
-                android:layout_below="@id/tv_question1"
-                android:layout_marginTop="@dimen/padding_size"
                 style="@style/SmallTextTheme.BaseTextTheme"
-                android:layout_alignParentLeft="true"
+                android:layout_below="@id/tv_question1"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="@dimen/padding_size"
                 android:text="@string/user_detail_help_count230"
                 android:textColor="@color/user_detail_gray_color" />
 
@@ -104,7 +106,7 @@
             <TextView
                 android:id="@+id/tv_question2"
                 style="@style/NormalTextTheme.BaseTextTheme"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_toStartOf="@id/tv_to_answer2"
                 android:text="@string/user_detail_contribute_question2"
                 android:textColor="@color/user_detail_title_color" />
@@ -112,17 +114,20 @@
             <TextView
                 android:id="@+id/tv_to_answer2"
                 style="@style/UserDetailRectCircleText"
-                android:layout_alignParentRight="true"
-                android:layout_marginLeft="@dimen/padding_size"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="@dimen/padding_size"
+                android:paddingLeft="@dimen/padding_large2"
+                android:paddingRight="@dimen/padding_large2"
+
                 android:background="@drawable/user_detail_login_rect_bg"
                 android:drawablePadding="4dp"
                 android:text="@string/user_detail_to_answer" />
 
             <TextView
-                android:layout_below="@id/tv_question2"
-                android:layout_marginTop="@dimen/padding_size"
                 style="@style/SmallTextTheme.BaseTextTheme"
-                android:layout_alignParentLeft="true"
+                android:layout_below="@id/tv_question2"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="@dimen/padding_size"
                 android:text="@string/user_detail_help_count228"
                 android:textColor="@color/user_detail_gray_color" />
 
