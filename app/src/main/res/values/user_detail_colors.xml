@@ -13,5 +13,7 @@
     <color name="user_detail_to_see">#4287FF</color>
 
     <color name="user_detail_gray_color">#747474</color>
+    <drawable name="user_detail_item_pressed">#F4F4F4</drawable>
+    <drawable name="user_detail_item_normal">@color/white</drawable>
 
 </resources>

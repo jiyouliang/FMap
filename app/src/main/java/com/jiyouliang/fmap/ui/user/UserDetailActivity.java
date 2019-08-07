@@ -128,12 +128,12 @@ public class UserDetailActivity extends BaseActivity {
         public void onBindViewHolder(@NonNull UserDetailViewHolder viewHolder, int position) {
             //int viewType = getItemViewType(position);
             // 末尾常规项
-            if(position >= 5){
+            if (position >= 5) {
                 String title = TITLES[position - 5];
                 String subtitle = SUBTITLES[position - 5];
-                if(TextUtils.isEmpty(subtitle)){
+                if (TextUtils.isEmpty(subtitle)) {
                     viewHolder.mSettingItemView.setSubTitleVisiable(false);
-                }else{
+                } else {
                     viewHolder.mSettingItemView.setSubTitleVisiable(true);
                     viewHolder.mSettingItemView.setSubTitleText(subtitle);
                 }
@@ -166,13 +166,24 @@ public class UserDetailActivity extends BaseActivity {
             super(itemView);
             this.mContext = context;
             switch (viewType) {
+                case TYPE_HEADER:
+                    break;
                 case TYPE_LOGIN:
                     ivLogo = itemView.findViewById(R.id.iv_user_logo);
                     ivLogo.setOnClickListener(this);
                     break;
+                case TYPE_FAVORITE:
+                    break;
+                case TYPE_MEDAL:
+                    break;
+                case TYPE_DATA_CONTRIBUTE:
+                    break;
                 default:
                     //常规列
                     mSettingItemView = itemView.findViewById(R.id.siv);
+                    if (mSettingItemView != null && mSettingItemView.getParent() != null) {
+                        ((ViewGroup)mSettingItemView.getParent()).setOnClickListener(this);
+                    }
                     break;
             }
         }

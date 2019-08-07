@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    android:background="@drawable/user_detail_item_selector"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/padding_large2">
@@ -14,6 +14,6 @@
         app:sivTitleBlod="false"
         app:sivSubtitleVisiable="true"
         app:sivTitleColor="@color/user_detail_color_black"
-        app:sivTitleSize="16dp" />
+        app:sivTitleSize="18dp" />
 
 </FrameLayout>
