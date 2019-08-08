@@ -138,5 +138,12 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
+    <style name="MyTranslucentTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <!-- 设置statusBarColor 为透明-->
+        <item name="android:statusBarColor">@android:color/white</item>
+    </style>
+
 </resources>
 

@@ -11,6 +11,7 @@
         <attr name="ttvRightTitleVisiable" format="boolean" />
         <!--drawble-->
         <attr name="ttvRightIcon" format="reference" />
+        <attr name="ttvLeftIcon" format="reference" />
     </declare-styleable>
 
     <!--SettingItemView-->

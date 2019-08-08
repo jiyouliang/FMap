@@ -48,8 +48,11 @@ public class TopTitleView extends RelativeLayout {
         boolean rightTitleVisiable = ta.getBoolean(R.styleable.TopTitleView_ttvRightTitleVisiable, true);
         Drawable drawableRight = ta.getDrawable(R.styleable.TopTitleView_ttvRightIcon);
         setRightDrawable(drawableRight);
-        ta.recycle();
+
+        Drawable drawableLeft = ta.getDrawable(R.styleable.TopTitleView_ttvLeftIcon);
+        setLeftDrawable(drawableLeft);
         setRightTextVisibility(rightTitleVisiable);
+        ta.recycle();
     }
 
     private void initView() {
@@ -88,9 +91,32 @@ public class TopTitleView extends RelativeLayout {
         mIvRight.setImageDrawable(drawable);
     }
 
+    /**
+     * 设置右侧图片资源
+     * @param resId
+     */
     public void setRightDrawable(int resId){
-        mIvRight.setVisibility(View.VISIBLE);
-        mTextRight.setVisibility(View.GONE);
-        mIvRight.setImageDrawable(getResources().getDrawable(resId));
+        setRightDrawable(getResources().getDrawable(resId));
+    }
+
+
+    /**
+     * 设置左侧图片
+     * @param drawable
+     */
+    public void setLeftDrawable(Drawable drawable){
+        if(drawable == null){
+            return;
+        }
+        mIvLeft.setVisibility(View.VISIBLE);
+        mIvLeft.setImageDrawable(drawable);
+    }
+
+    /**
+     * 设置左侧图片资源
+     * @param resId
+     */
+    public void setLeftDrawable(int resId){
+        setLeftDrawable(getResources().getDrawable(resId));
     }
 }

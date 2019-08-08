@@ -2,6 +2,7 @@ package com.jiyouliang.fmap.ui.user;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,16 +11,22 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.ui.BaseActivity;
+import com.jiyouliang.fmap.util.LogUtil;
+import com.jiyouliang.fmap.util.StatusBarUtils;
 import com.jiyouliang.fmap.view.widget.SettingItemView;
+import com.jiyouliang.fmap.view.widget.TopTitleView;
 
 /**
  * 用户详情页
  */
 public class UserDetailActivity extends BaseActivity {
+
+    private static final String TAG = "UserDetailActivity";
 
     private RecyclerView mRecycleView;
     /**
@@ -51,6 +58,9 @@ public class UserDetailActivity extends BaseActivity {
      * 常规列
      */
     private static final int TYPE_NORMAL = 5;
+    private TopTitleView mTopTitleView;
+    private int mTitleHeight;
+    private int mTotalDy;
 
 
     @Override
@@ -65,6 +75,53 @@ public class UserDetailActivity extends BaseActivity {
         mRecycleView = (RecyclerView) findViewById(R.id.recycle_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecycleView.setLayoutManager(layoutManager);
+        mTopTitleView = (TopTitleView) findViewById(R.id.top_title_view);
+
+        StatusBarUtils.getInstance().enableTranslucentStatusBar(this, mTitleHeight);
+        setListener();
+    }
+
+    private void setListener() {
+        mTopTitleView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mTitleHeight = mTopTitleView.getMeasuredHeight();
+            }
+        });
+
+        mRecycleView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                mTotalDy -= dy;
+                log(String.format("onScrolled, dy=%s, mTotalDy=%s", dy, mTotalDy));
+
+                int t = Math.abs(mTotalDy);
+                if (t <= 0) {
+                    //顶部图处于最顶部，标题栏透明
+                    mTopTitleView.setBackgroundColor(Color.argb(0, 255, 255, 255));
+                    getWindow().setStatusBarColor(Color.argb((int) 0, 255, 255, 255));
+                    mTopTitleView.setRightDrawable(R.drawable.user_detail_setting_light_icon);
+                    mTopTitleView.setLeftDrawable(R.drawable.user_detail_close_light_icon);
+                } else if (t > 0 && t < mTitleHeight) {
+                    //滑动过程中，渐变
+                    float scale = (float) t / mTitleHeight;//算出滑动距离比例
+                    float alpha = (255 * scale);//得到透明度
+                    log(String.format("alpha=%s", alpha));
+                    mTopTitleView.setBackgroundColor(Color.argb((int) alpha, 255, 255, 255));
+                    getWindow().setStatusBarColor(Color.argb((int) alpha, 255, 255, 255));
+                    // 标题栏深色icon
+                    mTopTitleView.setRightDrawable(R.drawable.user_detail_setting_black_icon);
+                    mTopTitleView.setLeftDrawable(R.drawable.user_detail_close_black_icon);
+                } else {
+                    //过顶部图区域，标题栏定色
+                    mTopTitleView.setBackgroundColor(Color.argb(255, 255, 255, 255));
+                    getWindow().setStatusBarColor(Color.argb(255, 255, 255, 255));
+                    mTopTitleView.setRightDrawable(R.drawable.user_detail_setting_black_icon);
+                    mTopTitleView.setLeftDrawable(R.drawable.user_detail_close_black_icon);
+                }
+            }
+        });
     }
 
     private void initData() {
@@ -182,7 +239,7 @@ public class UserDetailActivity extends BaseActivity {
                     //常规列
                     mSettingItemView = itemView.findViewById(R.id.siv);
                     if (mSettingItemView != null && mSettingItemView.getParent() != null) {
-                        ((ViewGroup)mSettingItemView.getParent()).setOnClickListener(this);
+                        ((ViewGroup) mSettingItemView.getParent()).setOnClickListener(this);
                     }
                     break;
             }
@@ -199,6 +256,10 @@ public class UserDetailActivity extends BaseActivity {
             Intent intent = new Intent(mContext, LoginActivity.class);
             mContext.startActivity(intent);
         }
+    }
+
+    private void log(String msg){
+        LogUtil.d(TAG, msg);
     }
 
 

@@ -25,4 +25,5 @@
     <string name="user_detail_contribute_question2">美味烧鹅茶餐厅还在营业么？</string>
     <string name="user_detail_help_count230">预计帮助230人</string>
     <string name="user_detail_help_count228">预计帮助228人</string>
+    <string name="login_by_password">密码登录</string>
 </resources>

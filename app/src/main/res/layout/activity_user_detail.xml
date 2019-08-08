@@ -9,9 +9,10 @@
     <com.jiyouliang.fmap.view.widget.TopTitleView
         android:id="@+id/top_title_view"
         android:layout_width="match_parent"
-        android:alpha="0"
         android:layout_height="wrap_content"
-        app:ttvRightIcon="@drawable/user_detail_setting_icon"
+        android:background="#00FFFFFF"
+        app:ttvLeftIcon="@drawable/user_detail_close_light_icon"
+        app:ttvRightIcon="@drawable/user_detail_setting_light_icon"
         app:ttvRightTitleVisiable="false" />
 
     <com.jiyouliang.fmap.view.widget.ReboundLinearLayout
