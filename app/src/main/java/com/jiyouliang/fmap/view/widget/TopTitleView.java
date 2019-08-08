@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,11 +48,26 @@ public class TopTitleView extends RelativeLayout {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.TopTitleView);
         boolean rightTitleVisiable = ta.getBoolean(R.styleable.TopTitleView_ttvRightTitleVisiable, true);
         Drawable drawableRight = ta.getDrawable(R.styleable.TopTitleView_ttvRightIcon);
-        setRightDrawable(drawableRight);
-
         Drawable drawableLeft = ta.getDrawable(R.styleable.TopTitleView_ttvLeftIcon);
+
+        setRightDrawable(drawableRight);
         setLeftDrawable(drawableLeft);
         setRightTextVisibility(rightTitleVisiable);
+
+        ViewGroup.LayoutParams lpLeft = mIvLeft.getLayoutParams();
+        ViewGroup.LayoutParams lpRight = mIvRight.getLayoutParams();
+        // 左侧ImageView大小,默认位控件自身布局属性大小
+        int leftSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvLeftSize, lpLeft.width);
+        int rightSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvRightSize,  lpRight.width);
+
+        lpLeft.width = leftSize;
+        lpLeft.height = leftSize;
+        mIvLeft.setLayoutParams(lpLeft);
+
+        lpRight.width = rightSize;
+        lpRight.height = rightSize;
+        mIvRight.setLayoutParams(lpRight);
+
         ta.recycle();
     }
 

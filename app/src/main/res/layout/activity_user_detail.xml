@@ -12,13 +12,14 @@
         android:layout_height="wrap_content"
         android:background="#00FFFFFF"
         app:ttvLeftIcon="@drawable/user_detail_close_light_icon"
+        app:ttvLeftSize="23dp"
         app:ttvRightIcon="@drawable/user_detail_setting_light_icon"
+        app:ttvRightSize="23dp"
         app:ttvRightTitleVisiable="false" />
 
     <com.jiyouliang.fmap.view.widget.ReboundLinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycle_view"

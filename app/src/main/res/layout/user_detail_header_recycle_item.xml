@@ -7,7 +7,7 @@
     <ImageView
         android:id="@+id/iv_header"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:scaleType="centerCrop"
         android:background="@drawable/user_detail_header_bg"
         app:layout_constraintLeft_toLeftOf="parent"

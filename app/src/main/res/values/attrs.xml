@@ -12,6 +12,9 @@
         <!--drawble-->
         <attr name="ttvRightIcon" format="reference" />
         <attr name="ttvLeftIcon" format="reference" />
+        <!--View大小-->
+        <attr name="ttvLeftSize" format="dimension|reference" />
+        <attr name="ttvRightSize" format="dimension|reference" />
     </declare-styleable>
 
     <!--SettingItemView-->
