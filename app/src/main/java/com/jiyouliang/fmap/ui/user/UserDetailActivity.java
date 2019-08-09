@@ -215,6 +215,7 @@ public class UserDetailActivity extends BaseActivity {
      */
     private static class UserDetailViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        private int mViewType;
         private Context mContext;
         ImageView ivLogo;
         SettingItemView mSettingItemView;
@@ -222,12 +223,13 @@ public class UserDetailActivity extends BaseActivity {
         private UserDetailViewHolder(Context context, @NonNull View itemView, int viewType) {
             super(itemView);
             this.mContext = context;
+            mViewType = viewType;
             switch (viewType) {
                 case TYPE_HEADER:
                     break;
                 case TYPE_LOGIN:
                     ivLogo = itemView.findViewById(R.id.iv_user_logo);
-                    ivLogo.setOnClickListener(this);
+                    itemView.setOnClickListener(this);
                     break;
                 case TYPE_FAVORITE:
                     break;
@@ -247,7 +249,7 @@ public class UserDetailActivity extends BaseActivity {
 
         @Override
         public void onClick(View v) {
-            if (v == ivLogo) {
+            if (v != null && mViewType == TYPE_LOGIN) {
                 showUserLoginPage();
             }
         }
