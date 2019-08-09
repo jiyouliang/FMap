@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +51,9 @@ public class TopTitleView extends RelativeLayout {
         boolean rightTitleVisiable = ta.getBoolean(R.styleable.TopTitleView_ttvRightTitleVisiable, true);
         Drawable drawableRight = ta.getDrawable(R.styleable.TopTitleView_ttvRightIcon);
         Drawable drawableLeft = ta.getDrawable(R.styleable.TopTitleView_ttvLeftIcon);
+        String rightText = ta.getString(R.styleable.TopTitleView_ttvRightText);
+        int rightTextSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvRightTextSize, 0);
+        int rightTextColor = ta.getColor(R.styleable.TopTitleView_ttvRightTextColor, getResources().getColor(R.color.poi_detail_loc));
 
         setRightDrawable(drawableRight);
         setLeftDrawable(drawableLeft);
@@ -58,7 +63,7 @@ public class TopTitleView extends RelativeLayout {
         ViewGroup.LayoutParams lpRight = mIvRight.getLayoutParams();
         // 左侧ImageView大小,默认位控件自身布局属性大小
         int leftSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvLeftSize, lpLeft.width);
-        int rightSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvRightSize,  lpRight.width);
+        int rightSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvRightSize, lpRight.width);
 
         lpLeft.width = leftSize;
         lpLeft.height = leftSize;
@@ -67,6 +72,11 @@ public class TopTitleView extends RelativeLayout {
         lpRight.width = rightSize;
         lpRight.height = rightSize;
         mIvRight.setLayoutParams(lpRight);
+
+        //右侧文字
+        setRightText(rightText);
+        setRightTextSize(rightTextSize);
+        setRightTextColor(rightTextColor);
 
         ta.recycle();
     }
@@ -82,9 +92,13 @@ public class TopTitleView extends RelativeLayout {
 
     /**
      * 右侧文字
+     *
      * @param text
      */
-    public void setRightText(String text){
+    public void setRightText(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return;
+        }
         mIvRight.setVisibility(View.GONE);
         mTextRight.setVisibility(View.VISIBLE);
         mTextRight.setText(text);
@@ -96,10 +110,11 @@ public class TopTitleView extends RelativeLayout {
 
     /**
      * 设置右侧图片
+     *
      * @param drawable
      */
-    public void setRightDrawable(Drawable drawable){
-        if(drawable == null){
+    public void setRightDrawable(Drawable drawable) {
+        if (drawable == null) {
             return;
         }
         mIvRight.setVisibility(View.VISIBLE);
@@ -109,19 +124,21 @@ public class TopTitleView extends RelativeLayout {
 
     /**
      * 设置右侧图片资源
+     *
      * @param resId
      */
-    public void setRightDrawable(int resId){
+    public void setRightDrawable(int resId) {
         setRightDrawable(getResources().getDrawable(resId));
     }
 
 
     /**
      * 设置左侧图片
+     *
      * @param drawable
      */
-    public void setLeftDrawable(Drawable drawable){
-        if(drawable == null){
+    public void setLeftDrawable(Drawable drawable) {
+        if (drawable == null) {
             return;
         }
         mIvLeft.setVisibility(View.VISIBLE);
@@ -130,9 +147,31 @@ public class TopTitleView extends RelativeLayout {
 
     /**
      * 设置左侧图片资源
+     *
      * @param resId
      */
-    public void setLeftDrawable(int resId){
+    public void setLeftDrawable(int resId) {
         setLeftDrawable(getResources().getDrawable(resId));
+    }
+
+
+    /**
+     * 右侧文字大小
+     *
+     * @param textSize
+     */
+    public void setRightTextSize(float textSize) {
+        if (textSize <= 0) {
+            return;
+        }
+        mTextRight.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
+    }
+
+    /**
+     * 右侧文字颜色
+     * @param textColor
+     */
+    private void setRightTextColor(int textColor) {
+        mTextRight.setTextColor(textColor);
     }
 }

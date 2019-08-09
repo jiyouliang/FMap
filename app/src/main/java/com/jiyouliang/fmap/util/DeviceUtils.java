@@ -134,4 +134,6 @@ public class DeviceUtils {
     public static String getTimestampStr(){
         return String.valueOf(System.currentTimeMillis());
     }
+
+
 }

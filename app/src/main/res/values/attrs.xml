@@ -15,6 +15,10 @@
         <!--View大小-->
         <attr name="ttvLeftSize" format="dimension|reference" />
         <attr name="ttvRightSize" format="dimension|reference" />
+        <!--右侧文字-->
+        <attr name="ttvRightText" format="string|reference" />
+        <attr name="ttvRightTextSize" format="dimension|reference" />
+        <attr name="ttvRightTextColor" format="color|reference" />
     </declare-styleable>
 
     <!--SettingItemView-->
