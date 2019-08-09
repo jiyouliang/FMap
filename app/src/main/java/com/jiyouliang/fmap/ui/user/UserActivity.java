@@ -46,31 +46,55 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
-        showUserDetailFragment();
+        showUserDetailFragment(null);
     }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
         log(uri.toString());
-        log(uri.getFragment());
-        if(uri == null || TextUtils.isEmpty(uri.getFragment())){
-            return;
-        }
 
-        String fragment = uri.getFragment();
-        if(fragment.equals("UserSendSmsFragment")){
-            showUserSemdSmsFragment();
-        }
+        dispatchFragment(uri);
+
     }
 
     /**
-     * 用户详情Fragment
+     * 分发Fragment
+     *
      */
-    public void showUserDetailFragment(){
+    private void dispatchFragment(Uri uri) {
+        String fragment = uri.getQueryParameter("fragment");
+        if (TextUtils.isEmpty(fragment)) {
+            LogUtil.e(TAG, "fragment name cannot be null");
+            return;
+        }
+        // 发送短信验证码
+        if(fragment.equals(UserSendSmsFragment.class.getSimpleName())){
+            showUserSemdSmsFragment();
+        }
+        // 短信验证码登录
+        if(fragment.equals(UserLoginBySmsFragment.class.getSimpleName())){
+            String phone = uri.getQueryParameter("phone");
+            showUserLoginBySmsFragment(phone);
+        }
+
+        // 用户详情Fragment
+        if(fragment.equals(UserDetailFragment.class.getSimpleName())){
+            String phone = uri.getQueryParameter("phone");
+            showUserDetailFragment(phone);
+        }
+
+    }
+
+
+    /**
+     * 用户详情Fragment
+     * @param phone
+     */
+    public void showUserDetailFragment(String phone) {
         // 用于沉浸式状态栏
         mRootContainer.setBackground(getResources().getDrawable(R.drawable.user_detail_bg));
         FragmentTransaction ft = fm.beginTransaction();
-        UserDetailFragment fragment = UserDetailFragment.newInstance();
+        UserDetailFragment fragment = UserDetailFragment.newInstance(phone);
         ft.replace(R.id.fragment_container, fragment);
         ft.commit();
     }
@@ -78,7 +102,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
     /**
      * 发端短信验证码Fragment
      */
-    public void showUserSemdSmsFragment(){
+    public void showUserSemdSmsFragment() {
         mRootContainer.setBackgroundColor(Color.WHITE);
         FragmentTransaction ft = fm.beginTransaction();
         UserSendSmsFragment fragment = UserSendSmsFragment.newInstance();
@@ -86,7 +110,18 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         ft.commit();
     }
 
-    private void log(String msg){
+    /**
+     * 短信验证码登录Fragment
+     */
+    public void showUserLoginBySmsFragment(String phone) {
+        mRootContainer.setBackgroundColor(Color.WHITE);
+        FragmentTransaction ft = fm.beginTransaction();
+        UserLoginBySmsFragment fragment = UserLoginBySmsFragment.newInstance(phone);
+        ft.replace(R.id.fragment_container, fragment);
+        ft.commit();
+    }
+
+    private void log(String msg) {
         LogUtil.d(TAG, msg);
     }
 }

@@ -76,17 +76,6 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void initView(View rootView) {
-        ScrollView scrollView = (ScrollView) rootView;
-        RelativeLayout child = (RelativeLayout) scrollView.getChildAt(0);
-        ViewGroup.LayoutParams lp = child.getLayoutParams();
-
-        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        Point pont = new Point();
-        wm.getDefaultDisplay().getSize(pont);
-        lp.height = pont.y;
-        child.setLayoutParams(lp);
-
-
         mEtPhone = (ClearEditText) rootView.findViewById(R.id.et_phone);
         mBtnLogin = (ButtonLoadingView) rootView.findViewById(R.id.btn_send_sms);
         mBtnLogin.setEnabled(false);
@@ -180,11 +169,7 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void sendSmsSuccess() {
         // 发送验证码成功,跳转下一个页面
-        // TODO 通过 mListener.onFragmentInteraction回调跳转下一个Fragment
-        /*Intent intent = new Intent(LoginActivity.this, UserLoginSendSmsActivity.class);
-        intent.putExtra("phone", phone);
-        startActivity(intent);
-        finish();*/
+       showUserLoginBySms();
     }
 
     @Override
@@ -201,8 +186,15 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
         }
     }
 
-    public void onButtonPressed(Uri uri) {
+    /**
+     * 跳转短信验证码登录Fragment
+     */
+    public void showUserLoginBySms() {
         if (mListener != null) {
+            Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+            builder.appendQueryParameter("fragment", "UserLoginBySmsFragment");
+            builder.appendQueryParameter("phone", phone);
+            Uri uri = Uri.parse(builder.toString());
             mListener.onFragmentInteraction(uri);
         }
     }

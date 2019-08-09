@@ -18,7 +18,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/padding_large"
         android:background="@drawable/user_detail_medal_rect_bg"
         android:padding="@dimen/padding_large">
@@ -59,9 +59,9 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tv_my_achieved"
+            android:layout_below="@id/ll_container"
             android:layout_marginTop="@dimen/padding_large"
-            android:layout_above="@id/ll_container"
-            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             style="@style/SmallTextTheme.BaseTextTheme"
             android:text="@string/user_detail_login_see_achieved"/>

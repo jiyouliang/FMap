@@ -1,5 +1,6 @@
 package com.jiyouliang.fmap.util;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -45,30 +46,50 @@ public class LogUtil {
 
     public static void v(String tag, String msg) {
         if (VERBOSE >= CURRENT_LEVEL && DEBUGGING) {
+            if(TextUtils.isEmpty(msg)){
+                Log.e(tag, "parameter msg cannot be null");
+                return;
+            }
             Log.v(tag, msg);
         }
     }
 
     public static void d(String tag, String msg) {
         if (DEBUG >= CURRENT_LEVEL && DEBUGGING) {
+            if(TextUtils.isEmpty(msg)){
+                Log.e(tag, "parameter msg cannot be null");
+                return;
+            }
             Log.d(tag, msg);
         }
     }
 
     public static void i(String tag, String msg) {
         if (INFO >= CURRENT_LEVEL && DEBUGGING) {
+            if(TextUtils.isEmpty(msg)){
+                Log.e(tag, "parameter msg cannot be null");
+                return;
+            }
             Log.i(tag, msg);
         }
     }
 
     public static void w(String tag, String msg) {
         if (WARN >= CURRENT_LEVEL && DEBUGGING) {
+            if(TextUtils.isEmpty(msg)){
+                Log.e(tag, "parameter msg cannot be null");
+                return;
+            }
             Log.w(tag, msg);
         }
     }
 
     public static void e(String tag, String msg) {
         if (ERROR >= CURRENT_LEVEL && DEBUGGING) {
+            if(TextUtils.isEmpty(msg)){
+                Log.e(tag, "parameter msg cannot be null");
+                return;
+            }
             Log.e(tag, msg);
         }
     }

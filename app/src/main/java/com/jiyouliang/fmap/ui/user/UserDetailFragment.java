@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.ui.BaseFragment;
@@ -67,16 +68,21 @@ public class UserDetailFragment extends BaseFragment {
      * 常规列
      */
     private static final int TYPE_NORMAL = 5;
+    private static final String KEY_PHONE = "phone";
     private TopTitleView mTopTitleView;
     private int mTitleHeight;
     private int mTotalDy;
+    private String mPhone;
 
     public UserDetailFragment() {
         // Required empty public constructor
     }
 
-    public static UserDetailFragment newInstance() {
+    public static UserDetailFragment newInstance(String phone) {
         UserDetailFragment fragment = new UserDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_PHONE, phone);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -84,8 +90,7 @@ public class UserDetailFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-           /* mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);*/
+            mPhone = getArguments().getString(KEY_PHONE);
         }
     }
 
@@ -153,7 +158,7 @@ public class UserDetailFragment extends BaseFragment {
     }
 
     private void initData() {
-        UserDetailAdapter adapter = new UserDetailAdapter(mListener);
+        UserDetailAdapter adapter = new UserDetailAdapter(mPhone, mListener);
         mRecycleView.setAdapter(adapter);
     }
 
@@ -165,11 +170,13 @@ public class UserDetailFragment extends BaseFragment {
         private static final String[] TITLES = new String[]{"我是商家", "我的反馈", "我的订单", "我的钱包", "我的小程序", "我的评论", "特别鸣谢", "帮助中心"};
         private static final String[] SUBTITLES = new String[]{"【免费】新增地点、认领店铺", "", "查看我的全部订单", "", "", "", "感谢高德热心用户", ""};
         private final OnFragmentInteractionListener mListener;
+        private final String mPhone;
 
         private Context mContext;
 
-        public UserDetailAdapter(OnFragmentInteractionListener listener) {
+        public UserDetailAdapter(String phone, OnFragmentInteractionListener listener) {
             this.mListener = listener;
+            this.mPhone = phone;
         }
 
         @NonNull
@@ -216,19 +223,45 @@ public class UserDetailFragment extends BaseFragment {
 
         @Override
         public void onBindViewHolder(@NonNull UserDetailViewHolder viewHolder, int position) {
-            //int viewType = getItemViewType(position);
-            // 末尾常规项
-            if (position >= 5) {
-                String title = TITLES[position - 5];
-                String subtitle = SUBTITLES[position - 5];
-                if (TextUtils.isEmpty(subtitle)) {
-                    viewHolder.mSettingItemView.setSubTitleVisiable(false);
-                } else {
-                    viewHolder.mSettingItemView.setSubTitleVisiable(true);
-                    viewHolder.mSettingItemView.setSubTitleText(subtitle);
-                }
-                viewHolder.mSettingItemView.setTitleText(title);
+            int viewType = getItemViewType(position);
+            switch (viewType){
+                case TYPE_HEADER:
+                    // 头部item
+                    break;
+                case TYPE_LOGIN:
+                    // 登录模块
+                    // 手机号存在,说明登录成功,修改用户详情UI
+                    if(!TextUtils.isEmpty(mPhone)){
+                        viewHolder.ivLogo.setBackgroundResource(R.drawable.user_detail_logined_boy);
+                        viewHolder.tvLoginTip.setVisibility(View.GONE);
+                        viewHolder.tvLogin.setText(String.format("Map_%s", mPhone));
+                    }
+                    break;
+                case TYPE_FAVORITE:
+                    break;
+                case TYPE_MEDAL:
+                    if(!TextUtils.isEmpty(mPhone)){
+                        viewHolder.tvMyAchieved.setVisibility(View.GONE);
+                    }
+                    break;
+                case TYPE_DATA_CONTRIBUTE:
+                    break;
+                default:
+                    // 末尾常规项
+                    if (position >= 5) {
+                        String title = TITLES[position - 5];
+                        String subtitle = SUBTITLES[position - 5];
+                        if (TextUtils.isEmpty(subtitle)) {
+                            viewHolder.mSettingItemView.setSubTitleVisiable(false);
+                        } else {
+                            viewHolder.mSettingItemView.setSubTitleVisiable(true);
+                            viewHolder.mSettingItemView.setSubTitleText(subtitle);
+                        }
+                        viewHolder.mSettingItemView.setTitleText(title);
+                    }
+                    break;
             }
+
         }
 
 
@@ -253,6 +286,9 @@ public class UserDetailFragment extends BaseFragment {
         private Context mContext;
         ImageView ivLogo;
         SettingItemView mSettingItemView;
+        TextView tvLoginTip;
+        TextView tvLogin;
+        TextView tvMyAchieved;
 
         private UserDetailViewHolder(Context context, OnFragmentInteractionListener listener, @NonNull View itemView, int viewType) {
             super(itemView);
@@ -264,11 +300,14 @@ public class UserDetailFragment extends BaseFragment {
                     break;
                 case TYPE_LOGIN:
                     ivLogo = itemView.findViewById(R.id.iv_user_logo);
+                    tvLoginTip = (TextView)itemView.findViewById(R.id.tv_experience_more);
+                    tvLogin = (TextView)itemView.findViewById(R.id.tv_login);
                     itemView.setOnClickListener(this);
                     break;
                 case TYPE_FAVORITE:
                     break;
                 case TYPE_MEDAL:
+                    tvMyAchieved = (TextView)itemView.findViewById(R.id.tv_my_achieved);
                     break;
                 case TYPE_DATA_CONTRIBUTE:
                     break;
@@ -293,7 +332,9 @@ public class UserDetailFragment extends BaseFragment {
             /*Intent intent = new Intent(mContext, LoginActivity.class);
             mContext.startActivity(intent);*/
             if (mListener != null) {
-                Uri uri = Uri.parse("user://fragment/id#UserSendSmsFragment");
+                Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+                builder.appendQueryParameter("fragment", "UserSendSmsFragment");
+                Uri uri = Uri.parse(builder.toString());
                 mListener.onFragmentInteraction(uri);
             }
         }
@@ -303,15 +344,6 @@ public class UserDetailFragment extends BaseFragment {
         LogUtil.d(TAG, msg);
     }
 
-    /**
-     * 跳转发送短信验证码Fragment
-     * @param uri
-     */
-    public void showSendSmsFragment(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {

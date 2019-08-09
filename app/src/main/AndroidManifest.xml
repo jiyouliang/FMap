@@ -33,6 +33,7 @@
         </activity>
         <activity
             android:name=".ui.user.UserActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:theme="@style/MyTranslucentTheme">
 
         </activity>
