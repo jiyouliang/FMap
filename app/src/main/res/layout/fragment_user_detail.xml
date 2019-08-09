@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/user_detail_bg"
+    android:orientation="vertical">
+
+    <com.jiyouliang.fmap.view.widget.TopTitleView
+        android:id="@+id/top_title_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#00FFFFFF"
+        app:ttvLeftIcon="@drawable/user_detail_close_light_icon"
+        app:ttvLeftSize="21dp"
+        app:ttvRightIcon="@drawable/user_detail_setting_light_icon"
+        app:ttvRightSize="21dp"
+        app:ttvRightTitleVisiable="false" />
+
+    <com.jiyouliang.fmap.view.widget.ReboundLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycle_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.jiyouliang.fmap.view.widget.ReboundLinearLayout>
+
+</LinearLayout>

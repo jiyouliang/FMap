@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,149 +7,147 @@
     android:background="@color/white"
     tools:context=".ui.user.LoginActivity">
 
-    <com.jiyouliang.fmap.view.widget.TopTitleView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/rl_title"
-        app:ttvLeftIcon="@drawable/user_detail_close_black_icon"
-        app:ttvLeftSize="20dp"
-        app:ttvRightText="@string/login_by_password"
-        android:background="@color/white"
-        app:ttvRightTitleVisiable="true"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <TextView
-        android:id="@+id/tv_desc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/padding_large2"
-        android:layout_marginTop="20dp"
-        android:text="登录"
-        android:textColor="@color/text_color_black"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rl_title" />
-
-    <com.jiyouliang.fmap.view.widget.ClearEditText
-        android:id="@+id/et_phone"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/input_height"
-        android:inputType="phone"
-        android:maxLength="11"
-        android:layout_marginLeft="@dimen/padding_large2"
-        android:layout_marginTop="40dp"
-        android:layout_marginRight="@dimen/padding_large2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_desc" />
-
-
-    <TextView
-        android:id="@+id/tv_login_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/padding_large2"
-        android:layout_marginTop="@dimen/padding_size"
-        android:layout_marginRight="@dimen/padding_large2"
-        android:text="登录遇到问题？"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_phone" />
-
-    <com.jiyouliang.fmap.view.widget.ButtonLoadingView
-        android:id="@+id/btn_send_sms"
-        style="@style/BtnLoginStyle"
-        android:layout_marginLeft="@dimen/padding_large2"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="@dimen/padding_large2"
-        android:background="@drawable/btn_blue_large_selector"
-        android:enabled="false"
-        android:text="获取验证码"
-        android:textColor="@color/white"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_login_error" />
-
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/padding_large2"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="@dimen/padding_large2"
-        android:layout_marginBottom="@dimen/padding_large2"
-        android:background="@drawable/btn_login_alipay_selector"
-        app:layout_constraintBottom_toTopOf="@id/tv_other_login"
-        app:layout_constraintLeft_toLeftOf="parent">
+        android:layout_height="match_parent">
+
+        <com.jiyouliang.fmap.view.widget.TopTitleView
+            android:id="@+id/rl_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            app:ttvLeftIcon="@drawable/user_detail_close_black_icon"
+            app:ttvLeftSize="20dp"
+            app:ttvRightText="@string/login_by_password"
+            app:ttvRightTitleVisiable="true" />
+
 
         <TextView
-            android:id="@+id/btn_login_alipay"
-            style="@style/BtnLoginStyle"
+            android:id="@+id/tv_desc"
             android:layout_width="wrap_content"
-            android:layout_centerInParent="true"
-            android:drawableLeft="@drawable/ic_alipay"
-            android:drawablePadding="6dp"
-            android:enabled="false"
-            android:gravity="center_vertical"
-            android:text="支付宝登录"
-            android:textColor="@color/blue_color" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/padding_large2"
+            android:layout_marginTop="20dp"
+            android:text="@string/login"
+            android:textColor="@color/text_color_black"
+            android:textSize="26sp"
+            android:layout_below="@id/rl_title"
+            android:textStyle="bold" />
 
+        <com.jiyouliang.fmap.view.widget.ClearEditText
+            android:id="@+id/et_phone"
+            android:layout_below="@id/tv_desc"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/input_height"
+            android:layout_marginLeft="@dimen/padding_large2"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="@dimen/padding_large2"
+            android:inputType="phone"
+            android:maxLength="11" />
+
+
+        <TextView
+            android:id="@+id/tv_login_error"
+            android:layout_below="@id/et_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/padding_large2"
+            android:layout_marginTop="@dimen/padding_size"
+            android:layout_marginRight="@dimen/padding_large2"
+            android:text="@string/login_error"/>
+
+        <com.jiyouliang.fmap.view.widget.ButtonLoadingView
+            android:id="@+id/btn_send_sms"
+            style="@style/BtnLoginStyle"
+            android:layout_marginLeft="@dimen/padding_large2"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="@dimen/padding_large2"
+            android:background="@drawable/btn_blue_large_selector"
+            android:enabled="false"
+            android:text="@string/get_sms_code"
+            android:layout_below="@id/tv_login_error"
+            android:textColor="@color/white"/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/padding_large2"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="@dimen/padding_large2"
+            android:layout_marginBottom="@dimen/padding_large2"
+            android:background="@drawable/btn_login_alipay_selector"
+            app:layout_constraintBottom_toTopOf="@id/tv_other_login"
+            app:layout_constraintLeft_toLeftOf="parent">
+
+            <TextView
+                android:id="@+id/btn_login_alipay"
+                style="@style/BtnLoginStyle"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawableLeft="@drawable/ic_alipay"
+                android:drawablePadding="6dp"
+                android:enabled="false"
+                android:gravity="center_vertical"
+                android:text="支付宝登录"
+                android:textColor="@color/blue_color" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_other_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/padding_large2"
+            android:layout_marginTop="@dimen/padding_size"
+            android:layout_marginRight="@dimen/padding_large2"
+            android:layout_marginBottom="@dimen/padding_large2"
+            android:text="其他方式登录"
+            app:layout_constraintBottom_toTopOf="@id/rl_login_container"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/rl_login_container"
+            android:layout_width="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/padding_large2"
+            android:paddingRight="@dimen/padding_large2">
+
+            <ImageView
+                android:id="@+id/iv_taobao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_taobao" />
+
+            <ImageView
+                android:id="@+id/iv_wechat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/padding_large2"
+                android:background="@drawable/ic_wechat" />
+
+            <ImageView
+                android:id="@+id/iv_qq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/padding_large2"
+                android:background="@drawable/ic_qq" />
+
+            <ImageView
+                android:id="@+id/iv_"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/padding_large2"
+                android:background="@drawable/ic_weibo" />
+
+
+        </LinearLayout>
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_other_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/padding_large2"
-        android:layout_marginTop="@dimen/padding_size"
-        android:layout_marginRight="@dimen/padding_large2"
-        android:layout_marginBottom="@dimen/padding_large2"
-        android:text="其他方式登录"
-        app:layout_constraintBottom_toTopOf="@id/rl_login_container"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/rl_login_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/padding_large2"
-        android:paddingRight="@dimen/padding_large2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-
-        <ImageView
-            android:id="@+id/iv_taobao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_taobao" />
-
-        <ImageView
-            android:id="@+id/iv_wechat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/padding_large2"
-            android:background="@drawable/ic_wechat" />
-
-        <ImageView
-            android:id="@+id/iv_qq"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/padding_large2"
-            android:background="@drawable/ic_qq" />
-
-        <ImageView
-            android:id="@+id/iv_"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/padding_large2"
-            android:background="@drawable/ic_weibo" />
-
-
-    </LinearLayout>
-
-
-</android.support.constraint.ConstraintLayout>
+</ScrollView>

@@ -2,6 +2,7 @@ package com.jiyouliang.fmap.ui.user;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.ui.BaseFragment;
@@ -19,12 +23,12 @@ import com.jiyouliang.fmap.view.widget.ButtonLoadingView;
 import com.jiyouliang.fmap.view.widget.ClearEditText;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link UserSendSmsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link UserSendSmsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * @author jiyouliang
+ * 发送短信验证码
+ * 由于Activity包含多个Fragment,Fragment之间通信通过接口回调{@link BaseFragment.OnFragmentInteractionListener}
+ * 处理,该回调由包含的Activity实现,并通过Fragment分发通信.
+ *
+ * 通过 {@link UserSendSmsFragment#newInstance} 该Fragment实例对象.
  */
 public class UserSendSmsFragment extends BaseFragment implements View.OnClickListener, IUserLoginView{
 
@@ -72,6 +76,17 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void initView(View rootView) {
+        ScrollView scrollView = (ScrollView) rootView;
+        RelativeLayout child = (RelativeLayout) scrollView.getChildAt(0);
+        ViewGroup.LayoutParams lp = child.getLayoutParams();
+
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        Point pont = new Point();
+        wm.getDefaultDisplay().getSize(pont);
+        lp.height = pont.y;
+        child.setLayoutParams(lp);
+
+
         mEtPhone = (ClearEditText) rootView.findViewById(R.id.et_phone);
         mBtnLogin = (ButtonLoadingView) rootView.findViewById(R.id.btn_send_sms);
         mBtnLogin.setEnabled(false);
