@@ -17,9 +17,17 @@ public class SharedPreferencesTask  extends BaseTask{
      */
     private static final String FILE_NAME_USER = "sp_user";
     private Runnable runnable;
+    private Context mContext;
+    private SharedPreferences mSp;
 
     public SharedPreferencesTask() {
     }
+
+    public SharedPreferencesTask(Context context) {
+        this.mContext = context;
+        mSp = getSharePreferences(mContext);
+    }
+
 
 
     @Override
@@ -47,7 +55,7 @@ public class SharedPreferencesTask  extends BaseTask{
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
-                    SharedPreferences sp = context.getSharedPreferences(FILE_NAME_USER, Context.MODE_PRIVATE);
+                    SharedPreferences sp = mContext.getSharedPreferences(FILE_NAME_USER, Context.MODE_PRIVATE);
                     sp.edit().putString(KEY_PHONE, phone).apply();
                 }
             };
@@ -69,7 +77,7 @@ public class SharedPreferencesTask  extends BaseTask{
             Runnable r = new Runnable() {
                 @Override
                 public void run() {
-                    SharedPreferences sp = getSharePreferences(context);
+                    SharedPreferences sp = getSharePreferences(mContext);
                     sp.getString(KEY_PHONE, null);
                 }
             };
@@ -81,5 +89,15 @@ public class SharedPreferencesTask  extends BaseTask{
 
     private SharedPreferences getSharePreferences(Context context) {
         return context.getSharedPreferences(FILE_NAME_USER, Context.MODE_PRIVATE);
+    }
+
+    /**
+     * 清空存储的手机号
+     */
+    public void clearPhone(){
+        if(mSp == null){
+            throw new NullPointerException("mSp对象不能为空,请调用构造方法SharedPreferencesTask(Context context)初始化");
+        }
+        mSp.edit().putString(KEY_PHONE, "").apply();
     }
 }

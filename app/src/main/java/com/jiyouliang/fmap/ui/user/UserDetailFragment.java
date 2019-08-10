@@ -94,8 +94,8 @@ public class UserDetailFragment extends BaseFragment {
         if (getArguments() != null) {
             mPhone = getArguments().getString(KEY_PHONE);
         }
-        SharedPreferencesTask mPreferencesTask = new SharedPreferencesTask();
-        String savedPhone = mPreferencesTask.getUserPhone(getContext());
+        SharedPreferencesTask spTask = new SharedPreferencesTask();
+        String savedPhone = spTask.getUserPhone(getContext());
         // 传递手机号参数为空,并且存储手机号不为空,UI显示存储手机号
         if (TextUtils.isEmpty(mPhone) && !TextUtils.isEmpty(savedPhone)) {
             mPhone = savedPhone;
@@ -106,7 +106,7 @@ public class UserDetailFragment extends BaseFragment {
             return;
         }
         //手机号没有存储,或者和存储手机号不一致,重新存储
-        mPreferencesTask.saveUserPhone(getContext(), mPhone);
+        spTask.saveUserPhone(getContext(), mPhone);
     }
 
     @Override
@@ -255,7 +255,9 @@ public class UserDetailFragment extends BaseFragment {
                     if (!TextUtils.isEmpty(mPhone)) {
                         viewHolder.ivLogo.setBackgroundResource(R.drawable.user_detail_logined_boy);
                         viewHolder.tvLoginTip.setVisibility(View.GONE);
-                        viewHolder.tvLogin.setText(String.format("Map_%s", mPhone.substring(0, 6)));
+                        viewHolder.tvLogin.setText(String.format("map_%s", mPhone.substring(0, 6)));
+                        viewHolder.setLoginStatus(true);
+                        viewHolder.setPhone(mPhone);
                     }
                     break;
                 case TYPE_FAVORITE:
@@ -305,11 +307,13 @@ public class UserDetailFragment extends BaseFragment {
         private final OnFragmentInteractionListener mListener;
         private int mViewType;
         private Context mContext;
+        private boolean mLoginStatus;
         ImageView ivLogo;
         SettingItemView mSettingItemView;
         TextView tvLoginTip;
         TextView tvLogin;
         TextView tvMyAchieved;
+        String mPhone;
 
         private UserDetailViewHolder(Context context, OnFragmentInteractionListener listener, @NonNull View itemView, int viewType) {
             super(itemView);
@@ -342,10 +346,38 @@ public class UserDetailFragment extends BaseFragment {
             }
         }
 
+        /**
+         * 登录状态
+         * @param status
+         */
+        void setLoginStatus(boolean status){
+            this.mLoginStatus = status;
+        }
+
+        void setPhone(String phone){
+            this.mPhone = phone;
+        }
+
         @Override
         public void onClick(View v) {
             if (v != null && mViewType == TYPE_LOGIN) {
-                showUserLoginPage();
+                if(mLoginStatus){
+                    // 已登录进入用户信息页面
+                    showUserInfoPage();
+                }else{
+                    // 未登录进入登录页
+                    showUserLoginPage();
+                }
+            }
+        }
+
+        private void showUserInfoPage() {
+            if (mListener != null) {
+                Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+                builder.appendQueryParameter("fragment", UserInfoFragment.class.getSimpleName());
+                builder.appendQueryParameter("phone", mPhone);
+                Uri uri = Uri.parse(builder.toString());
+                mListener.onFragmentInteraction(uri);
             }
         }
 

@@ -83,6 +83,12 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
             showUserDetailFragment(phone);
         }
 
+        // 用户信息Fragment
+        if(fragment.equals(UserInfoFragment.class.getSimpleName())){
+            String phone = uri.getQueryParameter("phone");
+            showUerInfoFragment(phone);
+        }
+
     }
 
 
@@ -114,9 +120,16 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
      * 短信验证码登录Fragment
      */
     public void showUserLoginBySmsFragment(String phone) {
-        mRootContainer.setBackgroundColor(Color.WHITE);
         FragmentTransaction ft = fm.beginTransaction();
         UserLoginBySmsFragment fragment = UserLoginBySmsFragment.newInstance(phone);
+        ft.replace(R.id.fragment_container, fragment);
+        ft.commit();
+    }
+
+    private void showUerInfoFragment(String phone) {
+        mRootContainer.setBackgroundColor(Color.WHITE);
+        FragmentTransaction ft = fm.beginTransaction();
+        UserInfoFragment fragment = UserInfoFragment.newInstance(phone);
         ft.replace(R.id.fragment_container, fragment);
         ft.commit();
     }
