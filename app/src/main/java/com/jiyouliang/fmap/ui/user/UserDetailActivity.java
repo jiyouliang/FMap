@@ -75,7 +75,7 @@ public class UserDetailActivity extends BaseActivity {
         mRecycleView = (RecyclerView) findViewById(R.id.recycle_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecycleView.setLayoutManager(layoutManager);
-        mTopTitleView = (TopTitleView) findViewById(R.id.top_title_view);
+        mTopTitleView = (TopTitleView) findViewById(R.id.ttv);
 
         StatusBarUtils.getInstance().enableTranslucentStatusBar(this, mTitleHeight);
         setListener();

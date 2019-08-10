@@ -1,6 +1,5 @@
 package com.jiyouliang.fmap.ui.user;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -48,7 +47,7 @@ public class UserLoginSendSmsActivity extends BaseActivity implements IUserLogin
     }
 
     private void initView() {
-        mTopTitleView = (TopTitleView) findViewById(R.id.top_title_view);
+        mTopTitleView = (TopTitleView) findViewById(R.id.ttv);
         mTvLoginSendTip = (TextView) findViewById(R.id.tv_login_send_tip);
         mTvSmsError = (TextView) findViewById(R.id.tv_sms_error);
         mTvLoginResendSms = (TextView) findViewById(R.id.tv_login_resend_sms);

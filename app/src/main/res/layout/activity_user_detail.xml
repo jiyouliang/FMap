@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <com.jiyouliang.fmap.view.widget.TopTitleView
-        android:id="@+id/top_title_view"
+        android:id="@+id/ttv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#00FFFFFF"

@@ -90,7 +90,7 @@ public class UserLoginBySmsFragment extends BaseFragment implements IUserLoginSe
 
     private void initView(View rootView) {
         mContext = getContext();
-        mTopTitleView = (TopTitleView) rootView.findViewById(R.id.top_title_view);
+        mTopTitleView = (TopTitleView) rootView.findViewById(R.id.ttv);
         mTvLoginSendTip = (TextView) rootView.findViewById(R.id.tv_login_send_tip);
         mTvSmsError = (TextView) rootView.findViewById(R.id.tv_sms_error);
         mTvLoginResendSms = (TextView) rootView.findViewById(R.id.tv_login_resend_sms);

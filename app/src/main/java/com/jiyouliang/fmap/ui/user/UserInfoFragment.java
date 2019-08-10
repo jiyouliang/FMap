@@ -9,23 +9,24 @@ import android.view.ViewGroup;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.ui.BaseFragment;
+import com.jiyouliang.fmap.view.widget.TopTitleView;
 
 /**
  * 用户信息Fragment,登录成功后点击用户头像进入该页面
  */
-public class UserInfoFragment extends BaseFragment {
+public class UserInfoFragment extends BaseFragment implements TopTitleView.OnTopTitleViewClickListener {
     private static final String KEY_PHONE = "phone";
 
     private String mPhone;
 
     private OnFragmentInteractionListener mListener;
+    private TopTitleView mTopTitleView;
 
     public UserInfoFragment() {
         // Required empty public constructor
     }
 
     /**
-     *
      * @param phone
      * @return
      */
@@ -50,18 +51,18 @@ public class UserInfoFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_user_info, container, false);
         initView(rootView);
+        setListener();
         return rootView;
     }
 
     private void initView(View rootView) {
-
+        mTopTitleView = (TopTitleView) rootView.findViewById(R.id.ttv);
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    private void setListener() {
+        mTopTitleView.setOnTopTitleViewClickListener(this);
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -80,4 +81,25 @@ public class UserInfoFragment extends BaseFragment {
         mListener = null;
     }
 
+    @Override
+    public void onLeftClick(View v) {
+        back();
+    }
+
+    /**
+     * 返回上一页
+     */
+    private void back() {
+        if (mListener != null) {
+            Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+            builder.appendQueryParameter("fragment", "back");
+            Uri uri = Uri.parse(builder.toString());
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onRightClick(View v) {
+
+    }
 }

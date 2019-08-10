@@ -6,7 +6,7 @@
     android:background="@color/white">
 
     <com.jiyouliang.fmap.view.widget.TopTitleView
-        android:id="@+id/top_title_view"
+        android:id="@+id/ttv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/padding_large2"
@@ -26,7 +26,7 @@
         android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_title_view" />
+        app:layout_constraintTop_toBottomOf="@id/ttv" />
 
     <TextView
         android:id="@+id/tv_login_send_tip"

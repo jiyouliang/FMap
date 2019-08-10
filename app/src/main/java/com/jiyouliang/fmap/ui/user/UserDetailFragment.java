@@ -1,12 +1,10 @@
 package com.jiyouliang.fmap.ui.user;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -14,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -123,7 +120,7 @@ public class UserDetailFragment extends BaseFragment {
         mRecycleView = (RecyclerView) rootView.findViewById(R.id.recycle_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecycleView.setLayoutManager(layoutManager);
-        mTopTitleView = (TopTitleView) rootView.findViewById(R.id.top_title_view);
+        mTopTitleView = (TopTitleView) rootView.findViewById(R.id.ttv);
 
         StatusBarUtils.getInstance().enableTranslucentStatusBar(getActivity(), mTitleHeight);
         setListener();

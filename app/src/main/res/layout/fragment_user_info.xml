@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/padding_large2">
 
     <com.jiyouliang.fmap.view.widget.TopTitleView
-        android:id="@+id/top_title_view"
+        android:id="@+id/ttv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:ttvLeftSize="20dp"
