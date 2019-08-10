@@ -17,6 +17,7 @@
 
 
 ![](/screenshot/5.gif)
+![](/screenshot/6.gif)
 
 
 
