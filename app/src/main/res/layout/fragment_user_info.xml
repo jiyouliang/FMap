@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.user.UserInfoFragment">
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/padding_large2"
+    android:paddingRight="@dimen/padding_large2">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.jiyouliang.fmap.view.widget.TopTitleView
+        android:id="@+id/top_title_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        app:ttvLeftSize="20dp"
+        app:ttvLeftIcon="@drawable/user_detail_close_black_icon"
+        app:ttvRightSize="20dp"
+        app:ttvRightTitleVisiable="false" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tv_login"
+        style="@style/BiggerTextTheme.BaseTextTheme"
+        android:text="@string/click_login"
+        android:textColor="#464646"
+        android:layout_marginTop="@dimen/padding_large2"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</LinearLayout>

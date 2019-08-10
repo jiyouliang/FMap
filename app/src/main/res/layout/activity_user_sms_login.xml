@@ -10,7 +10,7 @@
     <com.jiyouliang.fmap.view.widget.TopTitleView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rl_title"
+        android:id="@+id/ttv"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,7 +26,7 @@
         android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rl_title" />
+        app:layout_constraintTop_toBottomOf="@id/ttv" />
 
     <com.jiyouliang.fmap.view.widget.ClearEditText
         android:id="@+id/et_phone"

@@ -25,6 +25,28 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
     private static final String TAG = "UserActivity";
     private LinearLayout mRootContainer;
 
+    /**
+     * 用户详情Fragment栈名
+     * @deprecated 第一个页面默认进来即显示,不需要添加到回退栈
+     */
+    @Deprecated
+    private static final String STACK_NAME_DETAIL = "user_detail";
+
+    /**
+     * 用户发送验证码Fragment栈名
+     */
+    private static final String STACK_NAME_SEND_SMS = "user_send_sms";
+
+    /**
+     * 用户短信验证码登录Fragment栈名
+     */
+    private static final String STACK_NAME_SMS_LOGIN = "user_sms_login";
+
+    /**
+     * 用户信息Fragment栈名
+     */
+    private static final String STACK_NAME_INFO = "user_info";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,34 +81,47 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
 
     /**
      * 分发Fragment
-     *
      */
     private void dispatchFragment(Uri uri) {
+        // FragmentManager默认不会为空,这里添加是为了为了代码安全,防范于未然
+        if(fm == null){
+            return;
+        }
         String fragment = uri.getQueryParameter("fragment");
         if (TextUtils.isEmpty(fragment)) {
             LogUtil.e(TAG, "fragment name cannot be null");
             return;
         }
         // 发送短信验证码
-        if(fragment.equals(UserSendSmsFragment.class.getSimpleName())){
+        if (fragment.equals(UserSendSmsFragment.class.getSimpleName())) {
             showUserSemdSmsFragment();
         }
         // 短信验证码登录
-        if(fragment.equals(UserLoginBySmsFragment.class.getSimpleName())){
+        if (fragment.equals(UserLoginBySmsFragment.class.getSimpleName())) {
             String phone = uri.getQueryParameter("phone");
             showUserLoginBySmsFragment(phone);
         }
 
         // 用户详情Fragment
-        if(fragment.equals(UserDetailFragment.class.getSimpleName())){
+        if (fragment.equals(UserDetailFragment.class.getSimpleName())) {
             String phone = uri.getQueryParameter("phone");
             showUserDetailFragment(phone);
         }
 
         // 用户信息Fragment
-        if(fragment.equals(UserInfoFragment.class.getSimpleName())){
+        if (fragment.equals(UserInfoFragment.class.getSimpleName())) {
             String phone = uri.getQueryParameter("phone");
             showUerInfoFragment(phone);
+        }
+
+        // 返回上一页
+        if(fragment.equals("back")){
+            back();
+        }
+
+        // 登录成功,情况回退栈,默认显示用户详情Fragment
+        if(fragment.equals("loginSuccessClearStacks")){
+            loginSuccessClearStacks();
         }
 
     }
@@ -94,6 +129,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
 
     /**
      * 用户详情Fragment
+     *
      * @param phone
      */
     public void showUserDetailFragment(String phone) {
@@ -102,7 +138,14 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         FragmentTransaction ft = fm.beginTransaction();
         UserDetailFragment fragment = UserDetailFragment.newInstance(phone);
         ft.replace(R.id.fragment_container, fragment);
+        // 添加到回退栈
+        // 第一个页面不需要添加到回退栈
+        //ft.addToBackStack(STACK_NAME_DETAIL);
         ft.commit();
+        // 手机号不为空,说明从登录成功页面跳转过来,需要清空Fragment回退栈信息
+        if(!TextUtils.isEmpty(phone)){
+            loginSuccessClearStacks();
+        }
     }
 
     /**
@@ -113,6 +156,8 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         FragmentTransaction ft = fm.beginTransaction();
         UserSendSmsFragment fragment = UserSendSmsFragment.newInstance();
         ft.replace(R.id.fragment_container, fragment);
+        // 添加到回退栈
+        ft.addToBackStack(STACK_NAME_SEND_SMS);
         ft.commit();
     }
 
@@ -123,6 +168,8 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         FragmentTransaction ft = fm.beginTransaction();
         UserLoginBySmsFragment fragment = UserLoginBySmsFragment.newInstance(phone);
         ft.replace(R.id.fragment_container, fragment);
+        // 添加到回退栈
+        ft.addToBackStack(STACK_NAME_SMS_LOGIN);
         ft.commit();
     }
 
@@ -131,7 +178,36 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         FragmentTransaction ft = fm.beginTransaction();
         UserInfoFragment fragment = UserInfoFragment.newInstance(phone);
         ft.replace(R.id.fragment_container, fragment);
+        // 添加到回退栈
+        ft.addToBackStack(STACK_NAME_INFO);
         ft.commit();
+    }
+
+    /**
+     * 返回上一页,通过Fragment回退栈管理
+     */
+    private void back(){
+        int count = fm.getBackStackEntryCount();
+        if(count <= 0){
+            // 没有回退栈关闭Activity
+            finish();
+        }
+        fm.popBackStack();
+    }
+
+    /**
+     * 登录成功后,清空回退栈
+     */
+    private void loginSuccessClearStacks(){
+        log("clear fragments stack");
+        int count = fm.getBackStackEntryCount();
+        for (int i = 0; i < count; i++) {
+            FragmentManager.BackStackEntry entry = fm.getBackStackEntryAt(i);
+            if(!TextUtils.isEmpty(entry.getName())){
+                fm.popBackStack();
+            }
+        }
+//        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     private void log(String msg) {

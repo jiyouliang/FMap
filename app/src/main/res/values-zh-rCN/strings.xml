@@ -29,4 +29,5 @@
     <string name="login_error">登录遇到问题？</string>
     <string name="get_sms_code">获取验证码</string>
     <string name="phone_cannot_empty">手机号不能为空</string>
+    <string name="please_input_mobile_number">请输入手机号</string>
 </resources>

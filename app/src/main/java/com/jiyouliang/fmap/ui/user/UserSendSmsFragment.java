@@ -21,6 +21,7 @@ import com.jiyouliang.fmap.ui.BaseFragment;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.view.widget.ButtonLoadingView;
 import com.jiyouliang.fmap.view.widget.ClearEditText;
+import com.jiyouliang.fmap.view.widget.TopTitleView;
 
 /**
  * @author jiyouliang
@@ -30,7 +31,7 @@ import com.jiyouliang.fmap.view.widget.ClearEditText;
  *
  * 通过 {@link UserSendSmsFragment#newInstance} 该Fragment实例对象.
  */
-public class UserSendSmsFragment extends BaseFragment implements View.OnClickListener, IUserLoginView{
+public class UserSendSmsFragment extends BaseFragment implements View.OnClickListener, IUserLoginView, TopTitleView.OnTopTitleViewClickListener {
 
     private ClearEditText mEtPhone;
     private ButtonLoadingView mBtnLogin;
@@ -44,6 +45,7 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
     private UserLoginPresenter mPresenter;
 
     private OnFragmentInteractionListener mListener;
+    private TopTitleView mTopTitleView;
 
     public UserSendSmsFragment() {
         // Required empty public constructor
@@ -79,6 +81,7 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
         mEtPhone = (ClearEditText) rootView.findViewById(R.id.et_phone);
         mBtnLogin = (ButtonLoadingView) rootView.findViewById(R.id.btn_send_sms);
         mBtnLogin.setEnabled(false);
+        mTopTitleView = (TopTitleView)rootView.findViewById(R.id.ttv);
     }
 
     private void setListener() {
@@ -116,6 +119,7 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
         });
 
         mBtnLogin.setOnClickListener(this);
+        mTopTitleView.setOnTopTitleViewClickListener(this);
     }
 
     private void initData() {
@@ -216,4 +220,19 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
         mListener = null;
     }
 
+    @Override
+    public void onLeftClick(View v) {
+        if (mListener != null) {
+            Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+            // 返回上一页
+            builder.appendQueryParameter("fragment", "back");
+            Uri uri = Uri.parse(builder.toString());
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onRightClick(View v) {
+
+    }
 }

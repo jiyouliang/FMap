@@ -21,11 +21,12 @@ import com.jiyouliang.fmap.R;
  * <p>
  * 顶部标题
  */
-public class TopTitleView extends RelativeLayout {
+public class TopTitleView extends RelativeLayout implements View.OnClickListener {
     private ImageView mIvLeft;
     private TextView mTextRight;
     private boolean visiable;
     private ImageView mIvRight;
+    private OnTopTitleViewClickListener mListener;
 
     public TopTitleView(Context context) {
         this(context, null);
@@ -44,6 +45,15 @@ public class TopTitleView extends RelativeLayout {
         initView();
         //加载自定义属性
         initFromAttributes(context, attrs);
+        setListener();
+    }
+
+    /**
+     * 统一处理事件相关
+     */
+    private void setListener() {
+        mIvLeft.setOnClickListener(this);
+        mIvRight.setOnClickListener(this);
     }
 
     private void initFromAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -173,5 +183,40 @@ public class TopTitleView extends RelativeLayout {
      */
     private void setRightTextColor(int textColor) {
         mTextRight.setTextColor(textColor);
+    }
+
+
+    public void setOnTopTitleViewClickListener(OnTopTitleViewClickListener listener){
+        this.mListener = listener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(mListener == null || v == null){
+            return;
+        }
+        if(v == mIvLeft){
+            mListener.onLeftClick(v);
+        }
+        if(v == mIvRight){
+            mListener.onRightClick(v);
+        }
+    }
+
+    /**
+     * 点击回调监听
+     */
+    public interface OnTopTitleViewClickListener{
+        /**
+         * 点击左侧图片
+         * @param v
+         */
+        void onLeftClick(View v);
+
+        /**
+         * 点击右侧图片
+         * @param v
+         */
+        void onRightClick(View v);
     }
 }

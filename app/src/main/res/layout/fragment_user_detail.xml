@@ -9,6 +9,8 @@
     <com.jiyouliang.fmap.view.widget.TopTitleView
         android:id="@+id/top_title_view"
         android:layout_width="match_parent"
+        android:paddingLeft="@dimen/padding_large2"
+        android:paddingRight="@dimen/padding_large2"
         android:layout_height="wrap_content"
         android:background="#00FFFFFF"
         app:ttvLeftIcon="@drawable/user_detail_close_light_icon"
