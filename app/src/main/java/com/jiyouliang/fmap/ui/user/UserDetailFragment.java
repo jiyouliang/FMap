@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jiyouliang.fmap.R;
+import com.jiyouliang.fmap.server.task.SharedPreferencesTask;
 import com.jiyouliang.fmap.ui.BaseFragment;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.StatusBarUtils;
@@ -27,11 +28,11 @@ import com.jiyouliang.fmap.view.widget.TopTitleView;
 
 /**
  * @author jiyouliang
- *
+ * <p>
  * 用户详情
  * 由于Activity包含多个Fragment,Fragment之间通信通过接口回调{@link BaseFragment.OnFragmentInteractionListener}
  * 处理,该回调由包含的Activity实现,并通过Fragment分发通信.
- *
+ * <p>
  * 通过 {@link UserSendSmsFragment#newInstance} 该Fragment实例对象.
  */
 public class UserDetailFragment extends BaseFragment {
@@ -73,6 +74,7 @@ public class UserDetailFragment extends BaseFragment {
     private int mTitleHeight;
     private int mTotalDy;
     private String mPhone;
+    private UserDetailAdapter mAdapter;
 
     public UserDetailFragment() {
         // Required empty public constructor
@@ -92,6 +94,19 @@ public class UserDetailFragment extends BaseFragment {
         if (getArguments() != null) {
             mPhone = getArguments().getString(KEY_PHONE);
         }
+        SharedPreferencesTask mPreferencesTask = new SharedPreferencesTask();
+        String savedPhone = mPreferencesTask.getUserPhone(getContext());
+        // 传递手机号参数为空,并且存储手机号不为空,UI显示存储手机号
+        if (TextUtils.isEmpty(mPhone) && !TextUtils.isEmpty(savedPhone)) {
+            mPhone = savedPhone;
+            return;
+        }
+        // 手机号已经存储过
+        if (!TextUtils.isEmpty(savedPhone) && mPhone.equals(savedPhone)) {
+            return;
+        }
+        //手机号没有存储,或者和存储手机号不一致,重新存储
+        mPreferencesTask.saveUserPhone(getContext(), mPhone);
     }
 
     @Override
@@ -158,8 +173,8 @@ public class UserDetailFragment extends BaseFragment {
     }
 
     private void initData() {
-        UserDetailAdapter adapter = new UserDetailAdapter(mPhone, mListener);
-        mRecycleView.setAdapter(adapter);
+        mAdapter = new UserDetailAdapter(mPhone, mListener);
+        mRecycleView.setAdapter(mAdapter);
     }
 
     /**
@@ -170,13 +185,19 @@ public class UserDetailFragment extends BaseFragment {
         private static final String[] TITLES = new String[]{"我是商家", "我的反馈", "我的订单", "我的钱包", "我的小程序", "我的评论", "特别鸣谢", "帮助中心"};
         private static final String[] SUBTITLES = new String[]{"【免费】新增地点、认领店铺", "", "查看我的全部订单", "", "", "", "感谢高德热心用户", ""};
         private final OnFragmentInteractionListener mListener;
-        private final String mPhone;
+        private String mPhone;
 
         private Context mContext;
 
         public UserDetailAdapter(String phone, OnFragmentInteractionListener listener) {
             this.mListener = listener;
             this.mPhone = phone;
+        }
+
+        public void setPhone(String phone) {
+            this.mPhone = phone;
+            //刷新
+            notifyDataSetChanged();
         }
 
         @NonNull
@@ -224,23 +245,23 @@ public class UserDetailFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(@NonNull UserDetailViewHolder viewHolder, int position) {
             int viewType = getItemViewType(position);
-            switch (viewType){
+            switch (viewType) {
                 case TYPE_HEADER:
                     // 头部item
                     break;
                 case TYPE_LOGIN:
                     // 登录模块
                     // 手机号存在,说明登录成功,修改用户详情UI
-                    if(!TextUtils.isEmpty(mPhone)){
+                    if (!TextUtils.isEmpty(mPhone)) {
                         viewHolder.ivLogo.setBackgroundResource(R.drawable.user_detail_logined_boy);
                         viewHolder.tvLoginTip.setVisibility(View.GONE);
-                        viewHolder.tvLogin.setText(String.format("Map_%s", mPhone));
+                        viewHolder.tvLogin.setText(String.format("Map_%s", mPhone.substring(0, 6)));
                     }
                     break;
                 case TYPE_FAVORITE:
                     break;
                 case TYPE_MEDAL:
-                    if(!TextUtils.isEmpty(mPhone)){
+                    if (!TextUtils.isEmpty(mPhone)) {
                         viewHolder.tvMyAchieved.setVisibility(View.GONE);
                     }
                     break;
@@ -300,14 +321,14 @@ public class UserDetailFragment extends BaseFragment {
                     break;
                 case TYPE_LOGIN:
                     ivLogo = itemView.findViewById(R.id.iv_user_logo);
-                    tvLoginTip = (TextView)itemView.findViewById(R.id.tv_experience_more);
-                    tvLogin = (TextView)itemView.findViewById(R.id.tv_login);
+                    tvLoginTip = (TextView) itemView.findViewById(R.id.tv_experience_more);
+                    tvLogin = (TextView) itemView.findViewById(R.id.tv_login);
                     itemView.setOnClickListener(this);
                     break;
                 case TYPE_FAVORITE:
                     break;
                 case TYPE_MEDAL:
-                    tvMyAchieved = (TextView)itemView.findViewById(R.id.tv_my_achieved);
+                    tvMyAchieved = (TextView) itemView.findViewById(R.id.tv_my_achieved);
                     break;
                 case TYPE_DATA_CONTRIBUTE:
                     break;
@@ -340,7 +361,7 @@ public class UserDetailFragment extends BaseFragment {
         }
     }
 
-    private void log(String msg){
+    private void log(String msg) {
         LogUtil.d(TAG, msg);
     }
 

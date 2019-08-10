@@ -41,7 +41,7 @@ public class HttpTaskClient {
 
     public <T> void get(String url, String json, final int reqCode, final Class<T> clazz, final OnHttpResponseListener<T> listener) {
         LogUtil.d(TAG, String.format("get request url=%s, json=%s", url, json));
-        //调用OkHttp请求网络,后期如果需要修改，至今修改get方法获取post方法即可
+        //调用OkHttp请求网络,后期如果需要修改，直接修改get方法获取post方法即可
         OkHttpTaskClient.getInstance().get(url, json, new BaseHttpTask.BaseHttpResponse() {
             @Override
             public void onFailed(Exception e) {
