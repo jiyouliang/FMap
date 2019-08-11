@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -27,7 +28,8 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
 
     /**
      * 用户详情Fragment栈名
-     * @deprecated 第一个页面默认进来即显示,不需要添加到回退栈
+     *
+     * @deprecated 第一个页面默认进来即显示, 不需要添加到回退栈
      */
     @Deprecated
     private static final String STACK_NAME_DETAIL = "user_detail";
@@ -84,7 +86,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
      */
     private void dispatchFragment(Uri uri) {
         // FragmentManager默认不会为空,这里添加是为了为了代码安全,防范于未然
-        if(fm == null){
+        if (fm == null) {
             return;
         }
         String fragment = uri.getQueryParameter("fragment");
@@ -115,12 +117,12 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         }
 
         // 返回上一页
-        if(fragment.equals("back")){
+        if (fragment.equals("back")) {
             back();
         }
 
         // 登录成功,情况回退栈,默认显示用户详情Fragment
-        if(fragment.equals("loginSuccessClearStacks")){
+        if (fragment.equals("loginSuccessClearStacks")) {
             loginSuccessClearStacks();
         }
 
@@ -143,7 +145,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         //ft.addToBackStack(STACK_NAME_DETAIL);
         ft.commit();
         // 手机号不为空,说明从登录成功页面跳转过来,需要清空Fragment回退栈信息
-        if(!TextUtils.isEmpty(phone)){
+        if (!TextUtils.isEmpty(phone)) {
             loginSuccessClearStacks();
         }
     }
@@ -165,6 +167,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
      * 短信验证码登录Fragment
      */
     public void showUserLoginBySmsFragment(String phone) {
+        mRootContainer.setBackgroundColor(Color.WHITE);
         FragmentTransaction ft = fm.beginTransaction();
         UserLoginBySmsFragment fragment = UserLoginBySmsFragment.newInstance(phone);
         ft.replace(R.id.fragment_container, fragment);
@@ -186,11 +189,15 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
     /**
      * 返回上一页,通过Fragment回退栈管理
      */
-    private void back(){
+    private void back() {
         int count = fm.getBackStackEntryCount();
-        if(count <= 0){
+        if (count <= 0) {
             // 没有回退栈关闭当前Activity
             finish();
+        }
+        if (count == 1) {
+            // 避免回退背景变成白色
+            mRootContainer.setBackground(getResources().getDrawable(R.drawable.user_detail_bg));
         }
         fm.popBackStack();
     }
@@ -198,12 +205,12 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
     /**
      * 登录成功后,清空回退栈
      */
-    private void loginSuccessClearStacks(){
+    private void loginSuccessClearStacks() {
         log("clear fragments stack");
         int count = fm.getBackStackEntryCount();
         for (int i = 0; i < count; i++) {
             FragmentManager.BackStackEntry entry = fm.getBackStackEntryAt(i);
-            if(!TextUtils.isEmpty(entry.getName())){
+            if (!TextUtils.isEmpty(entry.getName())) {
                 fm.popBackStack();
             }
         }
@@ -212,5 +219,20 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
 
     private void log(String msg) {
         LogUtil.d(TAG, msg);
+    }
+
+    /**
+     * 处理返回键
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            back();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

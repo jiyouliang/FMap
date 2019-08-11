@@ -11,6 +11,7 @@ import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -20,7 +21,7 @@ import com.jiyouliang.fmap.util.LogUtil;
  * @author YouLiang.Ji
  * 阻尼回弹控件
  */
-public class ReboundLinearLayout extends LinearLayout implements NestedScrollingParent2 {
+public class ReboundLinearLayout extends LinearLayout  {
     private static final String TAG = "ReboundLinearLayout";
     /**
      * 摩擦力,摩擦力越大view移动距离越小
@@ -78,23 +79,23 @@ public class ReboundLinearLayout extends LinearLayout implements NestedScrolling
 
 
     @Override
-    public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int axes, int type) {
+    public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int axes) {
         log("onStartNestedScroll");
 //        return target instanceof RecyclerView;
         return (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
-    public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int axes, int type) {
+    public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int axes) {
         log("onNestedScrollAccepted");
-        mNestedHelper.onNestedScrollAccepted(child, target, axes, type);
+        mNestedHelper.onNestedScrollAccepted(child, target, axes);
     }
 
     @Override
-    public void onStopNestedScroll(@NonNull View target, int type) {
+    public void onStopNestedScroll(@NonNull View target) {
         log("onStopNestedScroll");
         // 不判断scrolls,第一次onNestedScroll前会回调onStopNestedScroll,导致阻尼scroll不顺畅
-        mNestedHelper.onStopNestedScroll(target, type);
+        mNestedHelper.onStopNestedScroll(target);
         if(scrolls != 0 && !mAnimator.isRunning()){
             mAnimator.setIntValues(scrolls, 0);
             mAnimator.start();
@@ -102,13 +103,13 @@ public class ReboundLinearLayout extends LinearLayout implements NestedScrolling
     }
 
     @Override
-    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
+    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed) {
         log(String.format("onNestedPreScroll, dy=%s, getScrollY=%s", dy, getScrollY()));
         this.dy = dy;
     }
 
     @Override
-    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
         getParent().requestDisallowInterceptTouchEvent(true);
 
         /*
@@ -116,7 +117,13 @@ public class ReboundLinearLayout extends LinearLayout implements NestedScrolling
          * dy <= 0: 只允向下滑动(只显示头部阻尼效果),
          * !mAnimator.isRunning(): 执行动画期间调用scrollTo方法导致onNestedScroll回调,这里需要屏蔽
          */
-        if(type == ViewCompat.TYPE_TOUCH && dy <= 0 && !mAnimator.isRunning()){
+        /*if(type == ViewCompat.TYPE_TOUCH && dy <= 0 && !mAnimator.isRunning()){
+            log("onNestedScroll");
+            scrolls += dyUnconsumed / FORCE;
+            scrollTo(0, scrolls);
+        }*/
+
+        if(dy <= 0 && !mAnimator.isRunning()){
             log("onNestedScroll");
             scrolls += dyUnconsumed / FORCE;
             scrollTo(0, scrolls);
