@@ -25,14 +25,13 @@ import com.jiyouliang.fmap.view.widget.TopTitleView;
 
 /**
  * @author jiyouliang
- * <p>
  * 用户详情
  * 由于Activity包含多个Fragment,Fragment之间通信通过接口回调{@link BaseFragment.OnFragmentInteractionListener}
  * 处理,该回调由包含的Activity实现,并通过Fragment分发通信.
  * <p>
  * 通过 {@link UserSendSmsFragment#newInstance} 该Fragment实例对象.
  */
-public class UserDetailFragment extends BaseFragment {
+public class UserDetailFragment extends BaseFragment implements TopTitleView.OnTopTitleViewClickListener, OnItemClickListener {
 
     private static final String TAG = "UserDetailFragment";
     private OnFragmentInteractionListener mListener;
@@ -167,29 +166,82 @@ public class UserDetailFragment extends BaseFragment {
                 }
             }
         });
+
+        mTopTitleView.setOnTopTitleViewClickListener(this);
+
     }
 
     private void initData() {
-        mAdapter = new UserDetailAdapter(mPhone, mListener);
+        mAdapter = new UserDetailAdapter(mPhone, this);
+//        mAdapter.setOnItemClickListener(this);
         mRecycleView.setAdapter(mAdapter);
     }
+
+    private void showUserInfoPage() {
+        if (mListener != null) {
+            Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+            builder.appendQueryParameter("fragment", UserInfoFragment.class.getSimpleName());
+            builder.appendQueryParameter("phone", mPhone);
+            Uri uri = Uri.parse(builder.toString());
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    private void showUserLoginPage() {
+        if (mListener != null) {
+            Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+            builder.appendQueryParameter("fragment", "UserSendSmsFragment");
+            Uri uri = Uri.parse(builder.toString());
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onItemClick(View v, int position) {
+        log(String.format("onItemClick, position=%s, v=%s", position, v));
+        if(position == TYPE_LOGIN){
+            if(TextUtils.isEmpty(mPhone)){
+                showUserLoginPage();
+            }else {
+                showUserInfoPage();
+            }
+        }
+    }
+
+    @Override
+    public void onLeftClick(View v) {
+        // 回退页面
+        if (mListener != null) {
+            Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+            builder.appendQueryParameter("fragment", "back");
+            Uri uri = Uri.parse(builder.toString());
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onRightClick(View v) {
+
+    }
+
 
     /**
      * 用户详情页Adapter
      */
-    private static class UserDetailAdapter extends RecyclerView.Adapter<UserDetailViewHolder> {
+    private static class UserDetailAdapter extends RecyclerView.Adapter<UserDetailViewHolder> implements View.OnClickListener {
 
         private static final String[] TITLES = new String[]{"我是商家", "我的反馈", "我的订单", "我的钱包", "我的小程序", "我的评论", "特别鸣谢", "帮助中心"};
         private static final String[] SUBTITLES = new String[]{"【免费】新增地点、认领店铺", "", "查看我的全部订单", "", "", "", "感谢高德热心用户", ""};
-        private final OnFragmentInteractionListener mListener;
+        private OnItemClickListener mListener;
         private String mPhone;
 
         private Context mContext;
 
-        public UserDetailAdapter(String phone, OnFragmentInteractionListener listener) {
-            this.mListener = listener;
+        public UserDetailAdapter(String phone, OnItemClickListener listener) {
             this.mPhone = phone;
+            this.mListener = listener;
         }
+
 
         public void setPhone(String phone) {
             this.mPhone = phone;
@@ -203,7 +255,7 @@ public class UserDetailFragment extends BaseFragment {
             this.mContext = parent.getContext();
             int viewType = getItemViewType(position);
             View itemView = null;
-            switch (viewType) {
+            switch (position) {
                 case TYPE_HEADER:
                     itemView = inflateLayout(parent, R.layout.user_detail_header_recycle_item);
                     break;
@@ -223,8 +275,12 @@ public class UserDetailFragment extends BaseFragment {
                     itemView = inflateLayout(parent, R.layout.user_detail_normal_recycle_item);
                     break;
             }
+            if (itemView != null) {
+                itemView.setTag(position);
+                itemView.setOnClickListener(this);
+            }
 
-            return new UserDetailViewHolder(mContext, mListener, itemView, viewType);
+            return new UserDetailViewHolder(mContext, itemView, viewType);
         }
 
         /**
@@ -242,6 +298,7 @@ public class UserDetailFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(@NonNull UserDetailViewHolder viewHolder, int position) {
             int viewType = getItemViewType(position);
+
             switch (viewType) {
                 case TYPE_HEADER:
                     // 头部item
@@ -249,13 +306,7 @@ public class UserDetailFragment extends BaseFragment {
                 case TYPE_LOGIN:
                     // 登录模块
                     // 手机号存在,说明登录成功,修改用户详情UI
-                    if (!TextUtils.isEmpty(mPhone)) {
-                        viewHolder.ivLogo.setBackgroundResource(R.drawable.user_detail_logined_boy);
-                        viewHolder.tvLoginTip.setVisibility(View.GONE);
-                        viewHolder.tvLogin.setText(String.format("map_%s", mPhone.substring(0, 6)));
-                        viewHolder.setLoginStatus(true);
-                        viewHolder.setPhone(mPhone);
-                    }
+                    setLoginUI(viewHolder);
                     break;
                 case TYPE_FAVORITE:
                     break;
@@ -284,6 +335,21 @@ public class UserDetailFragment extends BaseFragment {
 
         }
 
+        /**
+         * 设置登录用户UI
+         *
+         * @param viewHolder
+         */
+        private void setLoginUI(@NonNull UserDetailViewHolder viewHolder) {
+            if (!TextUtils.isEmpty(mPhone)) {
+                viewHolder.ivLogo.setBackgroundResource(R.drawable.user_detail_logined_boy);
+                viewHolder.tvLoginTip.setVisibility(View.GONE);
+                viewHolder.tvLogin.setText(String.format("map_%s", mPhone.substring(0, 6)));
+                viewHolder.setLoginStatus(true);
+                viewHolder.setPhone(mPhone);
+            }
+        }
+
 
         @Override
         public int getItemViewType(int position) {
@@ -294,14 +360,25 @@ public class UserDetailFragment extends BaseFragment {
         public int getItemCount() {
             return 5 + TITLES.length;
         }
+
+
+        @Override
+        public void onClick(View v) {
+            if (v == null || mListener == null) {
+                return;
+            }
+            // 回调OnItemClick
+            if (v.getTag() instanceof Integer) {
+                mListener.onItemClick(v, (Integer) v.getTag());
+            }
+        }
     }
 
     /**
      * ViewHolder
      */
-    private static class UserDetailViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private static class UserDetailViewHolder extends RecyclerView.ViewHolder {
 
-        private final OnFragmentInteractionListener mListener;
         private int mViewType;
         private Context mContext;
         private boolean mLoginStatus;
@@ -312,9 +389,9 @@ public class UserDetailFragment extends BaseFragment {
         TextView tvMyAchieved;
         String mPhone;
 
-        private UserDetailViewHolder(Context context, OnFragmentInteractionListener listener, @NonNull View itemView, int viewType) {
+
+        private UserDetailViewHolder(Context context, @NonNull View itemView, int viewType) {
             super(itemView);
-            this.mListener = listener;
             this.mContext = context;
             mViewType = viewType;
             switch (viewType) {
@@ -324,7 +401,6 @@ public class UserDetailFragment extends BaseFragment {
                     ivLogo = itemView.findViewById(R.id.iv_user_logo);
                     tvLoginTip = (TextView) itemView.findViewById(R.id.tv_experience_more);
                     tvLogin = (TextView) itemView.findViewById(R.id.tv_login);
-                    itemView.setOnClickListener(this);
                     break;
                 case TYPE_FAVORITE:
                     break;
@@ -336,58 +412,23 @@ public class UserDetailFragment extends BaseFragment {
                 default:
                     //常规列
                     mSettingItemView = itemView.findViewById(R.id.siv);
-                    if (mSettingItemView != null && mSettingItemView.getParent() != null) {
-                        ((ViewGroup) mSettingItemView.getParent()).setOnClickListener(this);
-                    }
                     break;
             }
         }
 
         /**
          * 登录状态
+         *
          * @param status
          */
-        void setLoginStatus(boolean status){
+        void setLoginStatus(boolean status) {
             this.mLoginStatus = status;
         }
 
-        void setPhone(String phone){
+        void setPhone(String phone) {
             this.mPhone = phone;
         }
 
-        @Override
-        public void onClick(View v) {
-            if (v != null && mViewType == TYPE_LOGIN) {
-                if(mLoginStatus){
-                    // 已登录进入用户信息页面
-                    showUserInfoPage();
-                }else{
-                    // 未登录进入登录页
-                    showUserLoginPage();
-                }
-            }
-        }
-
-        private void showUserInfoPage() {
-            if (mListener != null) {
-                Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
-                builder.appendQueryParameter("fragment", UserInfoFragment.class.getSimpleName());
-                builder.appendQueryParameter("phone", mPhone);
-                Uri uri = Uri.parse(builder.toString());
-                mListener.onFragmentInteraction(uri);
-            }
-        }
-
-        private void showUserLoginPage() {
-            /*Intent intent = new Intent(mContext, LoginActivity.class);
-            mContext.startActivity(intent);*/
-            if (mListener != null) {
-                Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
-                builder.appendQueryParameter("fragment", "UserSendSmsFragment");
-                Uri uri = Uri.parse(builder.toString());
-                mListener.onFragmentInteraction(uri);
-            }
-        }
     }
 
     private void log(String msg) {
@@ -411,5 +452,6 @@ public class UserDetailFragment extends BaseFragment {
         super.onDetach();
         mListener = null;
     }
+
 
 }

@@ -189,7 +189,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
     private void back(){
         int count = fm.getBackStackEntryCount();
         if(count <= 0){
-            // 没有回退栈关闭Activity
+            // 没有回退栈关闭当前Activity
             finish();
         }
         fm.popBackStack();

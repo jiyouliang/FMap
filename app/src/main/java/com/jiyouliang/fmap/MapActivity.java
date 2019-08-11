@@ -350,7 +350,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         //获取经纬度
         double lng = location.getLongitude();
         double lat = location.getLatitude();
-        mPoiName = location.getPoiName();
+        // 当前poiname和上次不相等才更新显示
+        if(location.getPoiName() != null && !location.getPoiName().equals(mPoiName)){
+            mPoiName = location.getPoiName();
+            showPoiNameText();
+        }
         LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat + ",mLocMarker=" + mLocMarker + ",poiName=" + mPoiName);
 
         //参数依次是：视角调整区域的中心点坐标、希望调整到的缩放级别、俯仰角0°~45°（垂直与地图时为0）、偏航角 0~360° (正北方为0)
@@ -797,9 +801,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         //底部：打车、路线...
         mPoiDetailTaxi.setVisibility(View.VISIBLE);
         //我的位置
-        if (!TextUtils.isEmpty(mPoiName)) {
-            mTvLocation.setText("在" + mPoiName + "附近");
-        }
+        showPoiNameText();
 
         //int poiTaxiHeight = mPoiDetailTaxi.getMeasuredHeight(); //为0
         int poiTaxiHeight = getResources().getDimensionPixelSize(R.dimen.setting_item_large_height);
@@ -807,6 +809,15 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mBehavior.setHideable(true);
         mBehavior.setPeekHeight(mMinPeekHeight + poiTaxiHeight);
 
+    }
+
+    /**
+     * 显示当前所在poi点信息
+     */
+    private void showPoiNameText() {
+        if (!TextUtils.isEmpty(mPoiName)) {
+            mTvLocation.setText(String.format("在%s附近", mPoiName));
+        }
     }
 
     /**
