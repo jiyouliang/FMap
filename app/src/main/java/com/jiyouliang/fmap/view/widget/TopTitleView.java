@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jiyouliang.fmap.R;
+import com.jiyouliang.fmap.util.DeviceUtils;
 
 /**
  * @author YouLiang.Ji
@@ -65,7 +66,6 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
         String rightText = ta.getString(R.styleable.TopTitleView_ttvRightText);
         int rightTextSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvRightTextSize, 0);
         int rightTextColor = ta.getColor(R.styleable.TopTitleView_ttvRightTextColor, getResources().getColor(R.color.poi_detail_loc));
-        String centerText = ta.getString(R.styleable.TopTitleView_ttvCenterText);
 
         setRightDrawable(drawableRight);
         setLeftDrawable(drawableLeft);
@@ -76,6 +76,9 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
         // 左侧ImageView大小,默认位控件自身布局属性大小
         int leftSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvLeftSize, lpLeft.width);
         int rightSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvRightSize, lpRight.width);
+        // 中间TextView
+        String centerText = ta.getString(R.styleable.TopTitleView_ttvCenterText);
+        int centerTextSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvCenterTextSize, 0);
 
         lpLeft.width = leftSize;
         lpLeft.height = leftSize;
@@ -90,9 +93,10 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
         setRightTextSize(rightTextSize);
         setRightTextColor(rightTextColor);
         //中间文字
-        if(!TextUtils.isEmpty(centerText)){
+        if (!TextUtils.isEmpty(centerText)) {
             setCenterText(centerText);
         }
+        setCenterTextSize(centerTextSize);
 
         ta.recycle();
     }
@@ -100,7 +104,7 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
     private void initView() {
         mIvLeft = findViewById(R.id.iv_left);
         mTextRight = findViewById(R.id.tv_subtitle);
-        mTvCenter = (TextView)findViewById(R.id.tv_center);
+        mTvCenter = findViewById(R.id.tv_center);
         mTextRight.setVisibility(View.GONE);
 
         mIvRight = findViewById(R.id.iv_right);
@@ -186,6 +190,7 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
 
     /**
      * 右侧文字颜色
+     *
      * @param textColor
      */
     private void setRightTextColor(int textColor) {
@@ -195,44 +200,72 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
 
     /**
      * 设置中间文字
+     *
      * @param text
      */
-    private void setCenterText(String text) {
-        if(mTvCenter.getVisibility() != View.VISIBLE){
+    public void setCenterText(String text) {
+        if (mTvCenter.getVisibility() != View.VISIBLE) {
             mTvCenter.setVisibility(View.VISIBLE);
         }
         mTvCenter.setText(text);
     }
 
-    public void setOnTopTitleViewClickListener(OnTopTitleViewClickListener listener){
+    /**
+     * 设置中间文字大小
+     *
+     * @param textSize
+     */
+    public void setCenterTextSize(float textSize) {
+        if (textSize <= 0) {
+            return;
+        }
+        mTvCenter.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+    }
+
+    /**
+     * 获取中间TextView文字
+     *
+     * @return
+     */
+    public String getCenterText() {
+        if (TextUtils.isEmpty(mTvCenter.getText())) {
+            return null;
+        }
+        return mTvCenter.getText().toString().trim();
+    }
+
+    public void setOnTopTitleViewClickListener(OnTopTitleViewClickListener listener) {
         this.mListener = listener;
     }
 
     @Override
     public void onClick(View v) {
-        if(mListener == null || v == null){
+        if (mListener == null || v == null) {
             return;
         }
-        if(v == mIvLeft){
+        if (v == mIvLeft) {
             mListener.onLeftClick(v);
         }
-        if(v == mIvRight){
+        if (v == mIvRight) {
             mListener.onRightClick(v);
         }
     }
+
     /**
      * 点击回调监听
      */
-    public interface OnTopTitleViewClickListener{
+    public interface OnTopTitleViewClickListener {
 
         /**
          * 点击左侧图片
+         *
          * @param v
          */
         void onLeftClick(View v);
 
         /**
          * 点击右侧图片
+         *
          * @param v
          */
         void onRightClick(View v);

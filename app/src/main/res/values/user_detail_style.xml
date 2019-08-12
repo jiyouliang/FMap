@@ -7,4 +7,12 @@
         <item name="android:paddingRight">@dimen/padding_size</item>
         <item name="android:textColor">#FF9F9F9F</item>
     </style>
+    <dimen name="user_info_logon_small_size">36dp</dimen>
+    <style name="UserDetailSmallLogo">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+    </style>
+
+    <!--个人资料item高度-->
+    <dimen name="user_info_item_height">64dp</dimen>
 </resources>

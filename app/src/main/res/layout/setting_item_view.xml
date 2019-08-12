@@ -5,26 +5,34 @@
 
     <TextView
         android:id="@+id/tv_title"
-        android:layout_centerVertical="true"
         style="@style/SmallTextTheme.BaseTextTheme"
-        android:textColor="@color/user_detail_title_color"
-        android:text="@string/temp_content"/>
+        android:layout_centerVertical="true"
+        android:textColor="@color/user_detail_title_color" />
 
     <ImageView
         android:id="@+id/iv_arrow"
         android:layout_width="wrap_content"
-        android:background="@drawable/arrow_right_icon2"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_height="wrap_content" />
+        android:background="@drawable/arrow_right_icon2" />
+
+    <ImageView
+        android:id="@+id/iv_right"
+        android:layout_width="@dimen/user_info_logon_small_size"
+        android:layout_height="@dimen/user_info_logon_small_size"
+        android:layout_toLeftOf="@id/iv_arrow"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:layout_marginRight="@dimen/padding_size" />
 
     <TextView
         android:id="@+id/tv_subtitle"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/padding_size"
-        android:layout_marginLeft="@dimen/padding_size"
-        android:layout_toStartOf="@id/iv_arrow"
         style="@style/LittleTextTheme.BaseTextTheme"
-        android:text="@string/temp_content"/>
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/padding_size"
+        android:layout_marginRight="@dimen/padding_size"
+        android:visibility="gone"
+        android:layout_toStartOf="@id/iv_arrow" />
 
 </RelativeLayout>

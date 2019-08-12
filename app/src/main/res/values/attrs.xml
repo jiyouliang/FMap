@@ -21,6 +21,7 @@
         <attr name="ttvRightTextColor" format="color|reference" />
         <!--中间文字-->
         <attr name="ttvCenterText" format="string|reference" />
+        <attr name="ttvCenterTextSize" format="dimension|reference" />
     </declare-styleable>
 
     <!--SettingItemView-->
@@ -35,10 +36,13 @@
         <attr name="sivTitleColor" format="color|reference"/>
         <!--文字是否加粗-->
         <attr name="sivTitleBlod" format="boolean"/>
-
+        <!--副标题-->
         <attr name="sivSubtitle" format="string|reference"/>
         <attr name="sivSubtitleVisiable" format="boolean"/>
         <attr name="sivSubtitleSize" format="dimension|reference"/>
+        <!--右侧图片-->
+        <attr name="sivRightIvBackground" format="reference"/>
+        <attr name="sivRightIvVisiable" format="boolean"/>
     </declare-styleable>
 
     <!--VerticalIconTextView-->

@@ -3,24 +3,28 @@ package com.jiyouliang.fmap.ui.user;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.ui.BaseFragment;
+import com.jiyouliang.fmap.util.UserUtils;
+import com.jiyouliang.fmap.view.widget.SettingItemView;
 import com.jiyouliang.fmap.view.widget.TopTitleView;
 
 /**
  * 用户信息Fragment,登录成功后点击用户头像进入该页面
  */
-public class UserInfoFragment extends BaseFragment implements TopTitleView.OnTopTitleViewClickListener {
+public class UserInfoFragment extends BaseFragment implements TopTitleView.OnTopTitleViewClickListener, View.OnClickListener {
     private static final String KEY_PHONE = "phone";
 
     private String mPhone;
 
     private OnFragmentInteractionListener mListener;
     private TopTitleView mTopTitleView;
+    private SettingItemView mSivNickName;
 
     public UserInfoFragment() {
         // Required empty public constructor
@@ -57,6 +61,19 @@ public class UserInfoFragment extends BaseFragment implements TopTitleView.OnTop
 
     private void initView(View rootView) {
         mTopTitleView = (TopTitleView) rootView.findViewById(R.id.ttv);
+        mSivNickName = (SettingItemView)rootView.findViewById(R.id.siv_nickname);
+        if(rootView instanceof ViewGroup){
+            int count = ((ViewGroup) rootView).getChildCount();
+            for (int i = 0; i < count; i++) {
+                View child = ((ViewGroup) rootView).getChildAt(i);
+                if(child instanceof ViewGroup){
+                    child.setOnClickListener(this);
+                }
+            }
+        }
+        if(!TextUtils.isEmpty(mPhone)){
+            mSivNickName.setSubTitleText(UserUtils.getUserName(mPhone));
+        }
     }
 
     private void setListener() {
@@ -100,6 +117,11 @@ public class UserInfoFragment extends BaseFragment implements TopTitleView.OnTop
 
     @Override
     public void onRightClick(View v) {
+
+    }
+
+    @Override
+    public void onClick(View v) {
 
     }
 }

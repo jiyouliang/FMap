@@ -34,4 +34,14 @@
     <string name="get_sms_code">获取验证码</string>
     <string name="phone_cannot_empty">手机号不能为空</string>
     <string name="please_input_mobile_number">请输入手机号</string>
+    <string name="personal_profile">个人资料</string>
+    <string name="logo">头像</string>
+    <string name="user_info_nickname">昵称</string>
+    <string name="user_info_sex">性别</string>
+    <string name="user_info_select_sex">请选择你的性别</string>
+    <string name="user_info_age">年龄</string>
+    <string name="user_info_select_birthday">请设置你的生日</string>
+    <string name="user_info_sign_in">签到</string>
+    <string name="user_info_sign_in_days">已连续签到10天</string>
+    <string name="setting">设置</string>
 </resources>

@@ -21,6 +21,7 @@ import com.jiyouliang.fmap.server.task.SharedPreferencesTask;
 import com.jiyouliang.fmap.ui.BaseFragment;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.StatusBarUtils;
+import com.jiyouliang.fmap.util.UserUtils;
 import com.jiyouliang.fmap.view.widget.SettingItemView;
 import com.jiyouliang.fmap.view.widget.TopTitleView;
 
@@ -196,6 +197,18 @@ public class UserDetailFragment extends BaseFragment implements TopTitleView.OnT
         }
     }
 
+    private void showUserSettingPage() {
+        if (mListener != null) {
+            Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+            builder.appendQueryParameter("fragment", UserSettingFragment.class.getSimpleName());
+            builder.appendQueryParameter("phone", mPhone);
+            Uri uri = Uri.parse(builder.toString());
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+
+
     @Override
     public void onItemClick(View v, int position) {
         log(String.format("onItemClick, position=%s, v=%s", position, v));
@@ -221,7 +234,8 @@ public class UserDetailFragment extends BaseFragment implements TopTitleView.OnT
 
     @Override
     public void onRightClick(View v) {
-
+        // 进入设置页面
+        showUserSettingPage();
     }
 
 
@@ -344,7 +358,7 @@ public class UserDetailFragment extends BaseFragment implements TopTitleView.OnT
             if (!TextUtils.isEmpty(mPhone)) {
                 viewHolder.ivLogo.setBackgroundResource(R.drawable.user_detail_logined_boy);
                 viewHolder.tvLoginTip.setVisibility(View.GONE);
-                viewHolder.tvLogin.setText(String.format("map_%s", mPhone.substring(0, 6)));
+                viewHolder.tvLogin.setText(UserUtils.getUserName(mPhone));
                 viewHolder.setLoginStatus(true);
                 viewHolder.setPhone(mPhone);
             }

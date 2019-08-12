@@ -49,6 +49,11 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
      */
     private static final String STACK_NAME_INFO = "user_info";
 
+    /**
+     * 用户设置Fragment栈名
+     */
+    private static final String STACK_NAME_SETTING = "user_setting";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +119,12 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         if (fragment.equals(UserInfoFragment.class.getSimpleName())) {
             String phone = uri.getQueryParameter("phone");
             showUerInfoFragment(phone);
+        }
+
+        // 用户设置Fragment
+        if (fragment.equals(UserSettingFragment.class.getSimpleName())) {
+            String phone = uri.getQueryParameter("phone");
+            showUerSettingFragment(phone);
         }
 
         // 返回上一页
@@ -187,6 +198,20 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
     }
 
     /**
+     * 显示用户设置Fragment
+     * @param phone
+     */
+    private void showUerSettingFragment(String phone) {
+        mRootContainer.setBackgroundColor(Color.WHITE);
+        FragmentTransaction ft = fm.beginTransaction();
+        UserSettingFragment fragment = UserSettingFragment.newInstance(phone);
+        ft.replace(R.id.fragment_container, fragment);
+        // 添加到回退栈
+        ft.addToBackStack(STACK_NAME_SETTING);
+        ft.commit();
+    }
+
+    /**
      * 返回上一页,通过Fragment回退栈管理
      */
     private void back() {
@@ -229,7 +254,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
             back();
             return true;
         }
