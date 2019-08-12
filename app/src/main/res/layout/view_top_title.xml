@@ -9,6 +9,17 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true" />
 
+
+    <TextView
+        android:id="@+id/tv_center"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        style="@style/MediumTextTheme.BaseTextTheme"
+        android:layout_centerVertical="true"
+        android:textColor="@color/poi_detail_loc" />
+
     <TextView
         android:id="@+id/tv_subtitle"
         android:layout_width="wrap_content"

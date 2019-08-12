@@ -27,6 +27,7 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
     private boolean visiable;
     private ImageView mIvRight;
     private OnTopTitleViewClickListener mListener;
+    private TextView mTvCenter;
 
     public TopTitleView(Context context) {
         this(context, null);
@@ -64,6 +65,7 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
         String rightText = ta.getString(R.styleable.TopTitleView_ttvRightText);
         int rightTextSize = ta.getDimensionPixelSize(R.styleable.TopTitleView_ttvRightTextSize, 0);
         int rightTextColor = ta.getColor(R.styleable.TopTitleView_ttvRightTextColor, getResources().getColor(R.color.poi_detail_loc));
+        String centerText = ta.getString(R.styleable.TopTitleView_ttvCenterText);
 
         setRightDrawable(drawableRight);
         setLeftDrawable(drawableLeft);
@@ -87,6 +89,10 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
         setRightText(rightText);
         setRightTextSize(rightTextSize);
         setRightTextColor(rightTextColor);
+        //中间文字
+        if(!TextUtils.isEmpty(centerText)){
+            setCenterText(centerText);
+        }
 
         ta.recycle();
     }
@@ -94,6 +100,7 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
     private void initView() {
         mIvLeft = findViewById(R.id.iv_left);
         mTextRight = findViewById(R.id.tv_subtitle);
+        mTvCenter = (TextView)findViewById(R.id.tv_center);
         mTextRight.setVisibility(View.GONE);
 
         mIvRight = findViewById(R.id.iv_right);
@@ -186,6 +193,17 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
     }
 
 
+    /**
+     * 设置中间文字
+     * @param text
+     */
+    private void setCenterText(String text) {
+        if(mTvCenter.getVisibility() != View.VISIBLE){
+            mTvCenter.setVisibility(View.VISIBLE);
+        }
+        mTvCenter.setText(text);
+    }
+
     public void setOnTopTitleViewClickListener(OnTopTitleViewClickListener listener){
         this.mListener = listener;
     }
@@ -202,11 +220,11 @@ public class TopTitleView extends RelativeLayout implements View.OnClickListener
             mListener.onRightClick(v);
         }
     }
-
     /**
      * 点击回调监听
      */
     public interface OnTopTitleViewClickListener{
+
         /**
          * 点击左侧图片
          * @param v

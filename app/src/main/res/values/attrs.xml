@@ -19,6 +19,8 @@
         <attr name="ttvRightText" format="string|reference" />
         <attr name="ttvRightTextSize" format="dimension|reference" />
         <attr name="ttvRightTextColor" format="color|reference" />
+        <!--中间文字-->
+        <attr name="ttvCenterText" format="string|reference" />
     </declare-styleable>
 
     <!--SettingItemView-->
