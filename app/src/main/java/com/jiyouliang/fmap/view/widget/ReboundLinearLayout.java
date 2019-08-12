@@ -36,6 +36,7 @@ public class ReboundLinearLayout extends LinearLayout  {
     private NestedScrollingParentHelper mNestedHelper;
     private int dy;
     private ValueAnimator mAnimator;
+    private boolean isScrollY;
 
     public ReboundLinearLayout(@NonNull Context context) {
         this(context, null);
@@ -104,8 +105,10 @@ public class ReboundLinearLayout extends LinearLayout  {
 
     @Override
     public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed) {
-        log(String.format("onNestedPreScroll, dy=%s, getScrollY=%s", dy, getScrollY()));
+        log(String.format("onNestedPreScroll, dy=%s, getScrollY=%s, getScrollX=%s", dy, getScrollY(), getScrollX()));
         this.dy = dy;
+        // Y轴方向滑动
+        isScrollY = Math.abs(dy) > Math.abs(dx);
     }
 
     @Override
@@ -123,7 +126,7 @@ public class ReboundLinearLayout extends LinearLayout  {
             scrollTo(0, scrolls);
         }*/
 
-        if(dy <= 0 && !mAnimator.isRunning()){
+        if(dy <= 0 && !mAnimator.isRunning() && isScrollY){
             log("onNestedScroll");
             scrolls += dyUnconsumed / FORCE;
             scrollTo(0, scrolls);
