@@ -28,10 +28,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
 
     /**
      * 用户详情Fragment栈名
-     *
-     * @deprecated 第一个页面默认进来即显示, 不需要添加到回退栈
      */
-    @Deprecated
     private static final String STACK_NAME_DETAIL = "user_detail";
 
     /**
@@ -75,6 +72,15 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
+        if (fm != null) {
+            int count = fm.getBackStackEntryCount();
+            // 回退栈已经存在fragment, onResume后不重复添加详情页Fragment
+            // 这里>1是为了避免多线程穿透
+            if (count >= 1) {
+                return;
+            }
+
+        }
         showUserDetailFragment(null);
     }
 
@@ -153,7 +159,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         ft.replace(R.id.fragment_container, fragment);
         // 添加到回退栈
         // 第一个页面不需要添加到回退栈
-        //ft.addToBackStack(STACK_NAME_DETAIL);
+        ft.addToBackStack(STACK_NAME_DETAIL);
         ft.commit();
         // 手机号不为空,说明从登录成功页面跳转过来,需要清空Fragment回退栈信息
         if (!TextUtils.isEmpty(phone)) {
@@ -199,6 +205,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
 
     /**
      * 显示用户设置Fragment
+     *
      * @param phone
      */
     private void showUerSettingFragment(String phone) {
@@ -216,11 +223,11 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
      */
     private void back() {
         int count = fm.getBackStackEntryCount();
-        if (count <= 0) {
-            // 没有回退栈关闭当前Activity
+        if (count <= 1) {
+            // 只有一个Fragment关闭当前Activity
             finish();
         }
-        if (count == 1) {
+        if (count == 2) {
             // 避免回退背景变成白色
             mRootContainer.setBackground(getResources().getDrawable(R.drawable.user_detail_bg));
         }
@@ -248,6 +255,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
 
     /**
      * 处理返回键
+     *
      * @param keyCode
      * @param event
      * @return
