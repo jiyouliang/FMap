@@ -14,9 +14,9 @@
         android:layout_height="wrap_content"
         android:background="#00FFFFFF"
         app:ttvLeftIcon="@drawable/user_detail_close_light_icon"
-        app:ttvLeftSize="20dp"
+        app:ttvLeftSize="24dp"
         app:ttvRightIcon="@drawable/user_detail_setting_light_icon"
-        app:ttvRightSize="20dp"
+        app:ttvRightSize="24dp"
         app:ttvRightTitleVisiable="false" />
 
     <com.jiyouliang.fmap.view.widget.ReboundLinearLayout
