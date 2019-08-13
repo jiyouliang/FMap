@@ -3,9 +3,12 @@ package com.jiyouliang.fmap.ui.user;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.ui.BaseFragment;
@@ -40,7 +43,7 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() != null){
+        if (getArguments() != null) {
             mPhone = getArguments().getString(KEY_PHONE);
         }
     }
@@ -55,21 +58,24 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
     }
 
     private void initView(View rootView) {
-        mTopTitleView = (TopTitleView)rootView.findViewById(R.id.ttv);
-        ViewGroup llContainer = rootView.findViewById(R.id.ll_container);
-        if(llContainer != null && llContainer.getChildCount() > 0){
+        mTopTitleView = (TopTitleView) rootView.findViewById(R.id.ttv);
+        final ViewGroup llContainer = rootView.findViewById(R.id.ll_container);
+        if (llContainer != null && llContainer.getChildCount() > 0) {
             int count = llContainer.getChildCount();
             for (int i = 0; i < count; i++) {
                 View child = llContainer.getChildAt(i);
-                if(child instanceof SettingItemView){
+                if (child instanceof SettingItemView) {
                     child.setOnClickListener(this);
                 }
             }
         }
-        mSivLogout = (SettingItemView)rootView.findViewById(R.id.siv_logout);
-        mSivMsgPush = (SettingItemView)rootView.findViewById(R.id.sivMsgPush);
-        mSivDownload = (SettingItemView)rootView.findViewById(R.id.sivDownloadNew);
-        mLogoutContainer = rootView.findViewById(R.id.rl_login_container);
+        mSivLogout = (SettingItemView) rootView.findViewById(R.id.siv_logout);
+        mSivMsgPush = (SettingItemView) rootView.findViewById(R.id.sivMsgPush);
+        mSivDownload = (SettingItemView) rootView.findViewById(R.id.sivDownloadNew);
+        mLogoutContainer = rootView.findViewById(R.id.ll_login_container);
+
+        mLogoutContainer.setVisibility(TextUtils.isEmpty(mPhone) ? View.GONE : View.VISIBLE);
+
     }
 
     private void setListener() {
@@ -118,13 +124,13 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        if(v == null){
+        if (v == null) {
             return;
         }
-        if(v == mSivMsgPush){
+        if (v == mSivMsgPush) {
             mSivMsgPush.setChecked(!mSivMsgPush.isChecked());
         }
-        if(v == mSivDownload){
+        if (v == mSivDownload) {
             mSivDownload.setChecked(!mSivDownload.isChecked());
         }
     }

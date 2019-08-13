@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scrollbars="none"
-    tools:context=".ui.user.UserSettingFragment">
 
-    <RelativeLayout
-        android:id="@+id/rl_container"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/gray_bg"
+    android:orientation="vertical">
+
+    <com.jiyouliang.fmap.view.widget.TopTitleView
+        android:id="@+id/ttv"
+        app:ttvCenterText="@string/setting"
+        app:ttvCenterTextSize="22dp"
+        app:ttvLeftIcon="@drawable/arrow_left_black"
+        app:ttvRightTitleVisiable="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gray_bg"
-        android:orientation="vertical">
+        android:background="@color/white"
+        android:paddingLeft="@dimen/padding_large2"
+        android:paddingRight="@dimen/padding_large2" />
 
-        <com.jiyouliang.fmap.view.widget.TopTitleView
-            android:id="@+id/ttv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:paddingLeft="@dimen/padding_large2"
-            android:paddingRight="@dimen/padding_large2"
-            app:ttvCenterText="@string/setting"
-            app:ttvCenterTextSize="22dp"
-            app:ttvLeftIcon="@drawable/arrow_left_black"
-            app:ttvRightTitleVisiable="false" />
+    <ScrollView
+        android:layout_below="@id/ttv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
         <LinearLayout
             android:id="@+id/ll_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/ttv"
             android:orientation="vertical">
 
             <View style="@style/DividerCommon" />
@@ -189,8 +188,8 @@
                 android:layout_marginBottom="@dimen/padding_size" />
 
             <LinearLayout
-                android:layout_width="match_parent"
                 android:id="@+id/ll_login_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
@@ -199,13 +198,13 @@
                 <com.jiyouliang.fmap.view.widget.SettingItemView
                     android:id="@+id/siv_logout"
                     style="@style/UserSettingItemStyle"
-                    app:sivHeight="52dp"
-                    app:sivTitleVisiable="false"
-                    app:sivCenterVisiable="true"
                     app:sivArrowVisiable="false"
                     app:sivCenterText="@string/logout"
                     app:sivCenterTextColor="#F65158"
-                    app:sivCenterTextSize="18dp"/>
+                    app:sivCenterTextSize="18dp"
+                    app:sivCenterVisiable="true"
+                    app:sivHeight="52dp"
+                    app:sivTitleVisiable="false" />
 
                 <View
                     style="@style/DividerCommon"
@@ -213,7 +212,7 @@
             </LinearLayout>
         </LinearLayout>
 
+    </ScrollView>
 
-    </RelativeLayout>
 
-</ScrollView>
+</RelativeLayout>
