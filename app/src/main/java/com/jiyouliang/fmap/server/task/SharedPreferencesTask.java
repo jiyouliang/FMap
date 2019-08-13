@@ -20,6 +20,7 @@ public class SharedPreferencesTask  extends BaseTask{
     private Context mContext;
     private SharedPreferences mSp;
 
+    @Deprecated
     public SharedPreferencesTask() {
     }
 

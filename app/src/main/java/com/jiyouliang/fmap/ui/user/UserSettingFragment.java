@@ -11,14 +11,17 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
 import com.jiyouliang.fmap.R;
+import com.jiyouliang.fmap.server.data.UserLoginData;
 import com.jiyouliang.fmap.ui.BaseFragment;
+import com.jiyouliang.fmap.util.security.ValidateUtil;
+import com.jiyouliang.fmap.view.widget.LoadingDialog;
 import com.jiyouliang.fmap.view.widget.SettingItemView;
 import com.jiyouliang.fmap.view.widget.TopTitleView;
 
 /**
  * 用户设置页面
  */
-public class UserSettingFragment extends BaseFragment implements View.OnClickListener {
+public class UserSettingFragment extends BaseFragment implements View.OnClickListener, IUserSettingView{
 
     private static final String KEY_PHONE = "phone";
     private OnFragmentInteractionListener mListener;
@@ -28,6 +31,8 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
     private View mLogoutContainer;
     private SettingItemView mSivDownload;
     private SettingItemView mSivMsgPush;
+    private LoadingDialog mLoadingDialog;
+    private UserSettingPresenter mPresenter;
 
     public UserSettingFragment() {
         // Required empty public constructor
@@ -37,6 +42,7 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
         UserSettingFragment fragment = new UserSettingFragment();
         Bundle bundle = new Bundle();
         bundle.putString(KEY_PHONE, phone);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -75,6 +81,11 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
         mLogoutContainer = rootView.findViewById(R.id.ll_login_container);
 
         mLogoutContainer.setVisibility(TextUtils.isEmpty(mPhone) ? View.GONE : View.VISIBLE);
+        // 加载进度
+        mLoadingDialog = new LoadingDialog(getContext());
+
+        // 注销Presenter
+        mPresenter = new UserSettingPresenter(this, getContext());
 
     }
 
@@ -105,6 +116,18 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
         }
     }
 
+    /**
+     * 通知Activity注销成功
+     */
+    private void logoutSuccess() {
+        if (mListener != null) {
+            Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+            builder.appendQueryParameter("fragment", "logoutSuccess");
+            Uri uri = Uri.parse(builder.toString());
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -115,6 +138,7 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
 
     @Override
     public void onDetach() {
@@ -132,6 +156,55 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
         }
         if (v == mSivDownload) {
             mSivDownload.setChecked(!mSivDownload.isChecked());
+        }
+        // 注销
+        if(v == mSivLogout){
+            if(!TextUtils.isEmpty(mPhone) && ValidateUtil.isPhone(mPhone)){
+                mPresenter.logout(mPhone);
+            }
+        }
+    }
+
+    @Override
+    public void showLoading() {
+        if(mLoadingDialog != null && !mLoadingDialog.isShowing()){
+            mLoadingDialog.show();
+        }
+    }
+
+    @Override
+    public void hideLoading() {
+        if(mLoadingDialog != null && mLoadingDialog.isShowing()){
+            mLoadingDialog.hide();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(mLoadingDialog != null && mLoadingDialog.isShowing()){
+            mLoadingDialog.hide();
+        }
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mLoadingDialog != null){
+            mLoadingDialog = null;
+        }
+    }
+
+    @Override
+    public void onLogoutSuccess(UserLoginData response) {
+        logoutSuccess();
+    }
+
+    @Override
+    public void onLogoutFailed(Exception e) {
+        if(e != null && !TextUtils.isEmpty(e.getMessage())){
+            showToast(e.getMessage());
         }
     }
 }

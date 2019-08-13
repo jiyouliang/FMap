@@ -20,6 +20,11 @@ public class HttpTaskClient {
     private static final String URL_SEND_SMS = "sms/sendSms";
 
     /**
+     * 注销
+     */
+    private static final String URL_LOGOUT = "user/logout";
+
+    /**
      * 短信验证码登录
      */
     private static final String URL_LOGIN_SMS = "user/loginBySmsCode";
@@ -165,6 +170,19 @@ public class HttpTaskClient {
      */
     public <T> void sendSms(Map<String, String> params, final int reqCode, Class<T> clazz, Context context, OnHttpResponseListener<T> listener) {
         post(URL_SEND_SMS, params, reqCode, clazz, context, listener);
+    }
+
+    /**
+     * 注销
+     * @param params
+     * @param reqCode
+     * @param clazz
+     * @param context
+     * @param listener
+     * @param <T>
+     */
+    public <T> void logout(Map<String, String> params, final int reqCode, Class<T> clazz, Context context, OnHttpResponseListener<T> listener) {
+        post(URL_LOGOUT, params, reqCode, clazz, context, listener);
     }
 
     /**

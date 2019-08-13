@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.jiyouliang.fmap.R;
+import com.jiyouliang.fmap.server.task.SharedPreferencesTask;
 import com.jiyouliang.fmap.ui.BaseFragment;
 import com.jiyouliang.fmap.util.LogUtil;
 
@@ -108,39 +109,50 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         // 发送短信验证码
         if (fragment.equals(UserSendSmsFragment.class.getSimpleName())) {
             showUserSemdSmsFragment();
+            return;
         }
         // 短信验证码登录
         if (fragment.equals(UserLoginBySmsFragment.class.getSimpleName())) {
             String phone = uri.getQueryParameter("phone");
             showUserLoginBySmsFragment(phone);
+            return;
         }
 
         // 用户详情Fragment
         if (fragment.equals(UserDetailFragment.class.getSimpleName())) {
             String phone = uri.getQueryParameter("phone");
             showUserDetailFragment(phone);
+            return;
         }
 
         // 用户信息Fragment
         if (fragment.equals(UserInfoFragment.class.getSimpleName())) {
             String phone = uri.getQueryParameter("phone");
             showUerInfoFragment(phone);
+            return;
         }
 
         // 用户设置Fragment
         if (fragment.equals(UserSettingFragment.class.getSimpleName())) {
             String phone = uri.getQueryParameter("phone");
-            showUerSettingFragment(phone);
+            showUserSettingFragment(phone);
+            return;
         }
 
         // 返回上一页
         if (fragment.equals("back")) {
             back();
+            return;
         }
-
+        // 注销成功
+        if (fragment.equals("logoutSuccess")) {
+            showLogoutSuccessFragment();
+            return;
+        }
         // 登录成功,情况回退栈,默认显示用户详情Fragment
         if (fragment.equals("loginSuccessClearStacks")) {
             loginSuccessClearStacks();
+            return;
         }
 
     }
@@ -208,7 +220,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
      *
      * @param phone
      */
-    private void showUerSettingFragment(String phone) {
+    private void showUserSettingFragment(String phone) {
         mRootContainer.setBackgroundColor(Color.WHITE);
         FragmentTransaction ft = fm.beginTransaction();
         UserSettingFragment fragment = UserSettingFragment.newInstance(phone);
@@ -216,6 +228,17 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         // 添加到回退栈
         ft.addToBackStack(STACK_NAME_SETTING);
         ft.commit();
+    }
+
+    /**
+     * 注销成功返回
+     */
+    private void showLogoutSuccessFragment() {
+        clearFragmentStacks();
+        showUserDetailFragment(null);
+        // 清空存储用户信息
+        SharedPreferencesTask task = new SharedPreferencesTask(this);
+        task.clearPhone();
     }
 
     /**
@@ -239,6 +262,14 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
      */
     private void loginSuccessClearStacks() {
         log("clear fragments stack");
+        clearFragmentStacks();
+//        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+    /**
+     * 清空回退栈
+     */
+    private void clearFragmentStacks() {
         int count = fm.getBackStackEntryCount();
         for (int i = 0; i < count; i++) {
             FragmentManager.BackStackEntry entry = fm.getBackStackEntryAt(i);
@@ -246,7 +277,6 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
                 fm.popBackStack();
             }
         }
-//        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     private void log(String msg) {
