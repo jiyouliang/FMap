@@ -43,6 +43,19 @@
         <!--右侧图片-->
         <attr name="sivRightIvBackground" format="reference"/>
         <attr name="sivRightIvVisiable" format="boolean"/>
+        <!--高度-->
+        <attr name="sivHeight" format="dimension|reference"/>
+        <!--checkbox是否显示-->
+        <attr name="sivCheckVisiable" format="boolean"/>
+        <!--checkbook选中状态-->
+        <attr name="sivChecked" format="boolean"/>
+        <!--箭头是否显示-->
+        <attr name="sivArrowVisiable" format="boolean"/>
+        <!--中间TextView-->
+        <attr name="sivCenterVisiable" format="boolean"/>
+        <attr name="sivCenterText" format="string|reference"/>
+        <attr name="sivCenterTextColor" format="color|reference"/>
+        <attr name="sivCenterTextSize" format="dimension|reference"/>
     </declare-styleable>
 
     <!--VerticalIconTextView-->

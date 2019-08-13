@@ -40,4 +40,17 @@
     <string name="user_info_sign_in">签到</string>
     <string name="user_info_sign_in_days">已连续签到10天</string>
     <string name="setting">设置</string>
+    <string name="account_and_security">账户与安全</string>
+    <string name="map_setting">地图设置</string>
+    <string name="navigation_setting">导航设置</string>
+    <string name="voice_setting">语音设置</string>
+    <string name="commute_setting">通勤设置</string>
+    <string name="common_trip_ways">通用出行方式</string>
+    <string name="message_push">消息推送</string>
+    <string name="download_new_version_on_wifi">WI-Fi下自动下载最新版</string>
+    <string name="clear_cache">清空缓存</string>
+    <string name="check_update">检查更新</string>
+    <string name="about_map">关于高德地图</string>
+    <string name="map_lab">小德实验室</string>
+    <string name="logout">退出登录</string>
 </resources>

@@ -8,20 +8,210 @@
     tools:context=".ui.user.UserSettingFragment">
 
     <RelativeLayout
+        android:id="@+id/rl_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/padding_large2"
-        android:paddingRight="@dimen/padding_large2">
+        android:layout_height="wrap_content"
+        android:background="@color/gray_bg"
+        android:orientation="vertical">
 
         <com.jiyouliang.fmap.view.widget.TopTitleView
             android:id="@+id/ttv"
-            app:ttvCenterTextSize="18dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingLeft="@dimen/padding_large2"
+            android:paddingRight="@dimen/padding_large2"
             app:ttvCenterText="@string/setting"
+            app:ttvCenterTextSize="22dp"
             app:ttvLeftIcon="@drawable/arrow_left_black"
             app:ttvRightTitleVisiable="false" />
+
+        <LinearLayout
+            android:id="@+id/ll_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ttv"
+            android:orientation="vertical">
+
+            <View style="@style/DividerCommon" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginTop="@dimen/padding_size" />
+
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivTitle="@string/account_and_security"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginLeft="@dimen/padding_large2" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivTitle="@string/map_setting"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginLeft="@dimen/padding_large2" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivTitle="@string/navigation_setting"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginLeft="@dimen/padding_large2" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivTitle="@string/voice_setting"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginLeft="@dimen/padding_large2" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivTitle="@string/commute_setting"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginLeft="@dimen/padding_large2" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivTitle="@string/common_trip_ways"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginLeft="@dimen/padding_large2" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivSubtitle="当前城市：深圳市"
+                app:sivSubtitleSize="14dp"
+                app:sivSubtitleVisiable="true"
+                app:sivTitle="@string/switch_city"
+                app:sivTitleSize="18dp" />
+
+            <View style="@style/DividerCommon" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginTop="@dimen/padding_size" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                android:id="@+id/sivMsgPush"
+                style="@style/UserSettingItemStyle"
+                app:sivArrowVisiable="false"
+                app:sivCheckVisiable="true"
+                app:sivHeight="52dp"
+                app:sivRightIvVisiable="false"
+                app:sivSubtitleSize="14dp"
+                app:sivTitle="@string/message_push"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginLeft="@dimen/padding_large2" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                android:id="@+id/sivDownloadNew"
+                style="@style/UserSettingItemStyle"
+                app:sivArrowVisiable="false"
+                app:sivCheckVisiable="true"
+                app:sivChecked="true"
+                app:sivHeight="52dp"
+                app:sivRightIvVisiable="false"
+                app:sivSubtitleSize="14dp"
+                app:sivTitle="@string/download_new_version_on_wifi"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginLeft="@dimen/padding_large2" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivTitle="@string/clear_cache"
+                app:sivTitleSize="18dp" />
+
+            <View style="@style/DividerCommon" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginTop="@dimen/padding_size" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivTitle="@string/check_update"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginLeft="@dimen/padding_size" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivTitle="@string/about_map"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginLeft="@dimen/padding_size" />
+
+            <com.jiyouliang.fmap.view.widget.SettingItemView
+                style="@style/UserSettingItemStyle"
+                app:sivHeight="52dp"
+                app:sivTitle="@string/map_lab"
+                app:sivTitleSize="18dp" />
+
+            <View
+                style="@style/DividerCommon"
+                android:layout_marginBottom="@dimen/padding_size" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:id="@+id/ll_login_container"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View style="@style/DividerCommon" />
+
+                <com.jiyouliang.fmap.view.widget.SettingItemView
+                    android:id="@+id/siv_logout"
+                    style="@style/UserSettingItemStyle"
+                    app:sivHeight="52dp"
+                    app:sivTitleVisiable="false"
+                    app:sivCenterVisiable="true"
+                    app:sivArrowVisiable="false"
+                    app:sivCenterText="@string/logout"
+                    app:sivCenterTextColor="#F65158"
+                    app:sivCenterTextSize="18dp"/>
+
+                <View
+                    style="@style/DividerCommon"
+                    android:layout_marginBottom="@dimen/padding_large2" />
+            </LinearLayout>
+        </LinearLayout>
 
 
     </RelativeLayout>

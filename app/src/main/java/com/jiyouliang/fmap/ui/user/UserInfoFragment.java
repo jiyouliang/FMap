@@ -74,10 +74,11 @@ public class UserInfoFragment extends BaseFragment implements TopTitleView.OnTop
         if(!TextUtils.isEmpty(mPhone)){
             mSivNickName.setSubTitleText(UserUtils.getUserName(mPhone));
         }
+
     }
 
     private void setListener() {
-        mTopTitleView.setOnTopTitleViewClickListener(this);
+                mTopTitleView.setOnTopTitleViewClickListener(this);
     }
 
 
