@@ -24,4 +24,5 @@
     <color name="btn_login_normal_stroke">@color/blue_color</color>
 
     <drawable name="transparent">#00000000</drawable>
+    <color name="navpage">#FFE1E8EB</color>
 </resources>

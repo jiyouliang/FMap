@@ -1,8 +1,11 @@
 package com.jiyouliang.fmap;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +45,8 @@ import com.jiyouliang.fmap.ui.user.LoginActivity;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.ui.user.UserDetailActivity;
 import com.jiyouliang.fmap.ui.user.UserLoginSendSmsActivity;
+import com.jiyouliang.fmap.util.Constants;
+import com.jiyouliang.fmap.util.WechatApi;
 import com.jiyouliang.fmap.view.base.MapViewInterface;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.ui.BaseActivity;
@@ -55,6 +61,12 @@ import com.jiyouliang.fmap.view.map.PoiDetailBottomView;
 import com.jiyouliang.fmap.view.map.RouteView;
 import com.jiyouliang.fmap.view.map.SupendPartitionView;
 import com.jiyouliang.fmap.view.map.TrafficView;
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener {
     private static final String TAG = "MapActivity";
@@ -117,12 +129,16 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private boolean onScrolling;//正在滑动地图
     private MyLocationStyle mLocationStyle;
     private boolean slideDown;//向下滑动
+    private LinearLayout mShareContainer;
+    private IWXAPI api;
+    private BroadcastReceiver mWechatBroadcast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         initView(savedInstanceState);
+        initData();
         setListener();
 
     }
@@ -159,11 +175,21 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mFeedbackContainer = findViewById(R.id.feedback_container);
         mFeedbackContainer.setVisibility(View.GONE);
         mSupendPartitionView = (SupendPartitionView) findViewById(R.id.spv);
+        // 分享组件
+        mShareContainer = (LinearLayout)findViewById(R.id.rl_right);
 
         setBottomSheet();
         setUpMap();
 
         mPadding = getResources().getDimensionPixelSize(R.dimen.padding_size);
+    }
+
+    private void initData() {
+        // 通过WXAPIFactory工厂，获取IWXAPI的实例
+        api = WXAPIFactory.createWXAPI(this, Constants.APP_ID, true);
+        // 将应用的appId注册到微信
+        api.registerApp(Constants.APP_ID);
+        //建议动态监听微信启动广播进行注册到微信
     }
 
     /**
@@ -323,6 +349,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
             }
         });
+
+        mShareContainer.setOnClickListener(this);
     }
 
     private void setUpMap() {
@@ -682,6 +710,25 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 setUpMap();
             }
         }
+        registerWechatBroadcast();
+    }
+
+    /**
+     * 注册微信广播
+     */
+    private void registerWechatBroadcast() {
+        //建议动态监听微信启动广播进行注册到微信
+        IntentFilter filter = new IntentFilter(ConstantsAPI.ACTION_REFRESH_WXAPP);
+        // 将该app注册到微信
+        mWechatBroadcast = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                // 将该app注册到微信
+                api.registerApp(Constants.APP_ID);
+            }
+        };
+        registerReceiver(mWechatBroadcast, filter);
     }
 
     @Override
@@ -689,6 +736,25 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         super.onPause();
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
         mMapView.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterWechatBroadcast();
+    }
+
+    /**
+     * 反注册微信广播
+     */
+    private void unregisterWechatBroadcast() {
+        if(mWechatBroadcast != null){
+            unregisterReceiver(mWechatBroadcast);
+        }
+        if(mWechatBroadcast != null){
+            mWechatBroadcast = null;
+        }
+
     }
 
     @Override
@@ -770,6 +836,32 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             resetGpsButtonPosition();
             hidePoiDetail();
         }
+
+        // 分享
+        if(v == mShareContainer){
+            shareToWechat();
+        }
+    }
+
+    /**
+     * 分享到微信
+     */
+    private void shareToWechat() {
+        WXWebpageObject webpage = new WXWebpageObject();
+        webpage.webpageUrl = "http://www.qq.com";
+        WXMediaMessage msg = new WXMediaMessage(webpage);
+        msg.title = "WebPage Title WebPage Title WebPage Title WebPage Title WebPage Title WebPage Title WebPage Title WebPage Title WebPage Title Very Long Very Long Very Long Very Long Very Long Very Long Very Long Very Long Very Long Very Long";
+        msg.description = "WebPage Description WebPage Description WebPage Description WebPage Description WebPage Description WebPage Description WebPage Description WebPage Description WebPage Description Very Long Very Long Very Long Very Long Very Long Very Long Very Long";
+       /* Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.send_img);
+        Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
+        bmp.recycle();
+        msg.thumbData = Util.bmpToByteArray(thumbBmp, true);*/
+
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = WechatApi.buildTransaction("webpage");
+        req.message = msg;
+        req.scene = WechatApi.mTargetScene;
+        api.sendReq(req);
     }
 
     /**

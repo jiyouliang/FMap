@@ -53,4 +53,13 @@
     <string name="about_map">关于高德地图</string>
     <string name="map_lab">小德实验室</string>
     <string name="logout">退出登录</string>
+    <string name="switch_city">切换城市</string>
+
+    <!--微信相关-->
+    <string name="errcode_success">发送成功</string>
+    <string name="errcode_cancel">发送取消</string>
+    <string name="errcode_deny">发送被拒绝</string>
+    <string name="errcode_unsupported">不支持错误</string>
+    <string name="errcode_unknown">发送返回</string>
+    <string name="show_from_wx_tip">这个界面用于显示微信向第三方app请求显示的信息</string>
 </resources>
