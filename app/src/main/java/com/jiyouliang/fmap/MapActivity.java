@@ -195,7 +195,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 将应用的appId注册到微信
         api.registerApp(Constants.APP_ID);
         // 高德地图分享
-        mShareSearch = new ShareSearch(this.getApplicationContext());
+        mShareSearch = new ShareSearch(this);
     }
 
     /**
@@ -719,13 +719,13 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 setUpMap();
             }
         }
-        registerWechatBroadcast();
+        //registerWechatBroadcast();
     }
 
     /**
      * 注册微信广播
      */
-    private void registerWechatBroadcast() {
+    /*private void registerWechatBroadcast() {
         //建议动态监听微信启动广播进行注册到微信
         IntentFilter filter = new IntentFilter(ConstantsAPI.ACTION_REFRESH_WXAPP);
         // 将该app注册到微信
@@ -738,7 +738,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             }
         };
         registerReceiver(mWechatBroadcast, filter);
-    }
+    }*/
 
     @Override
     protected void onPause() {
@@ -750,13 +750,13 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     protected void onStop() {
         super.onStop();
-        unregisterWechatBroadcast();
+        //unregisterWechatBroadcast();
     }
 
     /**
      * 反注册微信广播
      */
-    private void unregisterWechatBroadcast() {
+  /*  private void unregisterWechatBroadcast() {
         if(mWechatBroadcast != null){
             unregisterReceiver(mWechatBroadcast);
         }
@@ -764,7 +764,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mWechatBroadcast = null;
         }
 
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -1119,10 +1119,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      * 高德地图位置转短串分享
      */
     private void shareLocation() {
-        if(mAmapLocation == null || TextUtils.isEmpty(mAmapLocation.getLocationDetail())){
+        if(TextUtils.isEmpty(mPoiName)){
             return;
         }
-        String snippet = mAmapLocation.getLocationDetail();
+        String snippet = mPoiName;
         double lat = mAmapLocation.getLatitude();
         double lng = mAmapLocation.getLongitude();
         // addTestLocationMarker(snippet);
@@ -1158,7 +1158,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onLocationShareUrlSearched(String url, int errorCode) {
         if (errorCode == AMapException.CODE_AMAP_SUCCESS) {
-            shareToWechat(url, mAmapLocation.getPoiName());
+            shareToWechat(url, mPoiName);
         } else {
             showToast(String.format("分享失败:%s", errorCode));
         }

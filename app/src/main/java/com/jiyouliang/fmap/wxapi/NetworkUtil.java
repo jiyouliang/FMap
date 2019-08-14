@@ -1,4 +1,4 @@
-package net.sourceforge.simcpux.uikit;
+package com.jiyouliang.fmap.wxapi;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,8 +16,7 @@ import java.net.URLConnection;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class NetworkUtil
-{
+public class NetworkUtil {
     private static String TAG = "MicroMsg.NetworkUtil";
 
     public static final int GET_TOKEN = 1;
@@ -104,9 +103,9 @@ public class NetworkUtil
         }
 
         private static byte[] httpURLConnectionGet(String url) throws Exception {
-            HttpURLConnection connection = (HttpURLConnection)new URL(url).openConnection();
-            if(connection == null){
-                Log.i(TAG,"open connection failed.");
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            if (connection == null) {
+                Log.i(TAG, "open connection failed.");
             }
             int responseCode = connection.getResponseCode();
             if (responseCode >= 300) {
