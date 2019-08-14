@@ -15,6 +15,7 @@ import com.jiyouliang.fmap.server.data.UserLoginData;
 import com.jiyouliang.fmap.server.net.HttpTaskClient;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.util.DeviceUtils;
+import com.jiyouliang.fmap.util.InputMethodUtils;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.security.KeystoreUtil;
 import com.jiyouliang.fmap.util.security.RSACrypt;
@@ -27,7 +28,10 @@ import org.json.JSONObject;
 
 /**
  * 用户登录
+ * @deprecated 已经改成Fragment
+ * @see UserSendSmsFragment
  */
+@Deprecated
 public class LoginActivity extends BaseActivity implements View.OnClickListener, IUserLoginView {
 
     private ClearEditText mEtPhone;
@@ -164,5 +168,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if(!TextUtils.isEmpty(erroMsg)){
             showToast(erroMsg);
         }
+    }
+
+    @Override
+    public void hideInput() {
+        InputMethodUtils.hideInput(this);
     }
 }

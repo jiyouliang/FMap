@@ -81,7 +81,9 @@ public class UserDetailFragment extends BaseFragment implements TopTitleView.OnT
     public static UserDetailFragment newInstance(String phone) {
         UserDetailFragment fragment = new UserDetailFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_PHONE, phone);
+        if(!TextUtils.isEmpty(phone)){
+            bundle.putString(KEY_PHONE, phone);
+        }
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -182,7 +184,9 @@ public class UserDetailFragment extends BaseFragment implements TopTitleView.OnT
         if (mListener != null) {
             Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
             builder.appendQueryParameter("fragment", UserInfoFragment.class.getSimpleName());
-            builder.appendQueryParameter("phone", mPhone);
+            if(!TextUtils.isEmpty(mPhone)){
+                builder.appendQueryParameter("phone", mPhone);
+            }
             Uri uri = Uri.parse(builder.toString());
             mListener.onFragmentInteraction(uri);
         }
@@ -201,7 +205,10 @@ public class UserDetailFragment extends BaseFragment implements TopTitleView.OnT
         if (mListener != null) {
             Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
             builder.appendQueryParameter("fragment", UserSettingFragment.class.getSimpleName());
-            builder.appendQueryParameter("phone", mPhone);
+            // 避免出现phone="null",而不是phone=null
+            if(!TextUtils.isEmpty(mPhone)){
+                builder.appendQueryParameter("phone", mPhone);
+            }
             Uri uri = Uri.parse(builder.toString());
             mListener.onFragmentInteraction(uri);
         }

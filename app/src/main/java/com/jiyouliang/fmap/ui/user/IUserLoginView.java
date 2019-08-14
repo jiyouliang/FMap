@@ -46,4 +46,9 @@ public interface IUserLoginView {
      * @param erroMsg
      */
     void sendSmsFailed(String erroMsg);
+
+    /**
+     * 关闭软键盘
+     */
+    void hideInput();
 }

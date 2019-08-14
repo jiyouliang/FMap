@@ -18,6 +18,7 @@ import android.widget.ScrollView;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.ui.BaseFragment;
+import com.jiyouliang.fmap.util.InputMethodUtils;
 import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.view.widget.ButtonLoadingView;
 import com.jiyouliang.fmap.view.widget.ClearEditText;
@@ -222,6 +223,10 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
 
     @Override
     public void onLeftClick(View v) {
+        back();
+    }
+
+    private void back() {
         if (mListener != null) {
             Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
             // 返回上一页
@@ -229,6 +234,22 @@ public class UserSendSmsFragment extends BaseFragment implements View.OnClickLis
             Uri uri = Uri.parse(builder.toString());
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    /**
+     * 关闭软键盘
+     */
+    @Override
+    public void hideInput() {
+        /*if (mListener != null) {
+            Uri.Builder builder = Uri.parse("user://fragment").buildUpon();
+            // 返回上一页
+            builder.appendQueryParameter("fragment", "hideInput");
+            Uri uri = Uri.parse(builder.toString());
+            mListener.onFragmentInteraction(uri);
+        }*/
+        // 自己处理即可,不需要传递给Activity,Activity仅处理Fragment交互
+        InputMethodUtils.hideInput(getActivity());
     }
 
     @Override

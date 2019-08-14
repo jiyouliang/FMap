@@ -34,6 +34,7 @@ public class UserLoginPresenter {
             return;
         }
         mView.showLoadingBtn();
+        mView.hideInput();
         mModel.sendSms(phone, REQ_CODE_SMS, mContext, new HttpTaskClient.OnHttpResponseListener<UserLoginData>() {
             @Override
             public void onException(Exception e) {

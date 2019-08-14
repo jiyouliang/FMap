@@ -41,7 +41,10 @@ public class UserSettingFragment extends BaseFragment implements View.OnClickLis
     public static UserSettingFragment newInstance(String phone) {
         UserSettingFragment fragment = new UserSettingFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_PHONE, phone);
+        // 默认bundle添加null字符串会设置为"null"
+        if(!TextUtils.isEmpty(phone)){
+            bundle.putString(KEY_PHONE, phone);
+        }
         fragment.setArguments(bundle);
         return fragment;
     }

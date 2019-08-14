@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.server.task.SharedPreferencesTask;
 import com.jiyouliang.fmap.ui.BaseFragment;
+import com.jiyouliang.fmap.util.InputMethodUtils;
 import com.jiyouliang.fmap.util.LogUtil;
 
 /**
@@ -149,6 +150,12 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
             showLogoutSuccessFragment();
             return;
         }
+
+        // 关闭软键盘
+        if (fragment.equals("hideInput")) {
+            hideInput();
+            return;
+        }
         // 登录成功,情况回退栈,默认显示用户详情Fragment
         if (fragment.equals("loginSuccessClearStacks")) {
             loginSuccessClearStacks();
@@ -164,6 +171,10 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
      * @param phone
      */
     public void showUserDetailFragment(String phone) {
+        // 手机号不为空,说明从登录成功页面跳转过来,需要清空Fragment回退栈信息
+        if (!TextUtils.isEmpty(phone)) {
+            loginSuccessClearStacks();
+        }
         // 用于沉浸式状态栏
         mRootContainer.setBackground(getResources().getDrawable(R.drawable.user_detail_bg));
         FragmentTransaction ft = fm.beginTransaction();
@@ -173,10 +184,6 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         // 第一个页面不需要添加到回退栈
         ft.addToBackStack(STACK_NAME_DETAIL);
         ft.commit();
-        // 手机号不为空,说明从登录成功页面跳转过来,需要清空Fragment回退栈信息
-        if (!TextUtils.isEmpty(phone)) {
-            loginSuccessClearStacks();
-        }
     }
 
     /**
@@ -238,6 +245,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         showUserDetailFragment(null);
         // 清空存储用户信息
         SharedPreferencesTask task = new SharedPreferencesTask(this);
+
         task.clearPhone();
     }
 
@@ -249,6 +257,7 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
         if (count <= 1) {
             // 只有一个Fragment关闭当前Activity
             finish();
+            return;
         }
         if (count == 2) {
             // 避免回退背景变成白色
@@ -277,6 +286,10 @@ public class UserActivity extends FragmentActivity implements BaseFragment.OnFra
                 fm.popBackStack();
             }
         }
+    }
+
+    private void hideInput() {
+        InputMethodUtils.hideInput(this);
     }
 
     private void log(String msg) {

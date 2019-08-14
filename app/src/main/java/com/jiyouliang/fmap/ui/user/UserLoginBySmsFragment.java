@@ -268,7 +268,6 @@ public class UserLoginBySmsFragment extends BaseFragment implements IUserLoginSe
             builder.appendQueryParameter("fragment", "UserDetailFragment");
             builder.appendQueryParameter("phone", mPhone);
             Uri uri = Uri.parse(builder.toString());
-
             mListener.onFragmentInteraction(uri);
         }
     }
