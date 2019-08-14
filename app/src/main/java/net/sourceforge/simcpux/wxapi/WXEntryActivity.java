@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.util.Constants;
+import com.jiyouliang.fmap.util.LogUtil;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
@@ -25,16 +25,13 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-
+import net.sourceforge.simcpux.ShowFromWXActivity;
 import net.sourceforge.simcpux.uikit.NetworkUtil;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
-	private static String TAG = "MicroMsg.WXEntryActivity";
+	private static final String TAG = "WXEntryActivity";
 
     private IWXAPI api;
     private MyHandler handler;
@@ -99,6 +96,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
 
 	@Override
 	public void onReq(BaseReq req) {
+		LogUtil.w(TAG, "onReq, req="+req.toString());
 		switch (req.getType()) {
 		case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
 			goToGetMsg();
@@ -115,7 +113,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
 	@Override
 	public void onResp(BaseResp resp) {
 		int result = 0;
-		
+		LogUtil.w(TAG, "onResp, resp="+resp.errStr);
 		switch (resp.errCode) {
 		case BaseResp.ErrCode.ERR_OK:
 			result = R.string.errcode_success;
@@ -199,11 +197,11 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
 		msg.append("filePath: ");
 		msg.append(obj.filePath);
 		
-		/*Intent intent = new Intent(this, ShowFromWXActivity.class);
+		Intent intent = new Intent(this, ShowFromWXActivity.class);
 		intent.putExtra(Constants.ShowMsgActivity.STitle, wxMsg.title);
 		intent.putExtra(Constants.ShowMsgActivity.SMessage, msg.toString());
 		intent.putExtra(Constants.ShowMsgActivity.BAThumbData, wxMsg.thumbData);
-		startActivity(intent);*/
+		startActivity(intent);
 		finish();
 	}
 }

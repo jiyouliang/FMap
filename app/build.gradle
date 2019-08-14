@@ -42,5 +42,5 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.1.71.android'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.4.3'
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
 }

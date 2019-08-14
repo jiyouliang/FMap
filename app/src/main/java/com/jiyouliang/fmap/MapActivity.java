@@ -41,12 +41,13 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
-import com.jiyouliang.fmap.ui.user.LoginActivity;
+import com.amap.api.services.core.AMapException;
+import com.amap.api.services.core.LatLonSharePoint;
+import com.amap.api.services.share.ShareSearch;
 import com.jiyouliang.fmap.ui.user.UserActivity;
-import com.jiyouliang.fmap.ui.user.UserDetailActivity;
-import com.jiyouliang.fmap.ui.user.UserLoginSendSmsActivity;
 import com.jiyouliang.fmap.util.Constants;
 import com.jiyouliang.fmap.util.WechatApi;
+import com.jiyouliang.fmap.util.WechatUtil;
 import com.jiyouliang.fmap.view.base.MapViewInterface;
 import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.ui.BaseActivity;
@@ -68,7 +69,7 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -132,6 +133,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private LinearLayout mShareContainer;
     private IWXAPI api;
     private BroadcastReceiver mWechatBroadcast;
+    private ShareSearch mShareSearch;
+    private AMapLocation mAmapLocation;
+    // 分享url到微信图片大小
+    private static final int THUMB_SIZE = 150;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,10 +191,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     private void initData() {
         // 通过WXAPIFactory工厂，获取IWXAPI的实例
-        api = WXAPIFactory.createWXAPI(this, Constants.APP_ID, true);
+        api = WXAPIFactory.createWXAPI(this, Constants.APP_ID, false);
         // 将应用的appId注册到微信
         api.registerApp(Constants.APP_ID);
-        //建议动态监听微信启动广播进行注册到微信
+        // 高德地图分享
+        mShareSearch = new ShareSearch(this.getApplicationContext());
     }
 
     /**
@@ -351,6 +357,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         });
 
         mShareContainer.setOnClickListener(this);
+        // 注册高德地图分享回调
+        mShareSearch.setOnShareSearchListener(this);
     }
 
     private void setUpMap() {
@@ -371,6 +379,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             }
             return;
         }
+        this.mAmapLocation = location;
         if (onScrolling) {
             LogUtil.e(TAG, "MapView is Scrolling by user,can not operate...");
             return;
@@ -383,7 +392,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             mPoiName = location.getPoiName();
             showPoiNameText();
         }
-        LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat + ",mLocMarker=" + mLocMarker + ",poiName=" + mPoiName);
+        //LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat + ",mLocMarker=" + mLocMarker + ",poiName=" + mPoiName+",getDescription="+location.getDescription()+", address="+location.getAddress()+",getLocationDetail"+location.getLocationDetail()+",street="+location.getStreet());
 
         //参数依次是：视角调整区域的中心点坐标、希望调整到的缩放级别、俯仰角0°~45°（垂直与地图时为0）、偏航角 0~360° (正北方为0)
         mLatLng = new LatLng(lat, lng);
@@ -839,23 +848,23 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         // 分享
         if(v == mShareContainer){
-            shareToWechat();
+            shareLocation();
         }
     }
 
     /**
-     * 分享到微信
+     * 分享网页url到微信
      */
-    private void shareToWechat() {
+    private void shareToWechat(String url, String title) {
         WXWebpageObject webpage = new WXWebpageObject();
-        webpage.webpageUrl = "http://www.qq.com";
+        webpage.webpageUrl = url;
         WXMediaMessage msg = new WXMediaMessage(webpage);
-        msg.title = "WebPage Title WebPage Title WebPage Title WebPage Title WebPage Title WebPage Title WebPage Title WebPage Title WebPage Title Very Long Very Long Very Long Very Long Very Long Very Long Very Long Very Long Very Long Very Long";
-        msg.description = "WebPage Description WebPage Description WebPage Description WebPage Description WebPage Description WebPage Description WebPage Description WebPage Description WebPage Description Very Long Very Long Very Long Very Long Very Long Very Long Very Long";
-       /* Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.send_img);
+        msg.title = title;
+        // msg.description = description;
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
         Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
         bmp.recycle();
-        msg.thumbData = Util.bmpToByteArray(thumbBmp, true);*/
+        msg.thumbData = WechatUtil.bmpToByteArray(thumbBmp, true);
 
         SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.transaction = WechatApi.buildTransaction("webpage");
@@ -1106,6 +1115,26 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mMoveToCenter = false;
     }
 
+    /**
+     * 高德地图位置转短串分享
+     */
+    private void shareLocation() {
+        if(mAmapLocation == null || TextUtils.isEmpty(mAmapLocation.getLocationDetail())){
+            return;
+        }
+        String snippet = mAmapLocation.getLocationDetail();
+        double lat = mAmapLocation.getLatitude();
+        double lng = mAmapLocation.getLongitude();
+        // addTestLocationMarker(snippet);
+        LatLonSharePoint point = new LatLonSharePoint(lat,
+                lng, snippet);
+        // showProgressDialog();
+        mShareSearch.searchLocationShareUrlAsyn(point);
+    }
+
+    /**
+     * 高德地图回调
+     */
     @Override
     public void onCallTaxiClick() {
 
@@ -1113,6 +1142,45 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onRouteClick() {
+
+    }
+
+    @Override
+    public void onPoiShareUrlSearched(String s, int i) {
+
+    }
+
+    /**
+     * 高德地图分享位置短串回调
+     * @param url 网页url
+     * @param errorCode 错误码
+     */
+    @Override
+    public void onLocationShareUrlSearched(String url, int errorCode) {
+        if (errorCode == AMapException.CODE_AMAP_SUCCESS) {
+            shareToWechat(url, mAmapLocation.getPoiName());
+        } else {
+            showToast(String.format("分享失败:%s", errorCode));
+        }
+    }
+
+    @Override
+    public void onNaviShareUrlSearched(String s, int i) {
+
+    }
+
+    @Override
+    public void onBusRouteShareUrlSearched(String s, int i) {
+
+    }
+
+    @Override
+    public void onWalkRouteShareUrlSearched(String s, int i) {
+
+    }
+
+    @Override
+    public void onDrivingRouteShareUrlSearched(String s, int i) {
 
     }
 }
