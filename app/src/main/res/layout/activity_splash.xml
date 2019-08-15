@@ -5,6 +5,7 @@
     android:background="@color/white">
 
     <ImageView
+        android:id="@+id/iv_top"
         android:layout_alignParentTop="true"
         android:layout_marginTop="@dimen/padding_big"
         android:layout_width="match_parent"
@@ -12,12 +13,14 @@
         android:layout_height="wrap_content" />
 
     <ImageView
+        android:id="@+id/iv_center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:src="@drawable/splash_center" />
 
     <ImageView
+        android:id="@+id/iv_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

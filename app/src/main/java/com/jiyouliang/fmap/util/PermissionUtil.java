@@ -4,14 +4,22 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 运行时权限
  */
 public class PermissionUtil {
 
+    /**
+     * 出生时候App需要的权限
+     */
     private static final String[] INIT_PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -85,7 +93,9 @@ public class PermissionUtil {
      * @param activity
      * @param permissions
      * @param reqCode
+     * @deprecated 该方法已过时，请使用{@link #requestPermissions(String[], Activity, int)}替代
      */
+    @Deprecated
     public static void requestPermission(Activity activity, String[] permissions, int reqCode) {
         ActivityCompat.requestPermissions(activity, permissions, reqCode);
     }
@@ -109,5 +119,42 @@ public class PermissionUtil {
      */
     public static void requestWriteExtrenalStorage(Activity activity, int reqCode) {
         requestPermission(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, reqCode);
+    }
+
+    /**
+     * 获取未授予权限列表
+     */
+    public static String[] getNoGrantedPermissions(Context context){
+        List<String> permissions = new ArrayList<>();
+        for (String p: INIT_PERMISSIONS){
+            if(ContextCompat.checkSelfPermission(context, p) == PackageManager.PERMISSION_GRANTED){
+                continue;
+            }
+            // 添加未授予权限
+            permissions.add(p);
+        }
+        String[] pers = new String[permissions.size()];
+        permissions.toArray(pers);
+        return pers;
+    }
+
+    /**
+     * 请求多个权限
+     * @param activity
+     */
+    @RequiresApi(Build.VERSION_CODES.M)
+    public static void requestPermissions(Activity activity, int reqCode){
+        String[] permissions = getNoGrantedPermissions(activity);
+        activity.requestPermissions(permissions, reqCode);
+    }
+
+    /**
+     * 请求多个权限
+     * @param permissions 申请的多个权限
+     * @param activity
+     */
+    @RequiresApi(Build.VERSION_CODES.M)
+    public static void requestPermissions(String[] permissions, Activity activity, int reqCode){
+        activity.requestPermissions(permissions, reqCode);
     }
 }
