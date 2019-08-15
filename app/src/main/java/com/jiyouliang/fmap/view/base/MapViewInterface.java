@@ -7,8 +7,11 @@ public interface MapViewInterface {
 
     /**
      * 显示Poi detail
+     *
+     * @param locTitle 定位标题,比如当前所在位置名称
+     * @param locInfo  定位信息,比如当前在什么附近/距离当前位置多少米
      */
-    void showPoiDetail();
+    void showPoiDetail(String locTitle, String locInfo);
 
     /**
      * 隐藏poi detail

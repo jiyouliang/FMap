@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,11 +44,13 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.maps.model.Poi;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonSharePoint;
 import com.amap.api.services.share.ShareSearch;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
+import com.jiyouliang.fmap.util.MyAMapUtils;
 import com.jiyouliang.fmap.util.StatusBarUtils;
 import com.jiyouliang.fmap.util.SystemUIModes;
 import com.jiyouliang.fmap.util.WechatApi;
@@ -73,7 +76,7 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -142,6 +145,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     // 分享url到微信图片大小
     private static final int THUMB_SIZE = 150;
     private ImageButton mImgBtnBack;
+    private TextView mTvLocTitle;
+    // 当前是否正在处理POI点击
+    private boolean isPoiClick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +186,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mPoiDetailTaxi.setVisibility(View.GONE);
         mGspContainer = findViewById(R.id.gps_view_container);
 
+        mTvLocTitle = (TextView) findViewById(R.id.tv_title);
         mTvLocation = (TextView) findViewById(R.id.tv_my_loc);
         mMapHeaderView = (MapHeaderView) findViewById(R.id.mhv);
         mFeedbackContainer = findViewById(R.id.feedback_container);
@@ -194,9 +201,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         mPadding = getResources().getDimensionPixelSize(R.dimen.padding_size);
         int statusBarHeight = DeviceUtils.getStatusBarHeight(this);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         getWindow().setStatusBarColor(Color.WHITE);
         log(String.format("statusBarHeight=%s", statusBarHeight));
-        SystemUIModes.setTranslucentStatus(this, true);
+//        SystemUIModes.setTranslucentStatus(this, true);
     }
 
     private void initData() {
@@ -371,6 +380,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mShareSearch.setOnShareSearchListener(this);
         // 头部返回
         mImgBtnBack.setOnClickListener(this);
+        // 地图poi点击
+        aMap.setOnPOIClickListener(this);
     }
 
     private void setUpMap() {
@@ -402,7 +413,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 当前poiname和上次不相等才更新显示
         if(location.getPoiName() != null && !location.getPoiName().equals(mPoiName)){
             mPoiName = location.getPoiName();
-            showPoiNameText();
+            showPoiNameText(String.format("在%s附近", mPoiName));
         }
         //LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat + ",mLocMarker=" + mLocMarker + ",poiName=" + mPoiName+",getDescription="+location.getDescription()+", address="+location.getAddress()+",getLocationDetail"+location.getLocationDetail()+",street="+location.getStreet());
 
@@ -636,6 +647,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     public void onGPSClick() {
         CameraUpdate cameraUpdate = null;
         mMoveToCenter = true;
+        isPoiClick = false;
         //修改定位图标状态
         switch (mCurrentGpsState) {
             case STATE_LOCKED:
@@ -657,8 +669,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         }
         //显示底部POI详情
         if (mBottomSheet.getVisibility() == View.GONE || mBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-            showPoiDetail();
+            showPoiDetail("我的位置", String.format("在%s附近", mPoiName));
             moveGspButtonAbove();
+        }else{
+            mTvLocTitle.setText("我的位置");
+            mTvLocation.setText(String.format("在%s附近", mPoiName));
         }
 
         aMap.setMyLocationEnabled(true);
@@ -916,9 +931,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     /**
      * 显示底部POI详情
+     * @param locTitle 定位标题,比如当前所在位置名称
+     * @param locInfo 定位信息,比如当前在什么附近/距离当前位置多少米
      */
     @Override
-    public void showPoiDetail() {
+    public void showPoiDetail(String locTitle, String locInfo) {
         mGpsView.setVisibility(View.VISIBLE);
         mBottomSheet.setVisibility(View.VISIBLE);
         mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -928,7 +945,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         //底部：打车、路线...
         mPoiDetailTaxi.setVisibility(View.VISIBLE);
         //我的位置
-        showPoiNameText();
+        mTvLocTitle.setText(locTitle);
+        mTvLocation.setText(locInfo);
+//        showPoiNameText();
 
         //int poiTaxiHeight = mPoiDetailTaxi.getMeasuredHeight(); //为0
         int poiTaxiHeight = getResources().getDimensionPixelSize(R.dimen.setting_item_large_height);
@@ -941,10 +960,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     /**
      * 显示当前所在poi点信息
      */
-    private void showPoiNameText() {
-        if (!TextUtils.isEmpty(mPoiName)) {
-            mTvLocation.setText(String.format("在%s附近", mPoiName));
-        }
+    private void showPoiNameText(String locInfo) {
+        mTvLocation.setText(locInfo);
     }
 
     /**
@@ -1101,11 +1118,16 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     public void smoothSlideUpMap() {
         switch (mGpsView.getGpsState()) {
             case GPSView.STATE_ROTATE:
-                mMapType = MyLocationStyle.LOCATION_TYPE_MAP_ROTATE;
+                if(!isPoiClick){
+                    mMapType = MyLocationStyle.LOCATION_TYPE_MAP_ROTATE;
+                }
                 break;
             case GPSView.STATE_UNLOCKED:
             case GPSView.STATE_LOCKED:
-                mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+                // 当前没D有操作poi点击
+                if(!isPoiClick){
+                    mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+                }
                 break;
         }
         setLocationStyle();
@@ -1221,5 +1243,73 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 地图POI点击
+     * @param poi
+     */
+    @Override
+    public void onPOIClick(Poi poi) {
+        LogUtil.d(TAG, "onPOIClick,poi="+poi);
+        if(poi == null || poi.getCoordinate() == null || TextUtils.isEmpty(poi.getName())){
+            return;
+        }
+        // 当前正在处理poi点击
+        isPoiClick = true;
+        addPOIMarderAndShowDetail(poi);
+
+    }
+
+    /**
+     * 添加POImarker
+     * @param poi
+     */
+    private void addPOIMarderAndShowDetail(Poi poi) {
+        LatLng latLng = poi.getCoordinate();
+        animMap(latLng);
+        mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
+        mCurrentGpsState = STATE_UNLOCKED;
+        //当前没有正在定位才能修改状态
+        if (!mFirstLocation) {
+            mGpsView.setGpsState(mCurrentGpsState);
+        }
+        mMoveToCenter = false;
+        // 添加marker标记
+        addPOIMarker(latLng);
+        showClickPoiDetail(latLng, poi.getName());
+    }
+
+    /**
+     * 显示poi点击底部BottomSheet
+     */
+    private void showClickPoiDetail(LatLng latLng, String poiName) {
+        mTvLocTitle.setText(poiName);
+        String distanceStr = MyAMapUtils.calculateDistanceStr(mLatLng, latLng);
+        if (mBottomSheet.getVisibility() == View.GONE || mBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+            showPoiDetail(poiName, String.format("距离您%s", distanceStr));
+            moveGspButtonAbove();
+        }else{
+            mTvLocTitle.setText(poiName);
+            mTvLocation.setText(String.format("距离您%s", distanceStr));
+        }
+    }
+
+    private void addPOIMarker(LatLng latLng) {
+        aMap.clear();
+        MarkerOptions markOptiopns = new MarkerOptions();
+        markOptiopns.position(latLng);
+        markOptiopns.icon(BitmapDescriptorFactory.fromResource(R.drawable.poi_mark));
+        aMap.addMarker(markOptiopns);
+    }
+
+    /**
+     * 移动地图中心点到指定位置
+     * @param latLng
+     */
+    private void animMap(LatLng latLng){
+        if(latLng != null){
+            aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, mZoomLevel));
+        }
     }
 }
