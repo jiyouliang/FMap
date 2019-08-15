@@ -2,8 +2,6 @@ package com.jiyouliang.fmap.ui.user;
 
 import android.content.Context;
 
-import com.jiyouliang.fmap.server.data.UserLoginData;
-import com.jiyouliang.fmap.server.net.BaseHttpTask;
 import com.jiyouliang.fmap.server.net.HttpTaskClient;
 
 /**

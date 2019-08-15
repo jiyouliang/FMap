@@ -1,7 +1,5 @@
 package com.jiyouliang.fmap.ui.user;
 
-import android.content.Context;
-
 /**
  * @author YouLiang.Ji
  * 用户详情model层接口

@@ -1,20 +1,14 @@
 package com.jiyouliang.fmap.ui.user;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.ui.BaseFragment;

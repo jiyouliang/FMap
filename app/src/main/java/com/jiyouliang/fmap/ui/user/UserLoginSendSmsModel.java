@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jiyouliang.fmap.server.data.UserLoginData;
-import com.jiyouliang.fmap.server.net.BaseHttpTask;
 import com.jiyouliang.fmap.server.net.HttpTaskClient;
 
 import java.util.HashMap;

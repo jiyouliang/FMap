@@ -7,24 +7,13 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import com.jiyouliang.fmap.R;
-import com.jiyouliang.fmap.server.data.UserLoginData;
-import com.jiyouliang.fmap.server.net.HttpTaskClient;
 import com.jiyouliang.fmap.ui.BaseActivity;
-import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.InputMethodUtils;
 import com.jiyouliang.fmap.util.LogUtil;
-import com.jiyouliang.fmap.util.security.KeystoreUtil;
-import com.jiyouliang.fmap.util.security.RSACrypt;
-import com.jiyouliang.fmap.util.security.ValidateUtil;
 import com.jiyouliang.fmap.view.widget.ButtonLoadingView;
 import com.jiyouliang.fmap.view.widget.ClearEditText;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * 用户登录

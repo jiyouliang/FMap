@@ -4,8 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.jiyouliang.fmap.server.net.BaseHttpTask;
-import com.jiyouliang.fmap.server.net.HttpTaskClient;
 import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.security.RSACrypt;
 

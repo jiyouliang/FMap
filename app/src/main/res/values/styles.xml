@@ -9,6 +9,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!--欢迎页主题样式-->
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <!--输入框样式-->
     <style name="EditTextStyle" parent="Base.V7.Widget.AppCompat.EditText">
         <item name="android:background">@drawable/button_only_one_normal</item>
