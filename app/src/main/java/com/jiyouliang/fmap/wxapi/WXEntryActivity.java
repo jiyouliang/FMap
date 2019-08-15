@@ -115,21 +115,19 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
 				break;
 			case BaseResp.ErrCode.ERR_USER_CANCEL:
 				result = R.string.errcode_cancel;
-				Toast.makeText(this, getString(result) + ", type=" + resp.getType(), Toast.LENGTH_SHORT).show();
 				break;
 			case BaseResp.ErrCode.ERR_AUTH_DENIED:
 				result = R.string.errcode_deny;
-				Toast.makeText(this, getString(result) + ", type=" + resp.getType(), Toast.LENGTH_SHORT).show();
 				break;
 			case BaseResp.ErrCode.ERR_UNSUPPORT:
 				result = R.string.errcode_unsupported;
-				Toast.makeText(this, getString(result) + ", type=" + resp.getType(), Toast.LENGTH_SHORT).show();
 				break;
 			default:
 				result = R.string.errcode_unknown;
-				Toast.makeText(this, getString(result) + ", type=" + resp.getType(), Toast.LENGTH_SHORT).show();
 				break;
 		}
+
+		LogUtil.d(TAG, String.format("分享结果=%s, errorCode=%s, type=%s", result, resp.errCode, resp.getType()));
 
 
 

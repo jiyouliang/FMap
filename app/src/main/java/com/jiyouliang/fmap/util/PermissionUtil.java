@@ -31,7 +31,9 @@ public class PermissionUtil {
      *
      * @param activity
      * @param reqCode
+     * @deprecated 过时方法，请使用{@link #requestPermissions(String[], Activity, int)}替代
      */
+    @Deprecated
     public static void initPermissions(Activity activity, int reqCode) {
         requestPermission(activity, INIT_PERMISSIONS, reqCode);
     }

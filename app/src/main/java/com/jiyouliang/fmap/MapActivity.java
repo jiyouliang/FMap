@@ -14,10 +14,12 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -137,6 +139,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private AMapLocation mAmapLocation;
     // 分享url到微信图片大小
     private static final int THUMB_SIZE = 150;
+    private ImageButton mImgBtnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,6 +185,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mSupendPartitionView = (SupendPartitionView) findViewById(R.id.spv);
         // 分享组件
         mShareContainer = (LinearLayout)findViewById(R.id.rl_right);
+        mImgBtnBack= (ImageButton)findViewById(R.id.ib_back);
 
         setBottomSheet();
         setUpMap();
@@ -359,6 +363,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mShareContainer.setOnClickListener(this);
         // 注册高德地图分享回调
         mShareSearch.setOnShareSearchListener(this);
+        // 头部返回
+        mImgBtnBack.setOnClickListener(this);
     }
 
     private void setUpMap() {
@@ -458,13 +464,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 //            mLocationClient.startLocation();
             if (null != mLocationClient) {
                 mLocationClient.setLocationOption(mLocationOption);
+                mLocationClient.startLocation();
                 //运行时权限
-                if (PermissionUtil.checkPermissions(this)) {
+                /*if (PermissionUtil.checkPermissions(this)) {
                     mLocationClient.startLocation();
                 } else {
                     //未授予权限，动态申请
                     PermissionUtil.initPermissions(this, REQ_CODE_INIT);
-                }
+                }*/
             }
         }
     }
@@ -507,9 +514,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQ_CODE_INIT && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        /*if (requestCode == REQ_CODE_INIT && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             mLocationClient.startLocation();
-        }
+        }*/
     }
 
 
@@ -840,16 +847,29 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onClick(View v) {
+        if(v == null){
+            return;
+        }
+        // 点击关闭POI detail
         if (v == mPoiColseView) {
             mBehavior.setHideable(true);
             resetGpsButtonPosition();
             hidePoiDetail();
+            return;
         }
 
         // 分享
         if(v == mShareContainer){
             shareLocation();
+            return;
         }
+
+        // 头部返回ImageButton
+        if(v == mImgBtnBack){
+            mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            return;
+        }
+
     }
 
     /**
@@ -1182,5 +1202,18 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     public void onDrivingRouteShareUrlSearched(String s, int i) {
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // 处理返回键
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            // BottomSheet展开,折叠BottomSheet不关闭Activity
+            if(mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+                mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
