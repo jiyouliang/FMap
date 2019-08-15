@@ -38,7 +38,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MapActivity">
+            android:name=".MapActivity"
+            android:theme="@style/MapTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

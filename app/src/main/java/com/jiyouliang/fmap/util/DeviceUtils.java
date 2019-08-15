@@ -2,10 +2,12 @@ package com.jiyouliang.fmap.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
 
 /**
  * 设备相关
@@ -136,4 +138,17 @@ public class DeviceUtils {
     }
 
 
+    /**
+     * 获取状态栏高度
+     * @param activity
+     * @return
+     */
+    public static int getStatusBarHeight(Activity activity){
+        int statusBarHeight = 0;
+        int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = activity.getResources().getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
+    }
 }

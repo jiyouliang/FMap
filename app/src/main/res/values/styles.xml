@@ -15,6 +15,16 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="MapTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/white</item>
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <item name="colorAccent">@color/white</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:statusBarColor">@color/white</item>
+    </style>
+
     <!--输入框样式-->
     <style name="EditTextStyle" parent="Base.V7.Widget.AppCompat.EditText">
         <item name="android:background">@drawable/button_only_one_normal</item>

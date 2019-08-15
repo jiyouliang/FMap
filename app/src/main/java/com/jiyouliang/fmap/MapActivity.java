@@ -48,6 +48,8 @@ import com.amap.api.services.core.LatLonSharePoint;
 import com.amap.api.services.share.ShareSearch;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
+import com.jiyouliang.fmap.util.StatusBarUtils;
+import com.jiyouliang.fmap.util.SystemUIModes;
 import com.jiyouliang.fmap.util.WechatApi;
 import com.jiyouliang.fmap.util.WechatUtil;
 import com.jiyouliang.fmap.view.base.MapViewInterface;
@@ -191,6 +193,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         setUpMap();
 
         mPadding = getResources().getDimensionPixelSize(R.dimen.padding_size);
+        int statusBarHeight = DeviceUtils.getStatusBarHeight(this);
+        getWindow().setStatusBarColor(Color.WHITE);
+        log(String.format("statusBarHeight=%s", statusBarHeight));
+        SystemUIModes.setTranslucentStatus(this, true);
     }
 
     private void initData() {
