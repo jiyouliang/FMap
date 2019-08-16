@@ -11,9 +11,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -47,6 +51,9 @@ import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Poi;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonSharePoint;
+import com.amap.api.services.help.Inputtips;
+import com.amap.api.services.help.InputtipsQuery;
+import com.amap.api.services.help.Tip;
 import com.amap.api.services.share.ShareSearch;
 import com.jiyouliang.fmap.ui.navi.WalkRouteNaviActivity;
 import com.jiyouliang.fmap.ui.user.UserActivity;
@@ -74,7 +81,10 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -149,6 +159,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private boolean isPoiClick;
     private TextView mTvRoute;
     private LinearLayout mLLSearchContainer;
+    // 搜索结果存储
+    private List<Tip> mSearchData = new ArrayList<>();
 
     /**
      * 当前地图模式
@@ -157,6 +169,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private RecyclerView mRecycleViewSearch;
     private ImageView mIvLeftSearch;
     private EditText mEtSearchTip;
+    private SearchAdapter mSearchAdapter;
+    private String mCity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,6 +225,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mRecycleViewSearch = (RecyclerView)findViewById(R.id.rv_search);
         mIvLeftSearch = (ImageView)findViewById(R.id.iv_search_left);
         mEtSearchTip = (EditText)findViewById(R.id.et_search_tip);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mRecycleViewSearch.setLayoutManager(layoutManager);
 
         setBottomSheet();
         setUpMap();
@@ -231,6 +247,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         api.registerApp(Constants.APP_ID);
         // 高德地图分享
         mShareSearch = new ShareSearch(this);
+        // 搜索结果RecyclerView
+        mSearchAdapter = new SearchAdapter(mSearchData);
+        mRecycleViewSearch.setAdapter(mSearchAdapter);
     }
 
     /**
@@ -405,6 +424,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mTvRoute.setOnClickListener(this);
         // 搜索布局左侧返回箭头图标
         mIvLeftSearch.setOnClickListener(this);
+        // 搜索输入框
+        mEtSearchTip.addTextChangedListener(this);
     }
 
     private void setUpMap() {
@@ -445,6 +466,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         //参数依次是：视角调整区域的中心点坐标、希望调整到的缩放级别、俯仰角0°~45°（垂直与地图时为0）、偏航角 0~360° (正北方为0)
         mLatLng = new LatLng(lat, lng);
+        if(!location.getCity().equals(mCity)){
+            mCity = location.getCity();
+        }
 
         //首次定位,选择移动到地图中心点并修改级别到15级
         //首次定位成功才修改地图中心点，并移动
@@ -1423,6 +1447,53 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         InputMethodUtils.showInput(this, mEtSearchTip);
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    /**
+     * EditText输入内容后回调
+     * @param s
+     */
+    @Override
+    public void afterTextChanged(Editable s) {
+        if(s == null){
+            return;
+        }
+        String content = s.toString();
+        if(!TextUtils.isEmpty(content) && !TextUtils.isEmpty(mCity)){
+            // 调用高德地图搜索提示api
+            InputtipsQuery inputquery = new InputtipsQuery(content, mCity);
+            inputquery.setCityLimit(true);
+            Inputtips inputTips = new Inputtips(this, inputquery);
+            inputTips.setInputtipsListener(this);
+            inputTips.requestInputtipsAsyn();
+        }
+
+    }
+
+    /**
+     * 高德地图搜索提示回调
+     * @param list
+     * @param i
+     */
+    @Override
+    public void onGetInputtips(List<Tip> list, int i) {
+        if(list == null || list.size() == 0){
+            return;
+        }
+        mSearchData.clear();
+        mSearchData.addAll(list);
+        // 刷新RecycleView
+        mSearchAdapter.notifyDataSetChanged();
+    }
+
     /**
      * 地图模式
      */
@@ -1437,5 +1508,55 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
          */
         SEARCH
     }
+
+    /**
+     * 搜索Adapter
+     */
+    private static class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder>{
+
+        private List<Tip> mData;
+
+        public SearchAdapter(List<Tip> data) {
+            this.mData = data;
+        }
+
+        @NonNull
+        @Override
+        public SearchViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
+            View itemView = ((LayoutInflater) viewGroup.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                    .inflate(R.layout.search_tip_recycle_item, viewGroup, false);
+            return new SearchViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
+            Tip tip = mData.get(position);
+            holder.tvSearchTitle.setText(tip.getName());
+            holder.tvSearchLoc.setText(tip.getAddress());
+        }
+
+        @Override
+        public int getItemCount() {
+            if(mData != null && mData.size() > 0){
+                return mData.size();
+            }
+            return 0;
+        }
+    }
+
+
+    /**
+     * 搜索ViewHolder
+     */
+    private static class SearchViewHolder extends RecyclerView.ViewHolder{
+        TextView tvSearchTitle;
+        TextView tvSearchLoc;
+        public SearchViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvSearchTitle = itemView.findViewById(R.id.tv_search_title);
+            tvSearchLoc = itemView.findViewById(R.id.tv_search_loc);
+        }
+    }
+
 
 }
