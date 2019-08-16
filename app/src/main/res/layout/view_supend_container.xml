@@ -20,8 +20,8 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
-            android:visibility="gone"
             layout="@layout/view_map_top_feedback"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -96,11 +96,64 @@
 
     <!--<include layout="@layout/poi_detail_fix_bottom" />-->
     <com.jiyouliang.fmap.view.map.PoiDetailBottomView
-        android:layout_gravity="bottom"
-        android:visibility="gone"
         android:id="@+id/poi_detail_taxi"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="gone" />
+
+    <!--search container-->
+    <LinearLayout
+        android:id="@+id/ll_search_container"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent"
+        android:background="@color/gray_bg"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingLeft="@dimen/padding_size"
+            android:paddingTop="@dimen/padding_size"
+            android:paddingRight="@dimen/padding_size"
+            android:paddingBottom="@dimen/padding_size">
+
+            <ImageView
+                android:id="@+id/iv_search_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/arrow_left_black" />
+
+            <EditText
+                android:id="@+id/et_search_tip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_size"
+                android:layout_toEndOf="@id/iv_search_left"
+                android:background="@drawable/search_rect_bg"
+                android:drawableStart="@drawable/search_light_icon"
+                android:drawablePadding="4dp"
+                android:hint="@string/search"
+                android:paddingLeft="@dimen/padding_size"
+                android:paddingTop="@dimen/padding_medium"
+                android:paddingRight="@dimen/padding_size"
+                android:paddingBottom="@dimen/padding_medium"
+                android:textSize="16dp" />
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_search"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/padding_size" />
+
+    </LinearLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

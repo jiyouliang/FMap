@@ -64,4 +64,5 @@
     <string name="show_from_wx_tip">这个界面用于显示微信向第三方app请求显示的信息</string>
     <string name="location_failed_hold_on">定位失败,请稍后重试</string>
     <string name="please_select_dest_loc">请选择目的地</string>
+    <string name="search">搜索</string>
 </resources>

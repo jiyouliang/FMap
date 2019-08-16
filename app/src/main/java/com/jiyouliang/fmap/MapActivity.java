@@ -3,25 +3,23 @@ package com.jiyouliang.fmap;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +32,6 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
-import com.amap.api.maps.MapView;
 import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.AMapGestureListener;
@@ -53,9 +50,8 @@ import com.amap.api.services.share.ShareSearch;
 import com.jiyouliang.fmap.ui.navi.WalkRouteNaviActivity;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
+import com.jiyouliang.fmap.util.InputMethodUtils;
 import com.jiyouliang.fmap.util.MyAMapUtils;
-import com.jiyouliang.fmap.util.StatusBarUtils;
-import com.jiyouliang.fmap.util.SystemUIModes;
 import com.jiyouliang.fmap.util.WechatApi;
 import com.jiyouliang.fmap.util.WechatUtil;
 import com.jiyouliang.fmap.view.base.MapViewInterface;
@@ -63,7 +59,6 @@ import com.jiyouliang.fmap.harware.SensorEventHelper;
 import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.LogUtil;
-import com.jiyouliang.fmap.util.PermissionUtil;
 import com.jiyouliang.fmap.view.map.FrequentView;
 import com.jiyouliang.fmap.view.map.GPSView;
 import com.jiyouliang.fmap.view.map.MapHeaderView;
@@ -72,7 +67,6 @@ import com.jiyouliang.fmap.view.map.PoiDetailBottomView;
 import com.jiyouliang.fmap.view.map.RouteView;
 import com.jiyouliang.fmap.view.map.SupendPartitionView;
 import com.jiyouliang.fmap.view.map.TrafficView;
-import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
@@ -153,6 +147,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     // 当前是否正在处理POI点击
     private boolean isPoiClick;
     private TextView mTvRoute;
+    private LinearLayout mLLSearchContainer;
+
+    /**
+     * 当前地图模式
+     */
+    private MapMode mMapMode = MapMode.NORMAL;
+    private RecyclerView mRecycleViewSearch;
+    private ImageView mIvLeftSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,6 +204,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mImgBtnBack= (ImageButton)findViewById(R.id.ib_back);
         // 路线
         mTvRoute = (TextView)findViewById(R.id.tv_route);
+        // 搜索区域
+        mLLSearchContainer = (LinearLayout)findViewById(R.id.ll_search_container);
+        mRecycleViewSearch = (RecyclerView)findViewById(R.id.rv_search);
+        mIvLeftSearch = (ImageView)findViewById(R.id.iv_search_left);
 
         setBottomSheet();
         setUpMap();
@@ -368,7 +374,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
             @Override
             public void onSearchClick() {
-
+                // 显示搜索layout,隐藏地图图层,并设置当前地图操作模式
+                mMapMode = MapMode.SEARCH;
+                showSearchTipView();
+                hideMapView();
             }
 
             @Override
@@ -391,6 +400,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         aMap.setOnPOIClickListener(this);
         // 点击路径进入导航页面
         mTvRoute.setOnClickListener(this);
+        // 搜索布局左侧返回箭头图标
+        mIvLeftSearch.setOnClickListener(this);
     }
 
     private void setUpMap() {
@@ -931,6 +942,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             return;
         }
 
+        // 点击左侧返回箭头
+        if(v == mIvLeftSearch){
+            InputMethodUtils.hideInput(this);
+            hideSearchTipView();
+            showMapView();
+            return;
+        }
+
     }
 
     /**
@@ -1280,9 +1299,17 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // 处理返回键
         if(keyCode == KeyEvent.KEYCODE_BACK){
-            // BottomSheet展开,折叠BottomSheet不关闭Activity
-            if(mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
-                mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            MapMode mode = mMapMode;
+            if(mode == MapMode.NORMAL){
+                // BottomSheet展开,折叠BottomSheet不关闭Activity
+                if(mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+                    mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    return true;
+                }
+            }else if(mode == MapMode.SEARCH){
+                hideSearchTipView();
+                showMapView();
+                mMapMode = MapMode.NORMAL;
                 return true;
             }
         }
@@ -1359,4 +1386,52 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, mZoomLevel));
         }
     }
+
+    /**
+     * 隐藏地图图层
+     */
+    private void hideMapView(){
+        mMapView.setVisibility(View.GONE);
+        mMapHeaderView.setVisibility(View.GONE);
+        mSupendPartitionView.setVisibility(View.GONE);
+    }
+
+    /**
+     * 显示地图图层
+     */
+    private void showMapView(){
+        mMapView.setVisibility(View.VISIBLE);
+        mMapHeaderView.setVisibility(View.VISIBLE);
+        mSupendPartitionView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 隐藏搜索提示布局
+     */
+    private void hideSearchTipView(){
+        mLLSearchContainer.setVisibility(View.GONE);
+    }
+
+    /**
+     * 显示搜索提示布局
+     */
+    private void showSearchTipView(){
+        mLLSearchContainer.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 地图模式
+     */
+    private enum MapMode{
+        /**
+         * 普通模式:显示地图图层
+         */
+        NORMAL,
+
+        /**
+         * 搜索模式:显示搜索提示和搜索结果
+         */
+        SEARCH
+    }
+
 }
