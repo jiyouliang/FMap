@@ -1133,7 +1133,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         setLocationStyle();
         //禁用手势操作
         aMap.getUiSettings().setAllGesturesEnabled(false);
-        mMoveToCenter = true;
+        if(!isPoiClick){
+            mMoveToCenter = true;
+        }else{
+            mMoveToCenter = false;
+        }
         ViewGroup.LayoutParams lp = mMapView.getLayoutParams();
         lp.height = mScreenHeight * 2 / 5;
         mMapView.setLayoutParams(lp);
