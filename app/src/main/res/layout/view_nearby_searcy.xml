@@ -11,7 +11,7 @@
         android:drawableLeft="@drawable/icon_feed_logo"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
-        android:text="搜索附近"
+        android:text="@string/search_nearby"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 

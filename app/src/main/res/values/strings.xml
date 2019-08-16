@@ -69,4 +69,5 @@
     <string name="location_failed_hold_on">定位失败,请稍后重试</string>
     <string name="please_select_dest_loc">请选择目的地</string>
     <string name="search">搜索</string>
+    <string name="search_nearby">搜索附近</string>
 </resources>

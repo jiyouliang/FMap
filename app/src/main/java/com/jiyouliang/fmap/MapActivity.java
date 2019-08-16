@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -155,6 +156,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private MapMode mMapMode = MapMode.NORMAL;
     private RecyclerView mRecycleViewSearch;
     private ImageView mIvLeftSearch;
+    private EditText mEtSearchTip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,6 +210,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mLLSearchContainer = (LinearLayout)findViewById(R.id.ll_search_container);
         mRecycleViewSearch = (RecyclerView)findViewById(R.id.rv_search);
         mIvLeftSearch = (ImageView)findViewById(R.id.iv_search_left);
+        mEtSearchTip = (EditText)findViewById(R.id.et_search_tip);
 
         setBottomSheet();
         setUpMap();
@@ -944,7 +947,6 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         // 点击左侧返回箭头
         if(v == mIvLeftSearch){
-            InputMethodUtils.hideInput(this);
             hideSearchTipView();
             showMapView();
             return;
@@ -1409,6 +1411,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      * 隐藏搜索提示布局
      */
     private void hideSearchTipView(){
+        InputMethodUtils.hideInput(this);
         mLLSearchContainer.setVisibility(View.GONE);
     }
 
@@ -1417,6 +1420,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     private void showSearchTipView(){
         mLLSearchContainer.setVisibility(View.VISIBLE);
+        InputMethodUtils.showInput(this, mEtSearchTip);
     }
 
     /**
