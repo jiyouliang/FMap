@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -49,6 +50,7 @@ import com.amap.api.maps.model.Poi;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonSharePoint;
 import com.amap.api.services.share.ShareSearch;
+import com.jiyouliang.fmap.ui.navi.WalkRouteNaviActivity;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
 import com.jiyouliang.fmap.util.MyAMapUtils;
@@ -150,6 +152,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private TextView mTvLocTitle;
     // 当前是否正在处理POI点击
     private boolean isPoiClick;
+    private TextView mTvRoute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +200,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 分享组件
         mShareContainer = (LinearLayout)findViewById(R.id.rl_right);
         mImgBtnBack= (ImageButton)findViewById(R.id.ib_back);
+        // 路线
+        mTvRoute = (TextView)findViewById(R.id.tv_route);
 
         setBottomSheet();
         setUpMap();
@@ -384,6 +389,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mImgBtnBack.setOnClickListener(this);
         // 地图poi点击
         aMap.setOnPOIClickListener(this);
+        // 点击路径进入导航页面
+        mTvRoute.setOnClickListener(this);
     }
 
     private void setUpMap() {
@@ -901,6 +908,26 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 头部返回ImageButton
         if(v == mImgBtnBack){
             mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            return;
+        }
+
+        // 路线,进入导航页面
+        if(v == mTvRoute){
+            if(mLatLng == null){
+                showToast(getString(R.string.location_failed_hold_on));
+                return;
+            }
+            if(mClickPoiLatLng == null){
+                showToast(getString(R.string.please_select_dest_loc));
+                return;
+            }
+            Intent intent = new Intent(this, WalkRouteNaviActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("startLatLng", mLatLng);
+            bundle.putParcelable("stopLatLng", mClickPoiLatLng);
+
+            intent.putExtra("params", bundle);
+            startActivity(intent);
             return;
         }
 

@@ -17,12 +17,12 @@
 
     <style name="MapTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/white</item>
+        <!--<item name="colorPrimary">@color/white</item>-->
         <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
-        <item name="colorAccent">@color/white</item>
+        <!--<item name="colorAccent">@color/white</item>-->
         <item name="windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:statusBarColor">@color/white</item>
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:statusBarColor">@color/white</item>-->
     </style>
 
     <!--输入框样式-->
