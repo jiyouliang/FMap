@@ -34,6 +34,7 @@ import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.AMapGestureListener;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
@@ -84,7 +85,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private static final int REQ_CODE_INIT = 0;
     private static final int REQ_CODE_FINE_LOCATION = 1;
     private static final int REQ_CODE_STORAGE = 2;
-    private MapView mMapView;
+    private TextureMapView mMapView;
     private AMap aMap;
     private UiSettings mUiSettings;
 
@@ -99,6 +100,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private static final int STATE_ROTATE = 2;//根据地图方向旋转状态
     private int mZoomLevel = 16;//地图缩放级别，最大缩放级别为20
     private LatLng mLatLng;//当前定位经纬度
+    private LatLng mClickPoiLatLng;//当前点击的poi经纬度
     private static long mAnimDuartion = 500L;//地图动效时长
     private int mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;//地图状态类型
     private SensorEventHelper mSensorHelper;
@@ -164,7 +166,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mRouteView = (RouteView) findViewById(R.id.route_view);
         mFrequentView = (FrequentView) findViewById(R.id.fv);
         //获取地图控件引用
-        mMapView = (MapView) findViewById(R.id.map);
+        mMapView = (TextureMapView) findViewById(R.id.map);
         //交通流量状态控件
         mTrafficView = (TrafficView) findViewById(R.id.tv);
         aMap = mMapView.getMap();
@@ -200,11 +202,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         setUpMap();
 
         mPadding = getResources().getDimensionPixelSize(R.dimen.padding_size);
-        int statusBarHeight = DeviceUtils.getStatusBarHeight(this);
+        /*int statusBarHeight = DeviceUtils.getStatusBarHeight(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         getWindow().setStatusBarColor(Color.WHITE);
-        log(String.format("statusBarHeight=%s", statusBarHeight));
+        log(String.format("statusBarHeight=%s", statusBarHeight));*/
 //        SystemUIModes.setTranslucentStatus(this, true);
     }
 
@@ -412,8 +414,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         double lat = location.getLatitude();
         // 当前poiname和上次不相等才更新显示
         if(location.getPoiName() != null && !location.getPoiName().equals(mPoiName)){
-            mPoiName = location.getPoiName();
-            showPoiNameText(String.format("在%s附近", mPoiName));
+            if(!isPoiClick){
+                // 点击poi时,定位位置和点击位置不一定一样
+                mPoiName = location.getPoiName();
+                showPoiNameText(String.format("在%s附近", mPoiName));
+            }
         }
         //LogUtil.d(TAG, "定位成功，onLocationChanged： lng" + lng + ",lat=" + lat + ",mLocMarker=" + mLocMarker + ",poiName=" + mPoiName+",getDescription="+location.getDescription()+", address="+location.getAddress()+",getLocationDetail"+location.getLocationDetail()+",street="+location.getStreet());
 
@@ -881,7 +886,15 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
         // 分享
         if(v == mShareContainer){
-            shareLocation();
+            if(mAmapLocation != null && mLatLng != null){
+                if(isPoiClick){
+                    // 分享点击poi的位置
+                    shareLocation(mPoiName, mClickPoiLatLng.latitude, mClickPoiLatLng.longitude);
+                }else{
+                    // 分享当前定位位置
+                    shareLocation(mPoiName, mLatLng.latitude, mLatLng.longitude);
+                }
+            }
             return;
         }
 
@@ -1169,14 +1182,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     /**
      * 高德地图位置转短串分享
+     * @param snippet 位置名称
+     * @param lat 维度
+     * @param lng 经度
      */
-    private void shareLocation() {
-        if(TextUtils.isEmpty(mPoiName)){
+    private void shareLocation(String snippet, double lat, double lng) {
+        if(TextUtils.isEmpty(snippet)){
             return;
         }
-        String snippet = mPoiName;
-        double lat = mAmapLocation.getLatitude();
-        double lng = mAmapLocation.getLongitude();
         // addTestLocationMarker(snippet);
         LatLonSharePoint point = new LatLonSharePoint(lat,
                 lng, snippet);
@@ -1259,6 +1272,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         if(poi == null || poi.getCoordinate() == null || TextUtils.isEmpty(poi.getName())){
             return;
         }
+        // 当前点击坐标
+        mClickPoiLatLng = poi.getCoordinate();
         // 当前正在处理poi点击
         isPoiClick = true;
         addPOIMarderAndShowDetail(poi);
@@ -1288,6 +1303,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      * 显示poi点击底部BottomSheet
      */
     private void showClickPoiDetail(LatLng latLng, String poiName) {
+        mPoiName = poiName;
         mTvLocTitle.setText(poiName);
         String distanceStr = MyAMapUtils.calculateDistanceStr(mLatLng, latLng);
         if (mBottomSheet.getVisibility() == View.GONE || mBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
