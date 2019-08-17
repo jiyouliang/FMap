@@ -114,6 +114,18 @@
                 android:paddingBottom="@dimen/padding_normal"
                 android:textSize="16dp" />
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:visibility="gone"
+                android:layout_width="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/padding_small"
+                android:layout_height="24dp"
+                android:indeterminateDrawable="@drawable/progress_indeterminate" />
+
+
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
@@ -127,6 +139,7 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
+        android:visibility="visible"
         android:layout_height="match_parent">
 
         <com.jiyouliang.fmap.view.map.MapHeaderView

@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -171,6 +172,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private EditText mEtSearchTip;
     private SearchAdapter mSearchAdapter;
     private String mCity;
+    private ProgressBar mSearchProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,6 +229,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mEtSearchTip = (EditText)findViewById(R.id.et_search_tip);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecycleViewSearch.setLayoutManager(layoutManager);
+        mSearchProgressBar = (ProgressBar)findViewById(R.id.progressBar);
 
         setBottomSheet();
         setUpMap();
@@ -1449,7 +1452,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     @Override
     public void afterTextChanged(Editable s) {
-        if(s == null){
+        if(s == null || TextUtils.isEmpty(s.toString())){
+            mSearchProgressBar.setVisibility(View.GONE);
             return;
         }
         String content = s.toString();
@@ -1460,6 +1464,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             Inputtips inputTips = new Inputtips(this, inputquery);
             inputTips.setInputtipsListener(this);
             inputTips.requestInputtipsAsyn();
+            mSearchProgressBar.setVisibility(View.VISIBLE);
         }
 
     }
@@ -1471,6 +1476,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
      */
     @Override
     public void onGetInputtips(List<Tip> list, int i) {
+        mSearchProgressBar.setVisibility(View.GONE);
         if(list == null || list.size() == 0){
             return;
         }
