@@ -51,6 +51,7 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Poi;
 import com.amap.api.services.core.AMapException;
+import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.LatLonSharePoint;
 import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.InputtipsQuery;
@@ -76,6 +77,7 @@ import com.jiyouliang.fmap.view.map.PoiDetailBottomView;
 import com.jiyouliang.fmap.view.map.RouteView;
 import com.jiyouliang.fmap.view.map.SupendPartitionView;
 import com.jiyouliang.fmap.view.map.TrafficView;
+import com.jiyouliang.fmap.view.widget.OnItemClickListener;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
@@ -85,7 +87,7 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener, OnItemClickListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -253,6 +255,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 搜索结果RecyclerView
         mSearchAdapter = new SearchAdapter(mSearchData);
         mRecycleViewSearch.setAdapter(mSearchAdapter);
+
     }
 
     /**
@@ -406,6 +409,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mIvLeftSearch.setOnClickListener(this);
         // 搜索输入框
         mEtSearchTip.addTextChangedListener(this);
+        mSearchAdapter.setOnItemClickListener(this);
     }
 
     private void setUpMap() {
@@ -1339,16 +1343,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mClickPoiLatLng = poi.getCoordinate();
         // 当前正在处理poi点击
         isPoiClick = true;
-        addPOIMarderAndShowDetail(poi);
+        addPOIMarderAndShowDetail(poi.getCoordinate(), poi.getName());
 
     }
 
     /**
      * 添加POImarker
-     * @param poi
      */
-    private void addPOIMarderAndShowDetail(Poi poi) {
-        LatLng latLng = poi.getCoordinate();
+    private void addPOIMarderAndShowDetail(LatLng latLng, String poiName) {
         animMap(latLng);
         mMapType = MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER;
         mCurrentGpsState = STATE_UNLOCKED;
@@ -1359,7 +1361,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mMoveToCenter = false;
         // 添加marker标记
         addPOIMarker(latLng);
-        showClickPoiDetail(latLng, poi.getName());
+        showClickPoiDetail(latLng, poiName);
     }
 
     /**
@@ -1514,6 +1516,25 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     }
 
+    @Override
+    public void onItemClick(View v, int position) {
+        if(mSearchData.size() > 0){
+
+            Tip tip = mSearchData.get(position);
+            if(tip == null){
+                return;
+            }
+            hideSearchTipView();
+            showMapView();
+            mMoveToCenter = false;
+            isPoiClick = true;
+            LatLonPoint point = tip.getPoint();
+            LatLng latLng = new LatLng(point.getLatitude(), point.getLongitude());
+            addPOIMarderAndShowDetail(latLng, tip.getName());
+            showClickPoiDetail(latLng, tip.getName());
+        }
+    }
+
     /**
      * 地图模式
      */
@@ -1532,12 +1553,21 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     /**
      * 搜索Adapter
      */
-    private static class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder>{
+    private static class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> implements View.OnClickListener {
 
         private List<Tip> mData;
+        private OnItemClickListener mListener;
 
         public SearchAdapter(List<Tip> data) {
             this.mData = data;
+        }
+
+        /**
+         * 设置RecycleView条目点击
+         * @param listener
+         */
+        public void setOnItemClickListener(OnItemClickListener listener){
+            this.mListener = listener;
         }
 
         @NonNull
@@ -1545,6 +1575,8 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         public SearchViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
             View itemView = ((LayoutInflater) viewGroup.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                     .inflate(R.layout.search_tip_recycle_item, viewGroup, false);
+            itemView.setTag(position);
+            itemView.setOnClickListener(this);
             return new SearchViewHolder(itemView);
         }
 
@@ -1561,6 +1593,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 return mData.size();
             }
             return 0;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(v != null && mListener != null){
+                int postion = (int) v.getTag();
+                mListener.onItemClick(v, postion);
+            }
         }
     }
 
