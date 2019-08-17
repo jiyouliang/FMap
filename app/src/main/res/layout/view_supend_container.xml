@@ -5,37 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/transparent">
 
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <com.jiyouliang.fmap.view.map.MapHeaderView
-            android:id="@+id/mhv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/padding_size"
-            android:layout_marginTop="@dimen/padding_size"
-            android:layout_marginRight="@dimen/padding_size"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <include
-            layout="@layout/view_map_top_feedback"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <com.jiyouliang.fmap.view.map.SupendPartitionView
-            android:id="@+id/spv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/padding_size"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mhv" />
-
-
-    </android.support.constraint.ConstraintLayout>
 
 
     <LinearLayout
@@ -83,8 +53,6 @@
             android:id="@+id/nearby_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusableInTouchMode="true"
             android:layout_marginLeft="@dimen/padding_size"
             android:layout_marginRight="@dimen/padding_size"
             android:layout_marginBottom="@dimen/padding_size"
@@ -156,6 +124,38 @@
             android:layout_marginTop="@dimen/padding_size" />
 
     </LinearLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.jiyouliang.fmap.view.map.MapHeaderView
+            android:id="@+id/mhv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/padding_size"
+            android:layout_marginTop="@dimen/padding_size"
+            android:layout_marginRight="@dimen/padding_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            layout="@layout/view_map_top_feedback"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.jiyouliang.fmap.view.map.SupendPartitionView
+            android:id="@+id/spv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/padding_size"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mhv" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

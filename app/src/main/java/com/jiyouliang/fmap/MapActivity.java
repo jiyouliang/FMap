@@ -84,7 +84,7 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener {
+public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickListener, NearbySearchView.OnNearbySearchViewClickListener, AMapGestureListener, AMapLocationListener, LocationSource, TrafficView.OnTrafficChangeListener, View.OnClickListener, MapViewInterface, PoiDetailBottomView.OnPoiDetailBottomClickListener, ShareSearch.OnShareSearchListener, AMap.OnPOIClickListener, TextWatcher, Inputtips.InputtipsListener, MapHeaderView.OnMapHeaderViewClickListener {
     private static final String TAG = "MapActivity";
     /**
      * 首次进入申请定位、sd卡权限
@@ -388,30 +388,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mPoiDetailTaxi.setOnPoiDetailBottomClickListener(this);
 
         //头部View点击处理
-        mMapHeaderView.setOnMapHeaderViewClickListener(new MapHeaderView.OnMapHeaderViewClickListener() {
-            @Override
-            public void onUserClick() {
-                userLogin();
-            }
-
-            @Override
-            public void onSearchClick() {
-                // 显示搜索layout,隐藏地图图层,并设置当前地图操作模式
-                showSearchTipView();
-                hideMapView();
-                mMapMode = MapMode.SEARCH;
-            }
-
-            @Override
-            public void onVoiceClick() {
-
-            }
-
-            @Override
-            public void onQrScanClick() {
-
-            }
-        });
+        mMapHeaderView.setOnMapHeaderViewClickListener(this);
 
         mShareContainer.setOnClickListener(this);
         // 注册高德地图分享回调
@@ -1331,11 +1308,14 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 if(mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
                     mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     return true;
+                }else{
+                    return super.onKeyDown(keyCode, event);
                 }
             }else if(mode == MapMode.SEARCH){
                 hideSearchTipView();
                 showMapView();
                 mMapMode = MapMode.NORMAL;
+
                 return true;
             }
         }
@@ -1440,6 +1420,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mEtSearchTip.setVisibility(View.VISIBLE);
         mEtSearchTip.setFocusable(true);
         mEtSearchTip.setFocusableInTouchMode(true);
+        mSearchData.clear();
+        mSearchAdapter.notifyDataSetChanged();
+        mEtSearchTip.setText("");
     }
 
     /**
@@ -1495,6 +1478,34 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         mSearchData.addAll(list);
         // 刷新RecycleView
         mSearchAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onUserClick() {
+        userLogin();
+    }
+
+    @Override
+    public void onSearchClick() {
+        // 显示搜索layout,隐藏地图图层,并设置当前地图操作模式
+        showSearchTipView();
+        hideMapView();
+        mMapMode = MapMode.SEARCH;
+    }
+
+    @Override
+    public void onVoiceClick() {
+
+    }
+
+    @Override
+    public void onQrScanClick() {
+
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
     }
 
     /**

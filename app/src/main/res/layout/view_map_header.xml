@@ -34,17 +34,18 @@
         android:background="@drawable/voice_btn_selector" />
 
 
-    <TextView
+    <EditText
         android:id="@+id/tv_search"
         style="@style/EditTextStyle"
         android:layout_toStartOf="@id/iv_voice"
         android:layout_toEndOf="@id/iv_user"
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
+        android:focusable="false"
         android:background="@null"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
-        android:text="查找地点、公交、地铁"
+        android:text="@string/sear_loc_bus_subway"
         android:textColor="#757575" />
 
 </RelativeLayout>

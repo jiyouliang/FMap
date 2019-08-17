@@ -1,15 +1,14 @@
 package com.jiyouliang.fmap.view.map;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jiyouliang.fmap.R;
 
@@ -17,7 +16,7 @@ import com.jiyouliang.fmap.R;
  * 头部
  */
 public class MapHeaderView extends RelativeLayout implements View.OnClickListener {
-    private TextView mTvSearch;
+    private EditText mEtSearch;
     private ImageView mIvScan;
     private ImageView mIvVoice;
     private OnMapHeaderViewClickListener mListener;
@@ -44,16 +43,19 @@ public class MapHeaderView extends RelativeLayout implements View.OnClickListene
 
     private void initView() {
         mIvUser = findViewById(R.id.iv_user);
-        mTvSearch = findViewById(R.id.tv_search);
+        mEtSearch = findViewById(R.id.tv_search);
         mIvScan = findViewById(R.id.iv_qr_scan);
         mIvVoice = findViewById(R.id.iv_voice);
     }
 
     private void setListener() {
-        mIvUser.setOnClickListener(this);
-        mTvSearch.setOnClickListener(this);
-        mIvScan.setOnClickListener(this);
-        mIvVoice.setOnClickListener(this);
+        View child = this.getChildAt(0);
+        if(child instanceof ViewGroup){
+            int count = ((ViewGroup) child).getChildCount();
+            for (int i = 0; i < count; i++) {
+                ((ViewGroup) child).getChildAt(i).setOnClickListener(this);
+            }
+        }
     }
 
     public void setOnMapHeaderViewClickListener(OnMapHeaderViewClickListener listener) {
@@ -69,7 +71,7 @@ public class MapHeaderView extends RelativeLayout implements View.OnClickListene
         }
         if (v == mIvUser) {
             mListener.onUserClick();
-        } else if (v == mTvSearch) {
+        } else if (v == mEtSearch) {
             mListener.onSearchClick();
         } else if (v == mIvScan) {
             mListener.onQrScanClick();
