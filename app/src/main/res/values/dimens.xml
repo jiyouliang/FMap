@@ -6,6 +6,7 @@
     <dimen name="padding_large">14dp</dimen>
     <dimen name="padding_large2">20dp</dimen>
     <dimen name="padding_big">30dp</dimen>
+    <dimen name="padding_normal">10dp</dimen>
     <dimen name="padding_medium">6dp</dimen>
     <dimen name="padding_small">4dp</dimen>
     <dimen name="input_height">46dp</dimen>

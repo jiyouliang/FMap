@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:paddingLeft="@dimen/padding_size"
+    android:layout_height="wrap_content"
+    android:background="@drawable/user_detail_item_selector"
     android:minHeight="56dp"
-    android:paddingRight="@dimen/padding_size"
-    android:layout_height="wrap_content">
+    android:paddingLeft="@dimen/padding_large2"
+    android:paddingRight="@dimen/padding_large2">
 
     <ImageView
         android:id="@+id/iv_loc"
@@ -14,45 +15,53 @@
         android:background="@drawable/loc_gray_icon" />
 
     <LinearLayout
-        android:layout_toStartOf="@id/iv_route"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/padding_size"
+        android:layout_marginRight="@dimen/padding_size"
+        android:layout_toStartOf="@id/iv_route"
         android:layout_toEndOf="@id/iv_loc"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="@dimen/padding_size"
+        android:paddingBottom="@dimen/padding_size">
 
         <TextView
             android:id="@+id/tv_search_title"
             style="@style/NormalTextTheme.BaseTextTheme"
-            android:textColor="#313131"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#313131" />
 
         <TextView
             android:id="@+id/tv_search_loc"
             style="@style/SmallTextTheme.BaseTextTheme"
             android:layout_width="wrap_content"
-            android:layout_marginTop="@dimen/padding_small"
             android:layout_height="wrap_content"
-            android:textColor="#797979"/>
+            android:layout_marginTop="@dimen/padding_small"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#797979" />
 
     </LinearLayout>
 
     <ImageView
         android:id="@+id/iv_route"
         android:layout_width="wrap_content"
-        android:padding="4dp"
-        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:background="@drawable/route_circle_bg"
-        android:src="@drawable/poi_indicator_route"
-        android:layout_height="wrap_content" />
+        android:padding="4dp"
+        android:src="@drawable/poi_indicator_route" />
 
-    <View android:layout_width="match_parent"
-        android:layout_toEndOf="@id/iv_loc"
-        android:background="@drawable/common_line"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:layout_height="1dp"/>
+        android:layout_toEndOf="@id/iv_loc"
+        android:background="@drawable/common_line" />
 
 </RelativeLayout>

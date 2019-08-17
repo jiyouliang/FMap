@@ -141,9 +141,9 @@
                 android:drawablePadding="4dp"
                 android:hint="@string/search"
                 android:paddingLeft="@dimen/padding_size"
-                android:paddingTop="@dimen/padding_medium"
+                android:paddingTop="@dimen/padding_normal"
                 android:paddingRight="@dimen/padding_size"
-                android:paddingBottom="@dimen/padding_medium"
+                android:paddingBottom="@dimen/padding_normal"
                 android:textSize="16dp" />
 
         </RelativeLayout>

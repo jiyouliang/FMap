@@ -1,8 +1,10 @@
 package com.jiyouliang.fmap.view.map;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.jiyouliang.fmap.R;
 import com.jiyouliang.fmap.util.LogUtil;
@@ -10,7 +12,8 @@ import com.jiyouliang.fmap.util.LogUtil;
 /**
  * 自定义GPS定位控件
  */
-public class GPSView extends android.support.v7.widget.AppCompatImageButton implements View.OnClickListener {
+@SuppressLint("AppCompatCustomView")
+public class GPSView extends ImageView implements View.OnClickListener {
     private static final String TAG = "GPSView";
     private OnGPSViewClickListener mGPSClickListener;
     public static final int STATE_UNLOCKED = 0;//未定位状态，默认状态

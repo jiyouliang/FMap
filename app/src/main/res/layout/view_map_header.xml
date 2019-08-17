@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/button_only_one_normal"
-    android:paddingLeft="@dimen/padding_size">
+    android:paddingStart="@dimen/padding_size">
 
 
     <ImageView
@@ -18,27 +18,27 @@
         android:id="@+id/iv_qr_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/padding_size"
+        android:layout_marginEnd="@dimen/padding_size"
         android:background="@drawable/icon_qr_scan" />
 
 
     <ImageView
         android:id="@+id/iv_voice"
-        android:layout_toLeftOf="@id/iv_qr_scan"
+        android:layout_toStartOf="@id/iv_qr_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/padding_size"
+        android:layout_marginEnd="@dimen/padding_size"
         android:background="@drawable/voice_btn_selector" />
 
 
     <TextView
         android:id="@+id/tv_search"
         style="@style/EditTextStyle"
-        android:layout_toLeftOf="@id/iv_voice"
-        android:layout_toRightOf="@id/iv_user"
+        android:layout_toStartOf="@id/iv_voice"
+        android:layout_toEndOf="@id/iv_user"
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
         android:background="@null"

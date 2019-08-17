@@ -397,9 +397,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             @Override
             public void onSearchClick() {
                 // 显示搜索layout,隐藏地图图层,并设置当前地图操作模式
-                mMapMode = MapMode.SEARCH;
                 showSearchTipView();
                 hideMapView();
+                mMapMode = MapMode.SEARCH;
             }
 
             @Override
@@ -969,7 +969,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
             return;
         }
 
-        // 点击左侧返回箭头
+        // 点击搜索左侧返回箭头
         if(v == mIvLeftSearch){
             hideSearchTipView();
             showMapView();
@@ -1437,6 +1437,9 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private void hideSearchTipView(){
         InputMethodUtils.hideInput(this);
         mLLSearchContainer.setVisibility(View.GONE);
+        mEtSearchTip.setVisibility(View.VISIBLE);
+        mEtSearchTip.setFocusable(true);
+        mEtSearchTip.setFocusableInTouchMode(true);
     }
 
     /**
