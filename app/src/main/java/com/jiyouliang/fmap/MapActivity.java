@@ -57,18 +57,18 @@ import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.InputtipsQuery;
 import com.amap.api.services.help.Tip;
 import com.amap.api.services.share.ShareSearch;
+import com.jiyouliang.fmap.harware.SensorEventHelper;
+import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.ui.navi.WalkRouteNaviActivity;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
+import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.InputMethodUtils;
+import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.MyAMapUtils;
 import com.jiyouliang.fmap.util.WechatApi;
 import com.jiyouliang.fmap.util.WechatUtil;
 import com.jiyouliang.fmap.view.base.MapViewInterface;
-import com.jiyouliang.fmap.harware.SensorEventHelper;
-import com.jiyouliang.fmap.ui.BaseActivity;
-import com.jiyouliang.fmap.util.DeviceUtils;
-import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.view.map.FrequentView;
 import com.jiyouliang.fmap.view.map.GPSView;
 import com.jiyouliang.fmap.view.map.MapHeaderView;
@@ -781,6 +781,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 setUpMap();
             }
         }
+        if(mLocationOption != null && mLocationClient != null){
+            mLocationOption.setInterval(2000);//定位时间间隔，默认2000ms
+            mLocationClient.setLocationOption(mLocationOption);
+            aMap.setMyLocationEnabled(true);
+        }
         //registerWechatBroadcast();
     }
 
@@ -805,8 +810,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     protected void onPause() {
         super.onPause();
+        log("onPause");
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
         mMapView.onPause();
+        mLocationOption.setInterval(20000);//定位时间间隔，默认2000ms
+        mLocationClient.setLocationOption(mLocationOption);
     }
 
     @Override
@@ -846,7 +854,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         if (mLocMarker != null) {
             mLocMarker.destroy();
         }
+
+        // leakcanary检测
+
+
     }
+
 
     private void addCircle(LatLng latlng, double radius) {
         CircleOptions options = new CircleOptions();
