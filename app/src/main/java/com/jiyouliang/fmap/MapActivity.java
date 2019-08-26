@@ -1531,8 +1531,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onItemClick(View v, int position) {
-        if(mSearchData.size() > 0){
-
+        if(mSearchData != null && mSearchData.size() > 0){
             Tip tip = mSearchData.get(position);
             if(tip == null){
                 return;
