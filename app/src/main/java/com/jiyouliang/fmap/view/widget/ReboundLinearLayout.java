@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParent2;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
@@ -21,7 +22,7 @@ import com.jiyouliang.fmap.util.LogUtil;
  * @author YouLiang.Ji
  * 阻尼回弹控件
  */
-public class ReboundLinearLayout extends LinearLayout  {
+public class ReboundLinearLayout extends LinearLayout implements NestedScrollingParent {
     private static final String TAG = "ReboundLinearLayout";
     /**
      * 摩擦力,摩擦力越大view移动距离越小

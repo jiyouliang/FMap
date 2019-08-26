@@ -57,18 +57,18 @@ import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.InputtipsQuery;
 import com.amap.api.services.help.Tip;
 import com.amap.api.services.share.ShareSearch;
+import com.jiyouliang.fmap.harware.SensorEventHelper;
+import com.jiyouliang.fmap.ui.BaseActivity;
 import com.jiyouliang.fmap.ui.navi.WalkRouteNaviActivity;
 import com.jiyouliang.fmap.ui.user.UserActivity;
 import com.jiyouliang.fmap.util.Constants;
+import com.jiyouliang.fmap.util.DeviceUtils;
 import com.jiyouliang.fmap.util.InputMethodUtils;
+import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.util.MyAMapUtils;
 import com.jiyouliang.fmap.util.WechatApi;
 import com.jiyouliang.fmap.util.WechatUtil;
 import com.jiyouliang.fmap.view.base.MapViewInterface;
-import com.jiyouliang.fmap.harware.SensorEventHelper;
-import com.jiyouliang.fmap.ui.BaseActivity;
-import com.jiyouliang.fmap.util.DeviceUtils;
-import com.jiyouliang.fmap.util.LogUtil;
 import com.jiyouliang.fmap.view.map.FrequentView;
 import com.jiyouliang.fmap.view.map.GPSView;
 import com.jiyouliang.fmap.view.map.MapHeaderView;
@@ -1518,8 +1518,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onItemClick(View v, int position) {
-        if(mSearchData.size() > 0){
-
+        if(mSearchData != null && mSearchData.size() > 0){
             Tip tip = mSearchData.get(position);
             if(tip == null){
                 return;
