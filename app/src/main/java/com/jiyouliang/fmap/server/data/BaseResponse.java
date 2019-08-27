@@ -1,11 +1,14 @@
 package com.jiyouliang.fmap.server.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * @author YouLiang.Ji
  *
  * 服务器返回数据基类,解析服务器返回数据需继承该类
  */
-public class BaseResponse {
+public class BaseResponse implements Parcelable {
 
     // 状态码:0-成功,具体请参考服务器返回数据文档
     private int code;
@@ -34,5 +37,16 @@ public class BaseResponse {
                 "code=" + code +
                 ", msg='" + msg + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.code);
+        dest.writeString(this.msg);
     }
 }

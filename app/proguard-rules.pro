@@ -20,96 +20,98 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-#指定压缩级别
+#指定代码的压缩级别
 -optimizationpasses 5
 
-#不跳过非公共的库的类成员
--dontskipnonpubliclibraryclassmembers
+#包明不混合大小写
+-dontusemixedcaseclassnames
 
-#混淆时采用的算法
+#不去忽略非公共的库类
+-dontskipnonpubliclibraryclasses
+
+ #优化  不优化输入的类文件
+-dontoptimize
+
+ #预校验
+-dontpreverify
+
+ #混淆时是否记录日志
+-verbose
+
+ # 混淆时所采用的算法
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 
-#把混淆类中的方法名也混淆了
--useuniqueclassmembernames
+#保护注解
+-keepattributes *Annotation*
 
-#优化时允许访问并修改有修饰符的类和类的成员
--allowaccessmodification
+# 保持哪些类不被混淆
+-keep public class * extends android.app.Fragment
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class com.android.vending.licensing.ILicensingService
+#如果有引用v4包可以添加下面这行
+-keep public class * extends android.support.v4.app.Fragment
 
-#将文件来源重命名为“SourceFile”字符串
--renamesourcefileattribute SourceFile
-#保持泛型
--keepattributes Signature
-
-#dump文件列出apk包内所有class的内部结构
-#-dump class_files.txt
-##seeds.txt文件列出未混淆的类和成员
-#-printseeds seeds.txt
-##usage.txt文件列出从apk中删除的代码
-#-printusage unused.txt
-##mapping文件列出混淆前后的映射
-#-printmapping mapping.txt
 
 #忽略警告
 -ignorewarning
 
-#保持所有实现 Serializable 接口的类成员
--keepclassmembers class * implements java.io.Serializable {
-    static final long serialVersionUID;
-    private static final java.io.ObjectStreamField[] serialPersistentFields;
-    private void writeObject(java.io.ObjectOutputStream);
-    private void readObject(java.io.ObjectInputStream);
-    java.lang.Object writeReplace();
-    java.lang.Object readResolve();
+##记录生成的日志数据,gradle build时在本项目根目录输出##
+#apk 包内所有 class 的内部结构
+-dump class_files.txt
+#未混淆的类和成员
+-printseeds seeds.txt
+#列出从 apk 中删除的代码
+-printusage unused.txt
+#混淆前后的映射
+-printmapping mapping.txt
+
+#保持 native 方法不被混淆
+-keepclasseswithmembernames class * {
+    native <methods>;
 }
 
-#不混淆Parcelable和它的实现子类，还有Creator成员变量
+#保持 Parcelable 不被混淆
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
 }
 
-#使用GSON、fastjson等框架时，所写的JSON对象类不混淆，否则无法将JSON解析成对应的对象
+#保持 Serializable 不被混淆
+-keepnames class * implements java.io.Serializable
+
+-keepattributes Signature
+
+#fastjson
 -keep class com.alibaba.fastjson.**{*;}
 
-#不混淆枚举类
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
-
-#Fragment不需要在AndroidManifest.xml中注册，需要额外保护下
--keep public class * extends android.support.v4.app.Fragment
--keep public class * extends android.app.Fragment
--keep public class com.jiyouliang.fmap.server.data.** {*;}
+#高德定位
+-keep class com.amap.api.location.**{*;}
+-keep class com.amap.api.fence.**{*;}
+-keep class com.autonavi.**{*;}
+-keep class com.loc.**{*;}
+#高德搜素
+-keep   class com.amap.api.services.**{*;}
+#高德3D地图
+-keep class com.alibaba.idst.nls.**{*;}
+-keep class com.amap.api.col.**{*;}
+-keep class com.amap.api.maps.**{*;}
+-keep class com.amap.api.navi.**{*;}
+-keep class com.amap.api.offlineservice.**{*;}
+-keep class com.amap.api.trace.**{*;}
 
 #科大讯飞
 -keep class com.iflytek.**{*;}
 
-# 保持微信
--keep class com.tencent.mm.**{*;}
-
-# 保持测试相关的代码
--dontnote junit.framework.**
--dontnote junit.runner.**
--dontwarn android.test.**
--dontwarn android.support.test.**
--dontwarn org.junit.**
-
-#高德地图
--keep class com.amap.api.maps.**{*;}
--keep   class com.autonavi.**{*;}
--keep   class com.amap.api.trace.**{*;}
-#定位
--keep class com.amap.api.location.**{*;}
--keep class com.amap.api.fence.**{*;}
--keep class com.autonavi.aps.amapapi.model.**{*;}
-#搜索
--keep   class com.amap.api.services.**{*;}
--keep class com.amap.api.maps2d.**{*;}
--keep class com.amap.api.mapcore2d.**{*;}
-#导航
--keep class com.amap.api.navi.**{*;}
--keep class com.autonavi.**{*;}
-#高德地图end
-
+# okhttp
+-keep class com.squareup.okhttp3.**{*;}
+#glide
+-keep class com.bumptech.glide.**{*;}
+#微信sdk
+-keep class com.tencent.mm.opensdk.**{*;}
 
 
