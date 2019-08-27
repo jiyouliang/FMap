@@ -71,4 +71,5 @@
     <string name="search">搜索</string>
     <string name="search_nearby">搜索附近</string>
     <string name="sear_loc_bus_subway">查找地点、公交、地铁</string>
+    <string name="please_open_gps">请开启定位</string>
 </resources>

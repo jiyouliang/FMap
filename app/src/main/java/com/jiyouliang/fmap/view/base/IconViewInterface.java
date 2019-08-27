@@ -1,7 +1,5 @@
 package com.jiyouliang.fmap.view.base;
 
-import android.graphics.Bitmap;
-
 /**
  * IconView相关接口
  */

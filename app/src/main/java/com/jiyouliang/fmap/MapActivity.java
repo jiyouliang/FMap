@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -175,6 +176,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private SearchAdapter mSearchAdapter;
     private String mCity;
     private ProgressBar mSearchProgressBar;
+    private LocationManager mLocMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -255,6 +257,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 搜索结果RecyclerView
         mSearchAdapter = new SearchAdapter(mSearchData);
         mRecycleViewSearch.setAdapter(mSearchAdapter);
+        mLocMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
     }
 
@@ -679,6 +682,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onGPSClick() {
+        if(!isGpsOpen()){
+            showToast(getString(R.string.please_open_gps));
+            return;
+        }
         CameraUpdate cameraUpdate = null;
         mMoveToCenter = true;
         isPoiClick = false;
@@ -1630,5 +1637,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         }
     }
 
+    /**
+     * 是否打开GPS
+     * @return
+     */
+    private boolean isGpsOpen(){
+        return mLocMgr.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
 
 }

@@ -27,8 +27,8 @@ android {
         applicationId "com.jiyouliang.fmap"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 2
-        versionName "1.1.0"
+        versionCode 6
+        versionName "1.1.4"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         // testInstrumentationRunnerArgument "listener", "leakcanary.FailTestOnLeakRunListener"

@@ -2,12 +2,10 @@ package com.jiyouliang.fmap.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
 
 /**
  * 设备相关
