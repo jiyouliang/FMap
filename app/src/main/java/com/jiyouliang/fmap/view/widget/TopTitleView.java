@@ -15,7 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jiyouliang.fmap.R;
-import com.jiyouliang.fmap.util.DeviceUtils;
 
 /**
  * @author YouLiang.Ji

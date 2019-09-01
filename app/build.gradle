@@ -2,6 +2,18 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
+        release {
+            keyAlias 'jiyouliangkee'
+            keyPassword '09103208&jyl'
+            storeFile file('/home/jiyouliang/jiyouliang.jks')
+            storePassword '09103028&jyl'
+        }
+        debug {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('/home/jiyouliang/.android/debug.keystore')
+            storePassword 'android'
+        }
     }
     compileSdkVersion 28
 //    buildToolsVersion "28.0.3"
@@ -15,16 +27,28 @@ android {
         applicationId "com.jiyouliang.fmap"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 6
+        versionName "1.1.4"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        // testInstrumentationRunnerArgument "listener", "leakcanary.FailTestOnLeakRunListener"
+        signingConfig signingConfigs.release
     }
     buildTypes {
         release {
-            minifyEnabled false
+            buildConfigField "boolean", "LOG_DEBUG", "false" //不显示log
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            multiDexEnabled = true
         }
+        debug {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+        }
+    }
+    productFlavors {
     }
 }
 
@@ -43,4 +67,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+    /*debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
+                        releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
+                        debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'*/
 }

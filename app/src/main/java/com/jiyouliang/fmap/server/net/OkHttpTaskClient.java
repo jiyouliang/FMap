@@ -1,12 +1,7 @@
 package com.jiyouliang.fmap.server.net;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
-
-import com.alibaba.fastjson.JSONObject;
-import com.jiyouliang.fmap.util.DeviceUtils;
-import com.jiyouliang.fmap.util.security.RSACrypt;
 
 import org.jetbrains.annotations.NotNull;
 

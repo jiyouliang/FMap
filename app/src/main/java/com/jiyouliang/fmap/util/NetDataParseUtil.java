@@ -2,8 +2,6 @@ package com.jiyouliang.fmap.util;
 
 import com.alibaba.fastjson.JSON;
 
-import org.json.JSONObject;
-
 /**
  * @author YouLiang.Ji
  * 将服务器返回数据解析为bean对象

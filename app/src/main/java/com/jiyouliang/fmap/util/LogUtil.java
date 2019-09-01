@@ -37,12 +37,12 @@ public class LogUtil {
      * Priority constant for the println method.
      */
     private static final int ASSERT = 7;
-    private static final boolean DEBUGGING = true;
+    private static final boolean DEBUGGING = false;
 
     /**
      * 当前日志级别
      */
-    private static final int CURRENT_LEVEL = VERBOSE;
+    private static final int CURRENT_LEVEL = ERROR;
 
     public static void v(String tag, String msg) {
         if (VERBOSE >= CURRENT_LEVEL && DEBUGGING) {

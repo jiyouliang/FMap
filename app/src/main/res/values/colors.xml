@@ -25,4 +25,5 @@
 
     <drawable name="transparent">#00000000</drawable>
     <color name="navpage">#FFE1E8EB</color>
+    <color name="toast_text_color">#F2F3F8</color>
 </resources>

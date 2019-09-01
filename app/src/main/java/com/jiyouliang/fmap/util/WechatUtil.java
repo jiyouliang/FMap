@@ -2,7 +2,6 @@ package com.jiyouliang.fmap.util;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 

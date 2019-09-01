@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.jiyouliang.fmap.util.Base64;
-import com.jiyouliang.fmap.util.LogUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.security.KeyFactory;

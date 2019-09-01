@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -175,6 +176,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     private SearchAdapter mSearchAdapter;
     private String mCity;
     private ProgressBar mSearchProgressBar;
+    private LocationManager mLocMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -255,6 +257,7 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         // 搜索结果RecyclerView
         mSearchAdapter = new SearchAdapter(mSearchData);
         mRecycleViewSearch.setAdapter(mSearchAdapter);
+        mLocMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
     }
 
@@ -679,6 +682,10 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
 
     @Override
     public void onGPSClick() {
+        if(!isGpsOpen()){
+            showToast(getString(R.string.please_open_gps));
+            return;
+        }
         CameraUpdate cameraUpdate = null;
         mMoveToCenter = true;
         isPoiClick = false;
@@ -781,6 +788,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
                 setUpMap();
             }
         }
+        if(mLocationOption != null && mLocationClient != null){
+            mLocationOption.setInterval(2000);//定位时间间隔，默认2000ms
+            mLocationClient.setLocationOption(mLocationOption);
+            aMap.setMyLocationEnabled(true);
+        }
         //registerWechatBroadcast();
     }
 
@@ -805,8 +817,11 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
     @Override
     protected void onPause() {
         super.onPause();
+        log("onPause");
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
         mMapView.onPause();
+        mLocationOption.setInterval(20000);//定位时间间隔，默认2000ms
+        mLocationClient.setLocationOption(mLocationOption);
     }
 
     @Override
@@ -846,7 +861,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         if (mLocMarker != null) {
             mLocMarker.destroy();
         }
+
+        // leakcanary检测
+
+
     }
+
 
     private void addCircle(LatLng latlng, double radius) {
         CircleOptions options = new CircleOptions();
@@ -1617,5 +1637,12 @@ public class MapActivity extends BaseActivity implements GPSView.OnGPSViewClickL
         }
     }
 
+    /**
+     * 是否打开GPS
+     * @return
+     */
+    private boolean isGpsOpen(){
+        return mLocMgr.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
 
 }

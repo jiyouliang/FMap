@@ -1,13 +1,13 @@
 package com.jiyouliang.fmap.ui;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.widget.ImageView;
 
 import com.jiyouliang.fmap.MapActivity;
 import com.jiyouliang.fmap.R;
@@ -19,21 +19,21 @@ import java.util.List;
 /**
  * 启动页
  */
-public class SplashActivity extends BaseActivity implements Animator.AnimatorListener {
+public class SplashActivity extends BaseActivity {
 
     /**
      * 运行时权限请求码
      */
-    private static final int REQ_CODE_PERMISSIONS = 1;
+    private final int REQ_CODE_PERMISSIONS = 1;
 
     /**
      * 动画时长
      */
-    private static final long DURATION = 800;
+    private final long DURATION = 800;
     private ValueAnimator mAnimator;
-    private ImageView mIvTop;
+    /*private ImageView mIvTop;
     private ImageView mIvCenter;
-    private ImageView mIvBottom;
+    private ImageView mIvBottom;*/
     private boolean hasOnResumeChecked;
 
     @Override
@@ -45,15 +45,30 @@ public class SplashActivity extends BaseActivity implements Animator.AnimatorLis
     }
 
     private void initView() {
-        mIvTop = (ImageView) findViewById(R.id.iv_top);
+        /*mIvTop = (ImageView) findViewById(R.id.iv_top);
         mIvCenter = (ImageView) findViewById(R.id.iv_center);
-        mIvBottom = (ImageView) findViewById(R.id.iv_bottom);
+        mIvBottom = (ImageView) findViewById(R.id.iv_bottom);*/
     }
 
     private void initAnimator() {
         mAnimator = ValueAnimator.ofFloat(0, 80);
         mAnimator.setDuration(DURATION);
-        mAnimator.addListener(this);
+        mAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            /**
+             * 动画结束,进入主页MapActivity
+             *
+             * @param animation
+             */
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                showMapPage();
+            }
+        });
         mAnimator.start();
     }
 
@@ -86,30 +101,7 @@ public class SplashActivity extends BaseActivity implements Animator.AnimatorLis
         }
     }
 
-    @Override
-    public void onAnimationStart(Animator animation) {
 
-    }
-
-    /**
-     * 动画结束,进入主页MapActivity
-     *
-     * @param animation
-     */
-    @Override
-    public void onAnimationEnd(Animator animation) {
-        showMapPage();
-    }
-
-    @Override
-    public void onAnimationCancel(Animator animation) {
-
-    }
-
-    @Override
-    public void onAnimationRepeat(Animator animation) {
-
-    }
 
     /**
      * 关闭动画,释放动画资源
@@ -117,8 +109,17 @@ public class SplashActivity extends BaseActivity implements Animator.AnimatorLis
     @Override
     protected void onStop() {
         super.onStop();
-        if (mAnimator != null && mAnimator.isRunning()) {
-            mAnimator.cancel();
+        if (mAnimator != null) {
+            if(mAnimator.isRunning()){
+                mAnimator.cancel();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mAnimator != null){
             mAnimator = null;
         }
     }
