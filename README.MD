@@ -1,7 +1,7 @@
 ## 宇行地图Android客户端-高仿高德地图（持续更新中...）
 
 
-<a href="https://play.google.com/store/apps/details?id=com.jiyouliang.fmap"><img src="https://app-news.oss-cn-shenzhen.aliyuncs.com/images/googley-play.png" height="75"></a>
+<a href="https://play.google.com/store/apps/details?id=com.jiyouliang.fmap"><img src="https://app-news.oss-cn-shenzhen.aliyuncs.com/images/googley-play.png"></a>
 
 
 
