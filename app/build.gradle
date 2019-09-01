@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         release {
-            keyAlias 'jiyouliangkee'
-            keyPassword '09103208&jyl'
-            storeFile file('/home/jiyouliang/jiyouliang.jks')
-            storePassword '09103028&jyl'
+            keyAlias 'mykeyalias'
+            keyPassword '12345678'
+            storeFile file('/home/user/user.jks')
+            storePassword '12345678'
         }
         debug {
             keyAlias 'androiddebugkey'
