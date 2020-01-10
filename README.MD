@@ -1,4 +1,3 @@
-## 宇行地图Android客户端-高仿高德地图（持续更新中...）
 
 
 ![](/screenshot/notice.jpg)
@@ -7,6 +6,7 @@
 [![](/screenshot/google-play.png)](https://play.google.com/store/apps/details?id=com.jiyouliang.fmap)
 
 
+## 宇行地图Android客户端-高仿高德地图（持续更新中...）
 
 **宇行地图是以高德地图v9.05为参考的开源项目。
 具有：地图、定位、3D图层、交通流量、附近搜索、短信验证码登录、导航（公交、步行、驾车等）、天气情报、运动纪录、分享等等功能**
