@@ -1,6 +1,8 @@
 ## 宇行地图Android客户端-高仿高德地图（持续更新中...）
 
 
+![](/screenshot/notice.jpg)
+
 
 [![](/screenshot/google-play.png)](https://play.google.com/store/apps/details?id=com.jiyouliang.fmap)
 
